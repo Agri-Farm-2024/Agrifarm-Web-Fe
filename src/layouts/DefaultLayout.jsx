@@ -81,12 +81,12 @@ export const DefaultLayout = ({children}) => {
 				>
 					<div
 						style={{
-							minHeight: 360,
-							margin: '15px',
-							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Adjust shadow values as needed
-							borderRadius: '15px', // Optional: add border radius for rounded corners
-							padding: '20px', // Optional: add padding for inner content spacing
-							backgroundColor: '#ffffff', // Optional: set a background color if needed
+							margin: isLoginPage ? 0 : '15px',
+							minHeight: '50%',
+							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+							borderRadius: isLoginPage ? 0 : '15px',
+							padding: isLoginPage ? 0 : '20px',
+							backgroundColor: '#ffffff',
 						}}
 					>
 						{children}
