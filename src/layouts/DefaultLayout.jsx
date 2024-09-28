@@ -16,11 +16,13 @@ export const DefaultLayout = ({children}) => {
 
 	const pageLocation = [
 		'/dashboard',
+		'/booking-land',
 		//add page loction here to detect selected page
 	];
 
 	const items = [
 		getItem('Dashboard', '/dashboard', <DashboardOutlined />),
+		getItem('Quản lý thuê đất', '/booking-land', <DashboardOutlined />),
 		//add menu items here
 	];
 
@@ -79,18 +81,7 @@ export const DefaultLayout = ({children}) => {
 						backgroundColor: '#FBFCFB',
 					}}
 				>
-					<div
-						style={{
-							margin: isLoginPage ? 0 : '15px',
-							minHeight: '50%',
-							boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-							borderRadius: isLoginPage ? 0 : '15px',
-							padding: isLoginPage ? 0 : '20px',
-							backgroundColor: '#ffffff',
-						}}
-					>
-						{children}
-					</div>
+					{children}
 				</Content>
 
 				{showHeaderFooter && (
