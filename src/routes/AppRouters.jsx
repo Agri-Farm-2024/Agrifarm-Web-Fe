@@ -7,6 +7,15 @@ import PermissionDeniedPage from '../pages/PermissionDeniedPage/PermissionDenied
 import LoginPage from '../pages/LoginPage/LoginPage';
 import PrivateRoute from './PrivateRoute';
 import BookingLandPage from '../pages/BookingLandPage/BookingLandPage';
+import {LandLeaseRequestPage} from '../pages/LandLeaseRequestPage/LandLeaseRequestPage';
+import {ServiceRequestPage} from '../pages/ServiceRequestPage/ServiceRequestPage';
+import {PurchaseRequestPage} from '../pages/PurchaseRequestPage/PurchaseRequestPage';
+import {TaskManagementPage} from '../pages/TaskManagementPage/TaskManagementPage';
+import {DiaryMonitoringPage} from '../pages/DiaryMonitoringPage/DiaryMonitoringPage';
+import {OrderReportsPage} from '../pages/OrderReportsPage/OrderReportsPage';
+import {SupplyOrderPage} from '../pages/SupplyOrderPage/SupplyOrderPage';
+import {LandReportsPage} from '../pages/LandReportsPage/LandReportsPage';
+import {ReminderPage} from '../pages/ReminderPage/ReminderPage';
 
 export const AppRouters = () => {
 	return (
@@ -15,6 +24,15 @@ export const AppRouters = () => {
 				<Route path="/" element={<Navigate to="/dashboard" />} />
 				<Route path="/dashboard" element={<DashboardPage />} />
 				<Route path="/booking-land" element={<BookingLandPage />} />
+				<Route path="/land-requests" element={<LandLeaseRequestPage />} />
+				<Route path="/service-requests" element={<ServiceRequestPage />} />
+				<Route path="/purchase-requests" element={<PurchaseRequestPage />} />
+				<Route path="/task-management" element={<TaskManagementPage />} />
+				<Route path="/log-monitoring" element={<DiaryMonitoringPage />} />
+				<Route path="/order-reports" element={<OrderReportsPage />} />
+				<Route path="/supply-invoices" element={<SupplyOrderPage />} />
+				<Route path="/land-reports" element={<LandReportsPage />} />
+				<Route path="/reminders" element={<ReminderPage />} />
 
 				<Route path="/login" element={<LoginPage />} />
 
