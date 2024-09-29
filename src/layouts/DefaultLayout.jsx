@@ -1,12 +1,26 @@
 import React, {useState} from 'react';
 import {Layout, Menu} from 'antd';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
-import {DashboardOutlined, UserOutlined} from '@ant-design/icons';
+import {
+	DashboardOutlined,
+	UserOutlined,
+	FileTextOutlined,
+	ScheduleOutlined,
+	FormOutlined,
+	EnvironmentOutlined,
+	BellOutlined,
+	FileDoneOutlined,
+	SettingOutlined,
+	ShoppingCartOutlined,
+	DeliveredProcedureOutlined,
+} from '@ant-design/icons'; // Imported additional icons
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar'; // Import the TopNavbar component
-const {Footer, Sider, Content} = Layout;
 
-const getItem = (label, key, icon) => ({key, icon, label});
+const {Footer, Sider, Content} = Layout;
+const {SubMenu} = Menu;
+
+const getItem = (label, key, icon, children) => ({key, icon, label, children});
 
 export const DefaultLayout = ({children}) => {
 	const navigate = useNavigate();
@@ -17,13 +31,36 @@ export const DefaultLayout = ({children}) => {
 	const pageLocation = [
 		'/dashboard',
 		'/booking-land',
-		//add page loction here to detect selected page
+		'/task-management',
+		'/land-requests',
+		'/service-requests',
+		'/purchase-requests',
+		'/booking-land',
+		'/task-management',
+		'/log-monitoring',
+		'/order-reports',
+		'/supply-invoices',
+		'/land-reports',
+		'/reminders',
 	];
 
+	// Define the menu items with more suitable labels, links, and icons
 	const items = [
 		getItem('Dashboard', '/dashboard', <DashboardOutlined />),
-		getItem('Quản lý thuê đất', '/booking-land', <DashboardOutlined />),
-		//add menu items here
+
+		getItem('Quản lý yêu cầu', 'sub1', <FileTextOutlined />, [
+			getItem('Yêu cầu thuê đất', '/land-requests', <FileTextOutlined />),
+			getItem('Yêu cầu dịch vụ', '/service-requests', <ShoppingCartOutlined />),
+			getItem('Yêu cầu thu mua', '/purchase-requests', <DeliveredProcedureOutlined />),
+		]),
+
+		getItem('Quản lý thuê đất', '/booking-land', <EnvironmentOutlined />),
+		getItem('Phân công nhiệm vụ', '/task-management', <ScheduleOutlined />),
+		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
+		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
+		getItem('Hóa đơn cung cấp vật tư', '/supply-invoices', <SettingOutlined />),
+		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
+		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];
 
 	const handleClickMenuItem = (e) => {
@@ -45,6 +82,7 @@ export const DefaultLayout = ({children}) => {
 				collapsible
 				theme="light"
 				onCollapse={toggleCollapsed}
+				width={250} // Increase width to 250px (adjust this value as needed)
 				style={{display: pageLocation.includes(location.pathname) ? 'block' : 'none'}}
 			>
 				<Link to="/dashboard" style={{display: 'block', height: '100px'}}>
@@ -66,11 +104,21 @@ export const DefaultLayout = ({children}) => {
 					selectedKeys={[selectMenu]}
 					mode="inline"
 				>
-					{items.map((item) => (
-						<Menu.Item key={item.key} icon={item.icon}>
-							<Link to={item.key}>{item.label}</Link>
-						</Menu.Item>
-					))}
+					{items.map((item) =>
+						item.children ? (
+							<SubMenu key={item.key} icon={item.icon} title={item.label}>
+								{item.children.map((child) => (
+									<Menu.Item key={child.key} icon={child.icon}>
+										<Link to={child.key}>{child.label}</Link>
+									</Menu.Item>
+								))}
+							</SubMenu>
+						) : (
+							<Menu.Item key={item.key} icon={item.icon}>
+								<Link to={item.key}>{item.label}</Link>
+							</Menu.Item>
+						)
+					)}
 				</Menu>
 			</Sider>
 			<Layout style={{backgroundColor: '#eaeaea', minHeight: '100vh'}}>

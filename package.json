@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "agrifarm-web-fe": "file:",
     "antd": "^5.20.6",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
