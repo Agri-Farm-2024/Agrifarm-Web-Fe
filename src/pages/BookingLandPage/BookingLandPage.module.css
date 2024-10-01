@@ -35,3 +35,48 @@
 .filterContainer .fiterItem .filterInput {
 	width: 50%;
 }
+
+.tableContainer {
+	padding: 0 1rem;
+}
+
+.tableContainer .table {
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	border-radius: 7px;
+}
+
+.modalContainer {
+	width: 100%;
+	padding-top: 1rem;
+}
+
+.modalContainer button {
+	border: none !important;
+	outline: none !important;
+}
+
+.modalContainer .bookingItem {
+	width: 50rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.modalContainer .bookingItem .title {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.modalContainer .bookingItem .content {
+	font-size: 1rem;
+}
+
+.evenRow {
+	background-color: #ffffff;
+	cursor: pointer;
+}
+
+.oddRow {
+	cursor: pointer;
+	background-color: #fafafa;
+}

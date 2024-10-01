@@ -17,6 +17,9 @@ createRoot(document.getElementById('root')).render(
 					Button: {
 						colorPrimary: '#7fb640',
 					},
+					Table: {
+						rowHoverBg: '#f1f1f1',
+					},
 				},
 			}}
 		>
