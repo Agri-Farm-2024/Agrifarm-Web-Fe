@@ -307,7 +307,7 @@ const ServiceRequestPage = () => {
 	];
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-	const [selectedBooking, setSelectedBooking] = useState(null);
+	const [selectedService, setSelectedService] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
@@ -319,13 +319,13 @@ const ServiceRequestPage = () => {
 	};
 
 	const handleRowClick = (record) => {
-		setSelectedBooking(record);
+		setSelectedService(record);
 		setIsModalOpen(true);
 	};
 
 	const handleModalClose = () => {
 		setIsModalOpen(false);
-		setSelectedBooking(null);
+		setSelectedService(null);
 	};
 
 	const handleAssignExpert = () => {
@@ -362,7 +362,7 @@ const ServiceRequestPage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="bookingId"
+					rowKey="serviceId"
 					dataSource={data}
 					columns={columns}
 					scroll={{x: 'max-content'}}
@@ -386,7 +386,7 @@ const ServiceRequestPage = () => {
 				<ServiceRequestDetailModal
 					isModalOpen={isModalOpen}
 					handleModalClose={handleModalClose}
-					selectedBooking={selectedBooking}
+					selectedService={selectedService}
 				/>
 
 				<Modal

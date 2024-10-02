@@ -11,11 +11,11 @@ import {LandLeaseRequestPage} from '../pages/LandLeaseRequestPage/LandLeaseReque
 import {PurchaseRequestPage} from '../pages/PurchaseRequestPage/PurchaseRequestPage';
 import {TaskManagementPage} from '../pages/TaskManagementPage/TaskManagementPage';
 import {DiaryMonitoringPage} from '../pages/DiaryMonitoringPage/DiaryMonitoringPage';
-import {OrderReportsPage} from '../pages/OrderReportsPage/OrderReportsPage';
 import {SupplyOrderPage} from '../pages/SupplyOrderPage/SupplyOrderPage';
 import {LandReportsPage} from '../pages/LandReportsPage/LandReportsPage';
 import {ReminderPage} from '../pages/ReminderPage/ReminderPage';
 import ServiceRequestPage from '../pages/ServiceRequestPage/ServiceRequestPage';
+import OrderReportsPage from '../pages/OrderReportsPage/OrderReportsPage';
 
 export const AppRouters = () => {
 	return (
