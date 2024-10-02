@@ -8,7 +8,6 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import PrivateRoute from './PrivateRoute';
 import BookingLandPage from '../pages/BookingLandPage/BookingLandPage';
 import {LandLeaseRequestPage} from '../pages/LandLeaseRequestPage/LandLeaseRequestPage';
-import {ServiceRequestPage} from '../pages/ServiceRequestPage/ServiceRequestPage';
 import {PurchaseRequestPage} from '../pages/PurchaseRequestPage/PurchaseRequestPage';
 import {TaskManagementPage} from '../pages/TaskManagementPage/TaskManagementPage';
 import {DiaryMonitoringPage} from '../pages/DiaryMonitoringPage/DiaryMonitoringPage';
@@ -16,6 +15,7 @@ import {OrderReportsPage} from '../pages/OrderReportsPage/OrderReportsPage';
 import {SupplyOrderPage} from '../pages/SupplyOrderPage/SupplyOrderPage';
 import {LandReportsPage} from '../pages/LandReportsPage/LandReportsPage';
 import {ReminderPage} from '../pages/ReminderPage/ReminderPage';
+import ServiceRequestPage from '../pages/ServiceRequestPage/ServiceRequestPage';
 
 export const AppRouters = () => {
 	return (
