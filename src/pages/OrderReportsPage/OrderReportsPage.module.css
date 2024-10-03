@@ -11,7 +11,6 @@
 	width: 70%;
 	display: flex;
 	float: right;
-	justify-content: space-between;
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 2rem;
@@ -36,12 +35,19 @@
 }
 
 .tableContainer {
-	padding: 0 1rem;
+	width: 100%;
+	padding: 0 20px;
+}
+
+.tableContainer button {
+	border: none !important;
+	outline: none !important;
 }
 
 .tableContainer .table {
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	border-radius: 7px;
+	margin-bottom: 2rem;
 }
 
 .modalContainer {
@@ -61,12 +67,32 @@
 	gap: 1rem;
 }
 
-.modalContainer .bookingItem .title {
+.modalContainer .title {
 	font-size: 1rem;
 	font-weight: bold;
 }
 
 .modalContainer .bookingItem .content {
+	font-size: 1rem;
+}
+
+.modalContainer .orderProducts {
+	display: flex;
+	flex-direction: column;
+}
+
+.modalContainer .orderProducts .product {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.modalContainer .orderProducts .product p:first-child {
+	font-weight: bold;
+	padding-left: 1rem;
+}
+
+.modalContainer .orderProducts .product p {
 	font-size: 1rem;
 }
 
