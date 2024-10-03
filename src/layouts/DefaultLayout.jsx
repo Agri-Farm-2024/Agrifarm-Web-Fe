@@ -13,6 +13,7 @@ import {
 	SettingOutlined,
 	ShoppingCartOutlined,
 	DeliveredProcedureOutlined,
+	CalculatorOutlined,
 } from '@ant-design/icons'; // Imported additional icons
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar'; // Import the TopNavbar component
@@ -42,6 +43,7 @@ export const DefaultLayout = ({children}) => {
 		'/supply-invoices',
 		'/land-reports',
 		'/reminders',
+		'/product-purchase-invoices',
 	];
 
 	// Define the menu items with more suitable labels, links, and icons
@@ -59,6 +61,7 @@ export const DefaultLayout = ({children}) => {
 		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
 		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
 		getItem('Hóa đơn cung cấp vật tư', '/supply-invoices', <SettingOutlined />),
+		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];

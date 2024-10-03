@@ -509,6 +509,8 @@ export const DiaryMonitoringPage = () => {
 				onOk={handleSendNoti}
 				title="Gửi thông báo"
 				okButtonProps={{style: {outline: 'none', border: 'none'}}}
+				cancelText="Đóng"
+				okText="Gửi"
 			>
 				<div className={styles.notiModalContainer}>
 					<div className={styles.notiItem}>
