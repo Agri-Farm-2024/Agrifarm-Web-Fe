@@ -214,7 +214,7 @@ const statusOptions = [
 const ServiceRequestPage = () => {
 	const columns = [
 		{
-			title: 'Mã dịch vụ',
+			title: 'ID dịch vụ',
 			dataIndex: 'serviceId',
 			key: 'serviceId',
 			render: (text) => <a>{text}</a>,
@@ -395,6 +395,7 @@ const ServiceRequestPage = () => {
 					onOk={handleAssignExpert}
 					okButtonProps={{style: {outline: 'none', border: 'none'}}}
 					onCancel={() => setIsAssignModalOpen(false)}
+					centered
 				>
 					<div style={{padding: '1rem 0'}}>
 						<span style={{marginRight: '1rem'}}>Nhân viên phụ trách: </span>

@@ -15,6 +15,7 @@ export const ServiceRequestDetailModal = ({selectedService, handleModalClose, is
 			onOk={handleUpdateBooking}
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
+			style={{top: 20}}
 		>
 			{selectedService && (
 				<div className={styles.modalContainer}>

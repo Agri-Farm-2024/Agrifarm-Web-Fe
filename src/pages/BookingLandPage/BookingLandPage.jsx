@@ -6,7 +6,7 @@ import {BookingLandDetailModal} from './BookingLandDetailModal';
 
 const columns = [
 	{
-		title: 'Mã hợp đồng',
+		title: 'ID hợp đồng',
 		dataIndex: 'bookingId',
 		key: 'bookingId',
 		render: (text) => <a>{text}</a>,

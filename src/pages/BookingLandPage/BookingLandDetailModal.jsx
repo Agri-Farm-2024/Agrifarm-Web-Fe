@@ -17,6 +17,7 @@ export const BookingLandDetailModal = ({selectedBooking, handleModalClose, isMod
 			onOk={handleUpdateBooking}
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
+			style={{top: 20}}
 		>
 			{selectedBooking && (
 				<div className={styles.modalContainer}>
