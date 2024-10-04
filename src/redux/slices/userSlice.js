@@ -21,7 +21,9 @@ import {api} from '../../services/api';
 export const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: {
-		users: null,
+		user: {
+			role: 'manager',
+		},
 		loading: false,
 		error: null,
 	},
@@ -46,4 +48,4 @@ export const userSlice = createSlice({
 	},
 });
 
-export default userSlice.reducer;
+export default userSlice;

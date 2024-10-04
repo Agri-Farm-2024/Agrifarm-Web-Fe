@@ -1,2 +1,2 @@
 // users
-// export const getUserLoginSelector = (state) => state.userLoginSlice.userInfo;
+export const getUserSelector = (state) => state.userSlice.user;

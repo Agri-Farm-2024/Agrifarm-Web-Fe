@@ -14,9 +14,12 @@ import {
 	ShoppingCartOutlined,
 	DeliveredProcedureOutlined,
 	CalculatorOutlined,
-} from '@ant-design/icons'; // Imported additional icons
+	TeamOutlined,
+} from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
-import TopNavbar from '../components/TopNavBar/TopNavBar'; // Import the TopNavbar component
+import TopNavbar from '../components/TopNavBar/TopNavBar';
+import {useSelector} from 'react-redux';
+import {getUserSelector} from '../redux/selectors';
 
 const {Footer, Sider, Content} = Layout;
 const {SubMenu} = Menu;
@@ -29,6 +32,10 @@ export const DefaultLayout = ({children}) => {
 	const location = useLocation();
 	const [selectMenu, setSelectMenu] = useState(location.pathname);
 
+	const userSelector = useSelector(getUserSelector);
+	console.log('userselector: ' + JSON.stringify(userSelector));
+
+	//Location will display the sider menu
 	const pageLocation = [
 		'/dashboard',
 		'/booking-land',
@@ -44,9 +51,10 @@ export const DefaultLayout = ({children}) => {
 		'/land-reports',
 		'/reminders',
 		'/product-purchase-invoices',
+		'/manage-employees',
 	];
 
-	// Define the menu items with more suitable labels, links, and icons
+	// Define the menu items
 	const items = [
 		getItem('Dashboard', '/dashboard', <DashboardOutlined />),
 
@@ -64,6 +72,9 @@ export const DefaultLayout = ({children}) => {
 		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
+
+		userSelector?.role == 'manager' &&
+			getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
 	];
 
 	const handleClickMenuItem = (e) => {
@@ -88,7 +99,11 @@ export const DefaultLayout = ({children}) => {
 				width={250} // Increase width to 250px (adjust this value as needed)
 				style={{display: pageLocation.includes(location.pathname) ? 'block' : 'none'}}
 			>
-				<Link to="/dashboard" style={{display: 'block', height: '100px'}}>
+				<Link
+					to="/dashboard"
+					onClick={() => setSelectMenu('/dashboard')}
+					style={{display: 'block', height: '100px'}}
+				>
 					<img
 						src={imageExporter.logo}
 						alt="logo"
@@ -117,9 +132,11 @@ export const DefaultLayout = ({children}) => {
 								))}
 							</SubMenu>
 						) : (
-							<Menu.Item key={item.key} icon={item.icon}>
-								<Link to={item.key}>{item.label}</Link>
-							</Menu.Item>
+							item && (
+								<Menu.Item key={item.key} icon={item.icon}>
+									<Link to={item.key}>{item.label}</Link>
+								</Menu.Item>
+							)
 						)
 					)}
 				</Menu>

@@ -1,9 +1,8 @@
-import {DatePicker, Input, Table, Tag, Button, Space, Select, Modal} from 'antd';
+import {DatePicker, Table} from 'antd';
 import React, {useState} from 'react';
 import styles from './ProductPurchaseInvoicePage.module.css';
 import {formatNumber} from '../../utils';
 import {ProductPurchaseInvoiceDetailModal} from './ProductPurchaseInvoiceDetailModal';
-import {BellOutlined} from '@ant-design/icons';
 
 const data = [
 	{
@@ -92,21 +91,6 @@ const data = [
 	},
 ];
 
-const statusOptions = [
-	{
-		value: 'Chấp nhận',
-		label: 'Chấp nhận',
-	},
-	{
-		value: 'Đang xử lý',
-		label: 'Đang xử lý',
-	},
-	{
-		value: 'Từ chối',
-		label: 'Từ chối',
-	},
-];
-
 export const ProductPurchaseInvoicePage = () => {
 	const columns = [
 		{
@@ -143,17 +127,10 @@ export const ProductPurchaseInvoicePage = () => {
 		},
 	];
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isNotiModalOpen, setIsNotiModalOpen] = useState(false);
 	const [selectedInvoice, setSelectedInvoice] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
-	const [notiContent, setNotiContent] = useState('');
-
-	const handleRejectService = (e) => {
-		e.stopPropagation();
-		console.log('Reject service');
-	};
 
 	const handleRowClick = (record) => {
 		setSelectedInvoice(record);
@@ -165,9 +142,6 @@ export const ProductPurchaseInvoicePage = () => {
 		setSelectedInvoice(null);
 	};
 
-	const handleSendNoti = () => {
-		console.log('Send notification');
-	};
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
@@ -188,7 +162,7 @@ export const ProductPurchaseInvoicePage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="OrderId"
+					rowKey="invoiceId"
 					dataSource={data}
 					columns={columns}
 					scroll={{x: 'max-content'}}

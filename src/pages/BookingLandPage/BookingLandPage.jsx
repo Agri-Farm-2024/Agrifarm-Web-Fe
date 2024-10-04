@@ -71,16 +71,6 @@ const columns = [
 		key: 'totalPrice',
 		render: (text) => <>{formatNumber(text)} VND</>,
 	},
-	// {
-	// 	title: 'Action',
-	// 	key: 'action',
-	// 	render: (_, record) => (
-	// 		<Space size="middle">
-	// 			<a>Invite {record.name}</a>
-	// 			<a>Delete</a>
-	// 		</Space>
-	// 	),
-	// },
 ];
 
 const data = [

@@ -47,7 +47,7 @@
 	padding: 0 20px;
 }
 
-.tableContainer button {
+button {
 	border: none !important;
 	outline: none !important;
 }
@@ -90,11 +90,6 @@
 
 .notiModalContainer {
 	padding: 1rem;
-}
-
-.notiModalContainer button {
-	border: none !important;
-	outline: none !important;
 }
 
 .notiModalContainer .notiItem {

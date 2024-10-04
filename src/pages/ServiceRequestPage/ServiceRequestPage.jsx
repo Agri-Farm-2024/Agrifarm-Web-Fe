@@ -275,7 +275,7 @@ const ServiceRequestPage = () => {
 			render: (text) => <>{formatNumber(text)} VND</>,
 		},
 		{
-			title: 'Action',
+			title: 'Hành động',
 			key: 'action',
 			render: (_, record) => (
 				<Space size="middle">
@@ -292,12 +292,12 @@ const ServiceRequestPage = () => {
 
 					<Popconfirm
 						onClick={(e) => e.stopPropagation()}
-						title="Delete the task"
+						title="Từ chối yêu cầu"
 						description="Bạn muốn từ chối yêu cầu này?"
 						onConfirm={handleRejectService}
 						onCancel={(e) => e.stopPropagation()}
-						okText="OK"
-						cancelText="Cancel"
+						okText="Từ chối"
+						cancelText="Huỷ"
 					>
 						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
 					</Popconfirm>

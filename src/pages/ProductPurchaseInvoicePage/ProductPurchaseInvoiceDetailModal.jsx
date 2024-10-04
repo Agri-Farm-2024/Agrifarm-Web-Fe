@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styles from './ProductPurchaseInvoicePage.module.css';
-import {Button, Image, Modal} from 'antd';
+import {Modal} from 'antd';
 import {formatNumber} from '../../utils';
 export const ProductPurchaseInvoiceDetailModal = ({
 	selectedInvoice,

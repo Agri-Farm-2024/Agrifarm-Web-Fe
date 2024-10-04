@@ -394,7 +394,7 @@ export const DiaryMonitoringPage = () => {
 			),
 		},
 		{
-			title: 'Action',
+			title: 'Hành động',
 			key: 'action',
 			render: (_, record) => (
 				<Space size="middle">
@@ -463,7 +463,7 @@ export const DiaryMonitoringPage = () => {
 							style={{
 								width: '50%',
 							}}
-							placeholder="Chọn loại dịch vụ"
+							placeholder="Chọn trạng thái"
 							options={statusOptions}
 						/>
 					</div>
