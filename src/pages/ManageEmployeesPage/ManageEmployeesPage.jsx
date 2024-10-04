@@ -1,4 +1,4 @@
-import {Button, DatePicker, Popconfirm, Space, Table, Tag} from 'antd';
+import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useState} from 'react';
 import styles from './ManageEmployeesPage.module.css';
 import {formatNumber} from '../../utils';
@@ -50,7 +50,7 @@ const data = [
 		dateStart: '26/09/2020',
 		email: 'nguyenvana@gmail.com',
 		status: 'Nghỉ việc',
-		role: 'Nhân viên trang trại',
+		role: 'Chuyên viên nông nghiệp',
 		doingTaskNumber: 10,
 		doneTaskNumber: 5,
 		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
@@ -62,7 +62,7 @@ const data = [
 		dateStart: '26/09/2020',
 		email: 'nguyenvana@gmail.com',
 		status: 'Đang làm',
-		role: 'Nhân viên trang trại',
+		role: 'Chuyên viên nông nghiệp',
 		doingTaskNumber: 10,
 		doneTaskNumber: 5,
 		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
@@ -71,16 +71,23 @@ const data = [
 
 const statusOptions = [
 	{
-		value: 'Chấp nhận',
-		label: 'Chấp nhận',
+		value: 'Đang làm',
+		label: 'Đang làm',
 	},
 	{
-		value: 'Đang xử lý',
-		label: 'Đang xử lý',
+		value: 'Nghỉ việc',
+		label: 'Nghỉ việc',
+	},
+];
+
+const roleOptions = [
+	{
+		value: 'Chuyên viên nông nghiệp',
+		label: 'Chuyên viên nông nghiệp',
 	},
 	{
-		value: 'Từ chối',
-		label: 'Từ chối',
+		value: 'Nhân viên trang trại',
+		label: 'Nhân viên trang trại',
 	},
 ];
 
@@ -196,15 +203,26 @@ export const ManageEmployeesPage = () => {
 				<p>Quản lý nhân viên</p>
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
-						<span>Lọc theo ngày thanh toán:</span>
-						<DatePicker
-							className={styles.filterInput}
-							placeholder="DD-MM-YYYY"
-							onChange={(date, dateString) => {
-								console.log(date, dateString);
+						<span>Lọc theo vị trí:</span>
+						<Select
+							style={{
+								width: '50%',
 							}}
-							format={'DD-MM-YYYY'}
-						/>
+							allowClear
+							placeholder="Chọn vị trí"
+							options={roleOptions}
+						></Select>
+					</div>
+					<div className={styles.fiterItem}>
+						<span>Lọc theo trạng thái:</span>
+						<Select
+							style={{
+								width: '50%',
+							}}
+							allowClear
+							placeholder="Chọn trạng thái"
+							options={statusOptions}
+						></Select>
 					</div>
 				</div>
 			</div>
