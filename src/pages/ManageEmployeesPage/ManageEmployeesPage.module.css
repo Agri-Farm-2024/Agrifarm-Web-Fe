@@ -11,6 +11,7 @@
 .headerContainer .filterContainer {
 	width: 70%;
 	display: flex;
+	justify-content: flex-end;
 	float: right;
 	align-items: center;
 	gap: 1rem;
@@ -63,7 +64,7 @@ button {
 	gap: 1rem;
 }
 
-.modalContainer .bookingItem .title {
+.modalContainer .title {
 	font-size: 1rem;
 	font-weight: bold;
 }
@@ -80,4 +81,13 @@ button {
 .oddRow {
 	cursor: pointer;
 	background-color: #fafafa;
+}
+
+.formContainer {
+	width: 100%;
+	padding: 1rem;
+}
+
+.formContainer .inputField {
+	width: 100%;
 }

@@ -16,6 +16,8 @@ import {LandReportsPage} from '../pages/LandReportsPage/LandReportsPage';
 import {ReminderPage} from '../pages/ReminderPage/ReminderPage';
 import ServiceRequestPage from '../pages/ServiceRequestPage/ServiceRequestPage';
 import OrderReportsPage from '../pages/OrderReportsPage/OrderReportsPage';
+import {ProductPurchaseInvoicePage} from '../pages/ProductPurchaseInvoicePage/ProductPurchaseInvoicePage';
+import {ManageEmployeesPage} from '../pages/ManageEmployeesPage/ManageEmployeesPage';
 
 export const AppRouters = () => {
 	return (
@@ -33,6 +35,8 @@ export const AppRouters = () => {
 				<Route path="/supply-invoices" element={<SupplyOrderPage />} />
 				<Route path="/land-reports" element={<LandReportsPage />} />
 				<Route path="/reminders" element={<ReminderPage />} />
+				<Route path="/product-purchase-invoices" element={<ProductPurchaseInvoicePage />} />
+				<Route path="/manage-employees" element={<ManageEmployeesPage />} />
 
 				<Route path="/login" element={<LoginPage />} />
 

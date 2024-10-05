@@ -4,12 +4,12 @@
 }
 .headerContainer > p {
 	font-size: 1.5rem;
-	color: #7fb640;
 	font-weight: bold;
+	color: #7fb640;
 }
 
 .headerContainer .filterContainer {
-	width: 70%;
+	width: 60%;
 	display: flex;
 	float: right;
 	align-items: center;
@@ -35,6 +35,13 @@
 	width: 50%;
 }
 
+.diaryTitle {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #7fb640;
+	margin-bottom: 2rem;
+}
+
 .tableContainer {
 	width: 100%;
 	padding: 0 20px;
@@ -51,27 +58,6 @@ button {
 	margin-bottom: 2rem;
 }
 
-.modalContainer {
-	width: 100%;
-	padding-top: 1rem;
-}
-
-.modalContainer .bookingItem {
-	width: 50rem;
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-}
-
-.modalContainer .bookingItem .title {
-	font-size: 1rem;
-	font-weight: bold;
-}
-
-.modalContainer .bookingItem .content {
-	font-size: 1rem;
-}
-
 .evenRow {
 	background-color: #ffffff;
 	cursor: pointer;
@@ -80,4 +66,41 @@ button {
 .oddRow {
 	cursor: pointer;
 	background-color: #fafafa;
+}
+
+.diaryContent {
+	display: flex;
+	align-content: center;
+}
+
+.diaryContent .diaryInfo {
+	width: 30%;
+	padding-right: 1rem;
+	border-right: 3px solid #d9d9d9;
+	display: flex;
+	flex-direction: column;
+}
+
+.diaryContent .diaryProgress {
+	width: 70%;
+	height: 60vh;
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+}
+
+.notiModalContainer {
+	padding: 1rem;
+}
+
+.notiModalContainer .notiItem {
+	width: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.notiModalContainer .notiItem > p {
+	width: 30%;
+}
+.notiModalContainer .notiItem .notiItemInput {
+	width: 70%;
 }

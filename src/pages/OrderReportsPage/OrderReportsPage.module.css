@@ -4,6 +4,7 @@
 }
 .headerContainer > p {
 	font-size: 1.5rem;
+	color: #7fb640;
 	font-weight: bold;
 }
 
@@ -39,7 +40,7 @@
 	padding: 0 20px;
 }
 
-.tableContainer button {
+button {
 	border: none !important;
 	outline: none !important;
 }
@@ -53,11 +54,6 @@
 .modalContainer {
 	width: 100%;
 	padding-top: 1rem;
-}
-
-.modalContainer button {
-	border: none !important;
-	outline: none !important;
 }
 
 .modalContainer .bookingItem {

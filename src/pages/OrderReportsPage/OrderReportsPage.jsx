@@ -185,7 +185,7 @@ const statusOptions = [
 const OrderReportsPage = () => {
 	const columns = [
 		{
-			title: 'Mã đơn hàng',
+			title: 'ID đơn hàng',
 			dataIndex: 'orderId',
 			key: 'orderId',
 			render: (text) => <a>{text}</a>,

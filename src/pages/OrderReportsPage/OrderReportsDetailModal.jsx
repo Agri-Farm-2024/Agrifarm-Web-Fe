@@ -11,6 +11,7 @@ export const OrderReportsDetailModal = ({selectedOrder, handleModalClose, isModa
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
 			width={'max-content'}
+			style={{top: 20}}
 		>
 			{selectedOrder && (
 				<div className={styles.modalContainer}>

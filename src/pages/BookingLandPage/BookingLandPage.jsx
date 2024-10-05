@@ -6,7 +6,7 @@ import {BookingLandDetailModal} from './BookingLandDetailModal';
 
 const columns = [
 	{
-		title: 'Mã hợp đồng',
+		title: 'ID hợp đồng',
 		dataIndex: 'bookingId',
 		key: 'bookingId',
 		render: (text) => <a>{text}</a>,
@@ -71,16 +71,6 @@ const columns = [
 		key: 'totalPrice',
 		render: (text) => <>{formatNumber(text)} VND</>,
 	},
-	// {
-	// 	title: 'Action',
-	// 	key: 'action',
-	// 	render: (_, record) => (
-	// 		<Space size="middle">
-	// 			<a>Invite {record.name}</a>
-	// 			<a>Delete</a>
-	// 		</Space>
-	// 	),
-	// },
 ];
 
 const data = [

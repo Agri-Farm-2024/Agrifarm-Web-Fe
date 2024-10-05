@@ -111,6 +111,7 @@ const LoginPage = () => {
 							cancelButtonProps={{style: {display: 'none'}}}
 							maskClosable={false}
 							style={{paddingTop: '10rem'}}
+							centered
 						>
 							<Form
 								name="forgotPwdForm"
