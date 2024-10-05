@@ -1,4 +1,4 @@
-import {DatePicker, Input, Table, Tag} from 'antd';
+import {DatePicker, Input, InputNumber, Table, Tag} from 'antd';
 import React, {useState} from 'react';
 import styles from './BookingLandPage.module.css';
 import {formatNumber} from '../../utils';
@@ -155,9 +155,8 @@ const BookingLandPage = () => {
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
 						<span>Lọc theo thời gian thuê (tháng):</span>
-						<Input
+						<InputNumber
 							className={styles.filterInput}
-							type="number"
 							placeholder="Nhập số tháng thuê"
 						/>
 					</div>
