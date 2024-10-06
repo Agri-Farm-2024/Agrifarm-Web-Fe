@@ -188,12 +188,17 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 								message: 'Số lượng không hợp lệ!',
 							},
 							{
+								type: 'number',
 								min: 0,
 								message: 'Số lượng không hợp lệ!',
 							},
 						]}
 					>
-						<InputNumber type="number" className={styles.inputField} />
+						<InputNumber
+							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+							className={styles.inputField}
+						/>
 					</Form.Item>
 
 					<Form.Item

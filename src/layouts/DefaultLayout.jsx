@@ -16,6 +16,7 @@ import {
 	CalculatorOutlined,
 	TeamOutlined,
 	ToolOutlined,
+	ControlOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -54,6 +55,7 @@ export const DefaultLayout = ({children}) => {
 		'/product-purchase-invoices',
 		'/manage-employees',
 		'/manage-materials',
+		'/manage-plants',
 	];
 
 	// Define the menu items
@@ -79,6 +81,8 @@ export const DefaultLayout = ({children}) => {
 			getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
 		userSelector?.role == 'manager' &&
 			getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
+		userSelector?.role == 'manager' &&
+			getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
 	];
 
 	const handleClickMenuItem = (e) => {

@@ -1,4 +1,4 @@
-import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag} from 'antd';
+import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
 import {formatNumber} from '../../utils';
@@ -234,6 +234,10 @@ export const ManageMaterialPage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý vật tư</p>
 				<div className={styles.filterContainer}>
+					<div className={styles.fiterItem}>
+						<span>Lọc theo tên vật tư:</span>
+						<Input className={styles.filterInput} />
+					</div>
 					<div className={styles.fiterItem}>
 						<span>Lọc theo loại vật tư:</span>
 						<Select
