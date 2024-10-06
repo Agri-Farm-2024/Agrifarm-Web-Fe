@@ -19,6 +19,7 @@ import OrderReportsPage from '../pages/OrderReportsPage/OrderReportsPage';
 import {ProductPurchaseInvoicePage} from '../pages/ProductPurchaseInvoicePage/ProductPurchaseInvoicePage';
 import {ManageEmployeesPage} from '../pages/ManageEmployeesPage/ManageEmployeesPage';
 import {ManageMaterialPage} from '../pages/ManageMaterialPage/ManageMaterialPage';
+import {ManagePlantPage} from '../pages/ManagePlantPage/ManagePlantPage';
 
 export const AppRouters = () => {
 	return (
@@ -39,6 +40,7 @@ export const AppRouters = () => {
 				<Route path="/product-purchase-invoices" element={<ProductPurchaseInvoicePage />} />
 				<Route path="/manage-employees" element={<ManageEmployeesPage />} />
 				<Route path="/manage-materials" element={<ManageMaterialPage />} />
+				<Route path="/manage-plants" element={<ManagePlantPage />} />
 
 				<Route path="/login" element={<LoginPage />} />
 

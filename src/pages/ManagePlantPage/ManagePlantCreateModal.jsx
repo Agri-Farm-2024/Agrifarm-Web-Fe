@@ -1,70 +1,58 @@
 import React, {useEffect, useState} from 'react';
-import styles from './ManageMaterialPage.module.css';
+import styles from './ManagePlantPage.module.css';
 import {Form, Input, InputNumber, Modal, Select} from 'antd';
 import dayjs from 'dayjs';
 
 const statusOptions = [
 	{
-		value: 'Có sẵn',
-		label: 'Có sẵn',
+		value: 'Đang hỗ trợ',
+		label: 'Đang hỗ trợ',
 	},
 	{
-		value: 'Sắp hết',
-		label: 'Sắp hết',
+		value: 'Tạm ngưng',
+		label: 'Tạm ngưng',
 	},
 	{
-		value: 'Hết hàng',
-		label: 'Hết hàng',
+		value: 'Ngừng hỗ trợ',
+		label: 'Ngừng hỗ trợ',
 	},
 ];
 
-const materialTypeOptions = [
+const processOptions = [
 	{
-		value: 'Hạt giống',
-		label: 'Hạt giống',
+		value: 'Quy trình trồng dưa lưới tháng 3',
+		label: 'Quy trình trồng dưa lưới tháng 3',
 	},
 	{
-		value: 'Thuốc BVTV',
-		label: 'Thuốc BVTV',
+		value: 'Quy trình trồng dưa lưới tháng 6',
+		label: 'Quy trình trồng dưa lưới tháng 6',
 	},
 	{
-		value: 'Phân bón',
-		label: 'Phân bón',
-	},
-	{
-		value: 'Vật tư',
-		label: 'Vật tư',
-	},
-	{
-		value: 'Thiết bị',
-		label: 'Thiết bị',
+		value: 'Quy trình trồng dưa lưới tháng 9',
+		label: 'Quy trình trồng dưa lưới tháng 9',
 	},
 ];
 
-const materialMeasureOptions = [
+const plantTypeOptions = [
 	{
-		value: 'Túi',
-		label: 'Túi',
+		value: 'Rau ăn quả',
+		label: 'Rau ăn quả',
 	},
 	{
-		value: 'Bao',
-		label: 'Bao',
+		value: 'Rau ăn củ',
+		label: 'Rau ăn củ',
 	},
 	{
-		value: 'Chai',
-		label: 'Chai',
+		value: 'Rau ăn lá',
+		label: 'Rau ăn lá',
 	},
 	{
-		value: 'Cái',
-		label: 'Cái',
-	},
-	{
-		value: 'Cuộn',
-		label: 'Cuộn',
+		value: 'Cây ăn quả',
+		label: 'Cây ăn quả',
 	},
 ];
 
-export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
+export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
 
 	const onFinish = (values) => {
@@ -79,6 +67,7 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 			form.resetFields();
 		}
 	}, [isModalOpen]);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Tạo vật tư</span>}
@@ -92,13 +81,13 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 		>
 			<Form
 				form={form}
-				name="CreateMaterial"
+				name="CreatePlant"
 				labelCol={{
-					span: 5,
+					span: 8,
 				}}
 				labelAlign="left"
 				wrapperCol={{
-					span: 19,
+					span: 16,
 				}}
 				size="large"
 				className={styles.formContainer}
@@ -107,8 +96,8 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 				autoComplete="off"
 			>
 				<Form.Item
-					label="Tên vật tư"
-					name="materialName"
+					label="Tên giống cây"
+					name="plantName"
 					rules={[
 						{
 							required: true,
@@ -120,8 +109,8 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 				</Form.Item>
 
 				<Form.Item
-					label="Loại vật tư"
-					name="materialType"
+					label="Loại giống cây"
+					name="plantType"
 					rules={[
 						{
 							required: true,
@@ -132,45 +121,43 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 					<Select
 						className={styles.inputField}
 						allowClear
-						placeholder="Chọn loại vật tư"
-						options={materialTypeOptions}
+						placeholder="Chọn loại giống cây"
+						options={plantTypeOptions}
 					></Select>
 				</Form.Item>
 
 				<Form.Item
-					label="Đơn vị tính"
-					name="materialMeasure"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-					]}
-				>
-					<Select
-						className={styles.inputField}
-						allowClear
-						placeholder="Chọn đơn vị tính"
-						options={materialMeasureOptions}
-					></Select>
-				</Form.Item>
-
-				<Form.Item
-					label="Số lượng"
-					name="quantity"
+					label="Thời gian sinh trưởng (ngày)"
+					name="growthTime"
 					rules={[
 						{
 							required: true,
 							message: 'Vui lòng không bỏ trống!',
 						},
 						{
-							type: 'integer',
-							message: 'Số lượng không hợp lệ!',
-						},
-						{
-							type: 'number',
 							min: 0,
-							message: 'Số lượng không hợp lệ!',
+							message: 'Thời gian sinh trưởng không hợp lệ!',
+						},
+					]}
+				>
+					<InputNumber
+						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+						className={styles.inputField}
+					/>
+				</Form.Item>
+
+				<Form.Item
+					label="Năng suất trung bình (kg/m2)"
+					name="averageYield"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+						{
+							min: 0,
+							message: 'Năng suất trung bình không hợp lệ!',
 						},
 					]}
 				>
@@ -200,8 +187,8 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 				</Form.Item>
 
 				<Form.Item
-					label="Mô tả"
-					name="materialDescription"
+					label="Quy trình"
+					name="process"
 					rules={[
 						{
 							required: true,
@@ -209,8 +196,31 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 						},
 					]}
 				>
-					<Input.TextArea
-						autoSize={{minRows: 2, maxRows: 6}}
+					<Select
+						className={styles.inputField}
+						allowClear
+						placeholder="Chọn quy trình"
+						options={processOptions}
+					></Select>
+				</Form.Item>
+
+				<Form.Item
+					label="Giá thu mua (VND/kg)"
+					name="purchasedPrice"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+						{
+							min: 0,
+							message: 'Giá thu mua không hợp lệ!',
+						},
+					]}
+				>
+					<InputNumber
+						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
 						className={styles.inputField}
 					/>
 				</Form.Item>
