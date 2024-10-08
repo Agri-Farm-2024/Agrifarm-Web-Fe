@@ -72,7 +72,7 @@ export const DefaultLayout = ({children}) => {
 		getItem('Phân công nhiệm vụ', '/task-management', <ScheduleOutlined />),
 		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
 		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
-		getItem('Hóa đơn cung cấp vật tư', '/supply-invoices', <SettingOutlined />),
+		getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
 		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
