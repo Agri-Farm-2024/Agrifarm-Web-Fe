@@ -17,6 +17,7 @@ import {
 	TeamOutlined,
 	ToolOutlined,
 	ControlOutlined,
+	ApiOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -46,6 +47,7 @@ export const DefaultLayout = ({children}) => {
 		'/service-requests',
 		'/purchase-requests',
 		'/booking-land',
+		'/services-inuse',
 		'/task-management',
 		'/log-monitoring',
 		'/order-reports',
@@ -70,6 +72,7 @@ export const DefaultLayout = ({children}) => {
 
 		getItem('Quản lý thuê đất', '/booking-land', <EnvironmentOutlined />),
 		getItem('Phân công nhiệm vụ', '/task-management', <ScheduleOutlined />),
+		getItem('Dịch vụ đang sử dụng', '/services-inuse', <ApiOutlined />),
 		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
 		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
 		getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
