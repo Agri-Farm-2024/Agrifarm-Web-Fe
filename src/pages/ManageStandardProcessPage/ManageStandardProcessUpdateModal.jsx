@@ -261,6 +261,7 @@ export const ManageStandardProcessUpdateModal = ({
 							<>
 								{fields.map((field, index) => (
 									<div
+										key={index}
 										style={{
 											width: '100%',
 											display: 'flex',
@@ -360,33 +361,33 @@ export const ManageStandardProcessUpdateModal = ({
 												labelCol={4}
 												key={`${index} Stage dayFrom ${field.key}`}
 												style={{width: '20%'}}
-												rules={[
-													{
-														required: true,
-														message: 'Vui lòng không bỏ trống!',
-													},
-													({getFieldValue}) => ({
-														validator(_, value) {
-															if (!value || index === 0) {
-																return Promise.resolve();
-															}
-															const prevStageDayTo = getFieldValue([
-																'plantingSchedule',
-																index - 1,
-																'dayTo',
-															]);
-															if (
-																prevStageDayTo &&
-																value <= prevStageDayTo
-															) {
-																return Promise.reject(
-																	'Ngày bắt đầu của giai đoạn phải lớn hơn ngày kết thúc của giai đoạn trước.'
-																);
-															}
-															return Promise.resolve();
-														},
-													}),
-												]}
+												// rules={[
+												// 	{
+												// 		required: true,
+												// 		message: 'Vui lòng không bỏ trống!',
+												// 	},
+												// 	({getFieldValue}) => ({
+												// 		validator(_, value) {
+												// 			if (!value || index === 0) {
+												// 				return Promise.resolve();
+												// 			}
+												// 			const prevStageDayTo = getFieldValue([
+												// 				'plantingSchedule',
+												// 				index - 1,
+												// 				'dayTo',
+												// 			]);
+												// 			if (
+												// 				prevStageDayTo &&
+												// 				value <= prevStageDayTo
+												// 			) {
+												// 				return Promise.reject(
+												// 					'Ngày bắt đầu của giai đoạn phải lớn hơn ngày kết thúc của giai đoạn trước.'
+												// 				);
+												// 			}
+												// 			return Promise.resolve();
+												// 		},
+												// 	}),
+												// ]}
 												label={`Từ ngày`}
 											>
 												<InputNumber
@@ -402,27 +403,27 @@ export const ManageStandardProcessUpdateModal = ({
 												wrapperCol={8}
 												labelCol={4}
 												style={{width: '20%'}}
-												rules={[
-													{
-														required: true,
-														message: 'Vui lòng không bỏ trống!',
-													},
-													({getFieldValue}) => ({
-														validator(_, value) {
-															const dayFromValue = getFieldValue([
-																'plantingSchedule',
-																field.name,
-																'dayFrom',
-															]);
-															if (!value || value >= dayFromValue) {
-																return Promise.resolve();
-															}
-															return Promise.reject(
-																'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.'
-															);
-														},
-													}),
-												]}
+												// rules={[
+												// 	{
+												// 		required: true,
+												// 		message: 'Vui lòng không bỏ trống!',
+												// 	},
+												// 	({getFieldValue}) => ({
+												// 		validator(_, value) {
+												// 			const dayFromValue = getFieldValue([
+												// 				'plantingSchedule',
+												// 				field.name,
+												// 				'dayFrom',
+												// 			]);
+												// 			if (!value || value >= dayFromValue) {
+												// 				return Promise.resolve();
+												// 			}
+												// 			return Promise.reject(
+												// 				'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.'
+												// 			);
+												// 		},
+												// 	}),
+												// ]}
 												label="đến ngày"
 											>
 												<InputNumber
@@ -473,7 +474,7 @@ export const ManageStandardProcessUpdateModal = ({
 												},
 											]}
 										>
-											{(subFields, subOpt) => (
+											{(subFields, subOpt, subError) => (
 												<div
 													key={`${index} Actions contianer ${subFields.key}`}
 													style={{
@@ -520,10 +521,20 @@ export const ManageStandardProcessUpdateModal = ({
 																			validator(_, value) {
 																				if (
 																					!value ||
-																					index === 0
+																					(index === 0 &&
+																						subIndex ==
+																							0)
 																				) {
+																					console.log(
+																						'value pass',
+																						value,
+																						'index',
+																						index
+																					);
 																					return Promise.resolve();
 																				}
+																				//if dayFrom of the action is first will check dayTo of the last action of the stage above
+																				//else will check dayTo of the above action
 																				const prevStageDayTo =
 																					subIndex == 0
 																						? getFieldValue(
@@ -546,15 +557,16 @@ export const ManageStandardProcessUpdateModal = ({
 																									'dayTo',
 																								]
 																							);
-																				console.log(
-																					'prevStageDayTo',
-																					prevStageDayTo
-																				);
+
 																				if (
 																					!prevStageDayTo ||
 																					value >
 																						prevStageDayTo
 																				) {
+																					console.log(
+																						'prevStageDayTo pass',
+																						prevStageDayTo
+																					);
 																					return Promise.resolve();
 																				}
 																				return Promise.reject(
@@ -724,16 +736,30 @@ export const ManageStandardProcessUpdateModal = ({
 															</Form.Item>
 														</div>
 													))}
-													<Button
-														color="primary"
-														variant="filled"
-														style={{
-															margin: '20px 0',
-														}}
-														onClick={() => subOpt.add()}
+													<Form.Item
+														wrapperCol={24}
+														style={{width: '100%'}}
 													>
-														+ Thêm hoạt động
-													</Button>
+														<Button
+															color="primary"
+															variant="filled"
+															style={{
+																margin: '20px 0',
+																width: '100%',
+															}}
+															onClick={() => subOpt.add()}
+														>
+															+ Thêm hoạt động
+														</Button>
+														<Form.ErrorList
+															style={{
+																marginBottom: 20,
+																marginTop: -20,
+																color: 'red!important',
+															}}
+															errors={subError.errors}
+														/>
+													</Form.Item>
 												</div>
 											)}
 										</Form.List>
