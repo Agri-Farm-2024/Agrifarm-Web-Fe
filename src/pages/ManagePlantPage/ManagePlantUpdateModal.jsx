@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
 import {Form, Input, InputNumber, Modal, Select} from 'antd';
-import dayjs from 'dayjs';
 
 const statusOptions = [
 	{

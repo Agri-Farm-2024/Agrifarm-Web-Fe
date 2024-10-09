@@ -18,6 +18,12 @@ import {
 	ToolOutlined,
 	ControlOutlined,
 	ApiOutlined,
+	FundProjectionScreenOutlined,
+	AccountBookOutlined,
+	ApartmentOutlined,
+	AppstoreOutlined,
+	TransactionOutlined,
+	TruckOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -58,10 +64,18 @@ export const DefaultLayout = ({children}) => {
 		'/manage-employees',
 		'/manage-materials',
 		'/manage-plants',
+		'/manage-standard-process',
+		'/manager-dashboard',
+		'/manage-service',
+		'/manage-service-package',
+		'/manage-land',
+		'/manage-transaction',
+		'/manage-rental-equipment',
+		'/manage-agri-product-purchase-request',
+		'/manage-order',
 	];
 
-	// Define the menu items
-	const items = [
+	const staffMenuItems = [
 		getItem('Dashboard', '/dashboard', <DashboardOutlined />),
 
 		getItem('Quản lý yêu cầu', 'sub1', <FileTextOutlined />, [
@@ -79,14 +93,33 @@ export const DefaultLayout = ({children}) => {
 		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
-
-		userSelector?.role == 'manager' &&
-			getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
-		userSelector?.role == 'manager' &&
-			getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
-		userSelector?.role == 'manager' &&
-			getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
 	];
+
+	const managerMenuItems = [
+		getItem('Dashboard', '/manager-dashboard', <DashboardOutlined />),
+		getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
+		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
+		getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
+		getItem(
+			'Quản lý quy trình chuẩn',
+			'/manage-standard-process',
+			<FundProjectionScreenOutlined />
+		),
+		getItem('Quản lý dịch vụ', '/manage-service', <AccountBookOutlined />),
+		getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
+		getItem('Quản lý mảnh đất', '/manage-land', <AppstoreOutlined />),
+		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),
+		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
+		getItem(
+			'Quản lý yêu cầu thu mua',
+			'/manage-agri-product-purchase-request',
+			<TruckOutlined />
+		),
+		getItem('Quản lý đơn hàng', '/manage-order', <FileTextOutlined />),
+	];
+
+	// Define the menu items
+	const items = userSelector.role == 'manager' ? managerMenuItems : staffMenuItems;
 
 	const handleClickMenuItem = (e) => {
 		setSelectMenu(e.key);
@@ -108,7 +141,9 @@ export const DefaultLayout = ({children}) => {
 				theme="light"
 				onCollapse={toggleCollapsed}
 				width={250} // Increase width to 250px (adjust this value as needed)
-				style={{display: pageLocation.includes(location.pathname) ? 'block' : 'none'}}
+				style={{
+					display: pageLocation.includes(location.pathname) ? 'block' : 'none',
+				}}
 			>
 				<Link
 					to="/dashboard"

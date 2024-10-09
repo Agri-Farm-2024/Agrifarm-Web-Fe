@@ -2,11 +2,16 @@ import React, {useEffect, useState} from 'react';
 import styles from './LoginPage.module.css';
 import {Button, Form, Input, Modal} from 'antd';
 import {imageExporter} from '../../assets/images';
+import {useNavigate} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import userSlice from '../../redux/slices/userSlice';
 
 const LoginPage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [counter, setCounter] = useState(60);
 	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		let timer;
@@ -38,6 +43,14 @@ const LoginPage = () => {
 
 	const onFinish = (values) => {
 		console.log('Success:', values);
+		if (values.email == 'manager@gmail.com') {
+			dispatch(userSlice.actions.setUser({role: 'manager'}));
+			navigate('/manager-dashboard');
+		}
+		if (values.email == 'staff@gmail.com') {
+			dispatch(userSlice.actions.setUser({role: 'staff'}));
+			navigate('/dashboard');
+		}
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);

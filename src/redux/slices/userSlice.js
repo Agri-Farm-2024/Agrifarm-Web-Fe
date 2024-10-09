@@ -22,15 +22,15 @@ export const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: {
 		user: {
-			role: 'manager',
+			role: '',
 		},
 		loading: false,
 		error: null,
 	},
 	reducers: {
-		//   setUser: (state, action) => {
-		//     state.userInfo = action.payload;
-		//   },
+		setUser: (state, action) => {
+			state.user = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder;

@@ -134,7 +134,11 @@ export const ManageEmployeeUpdateModal = ({selectedEmployee, handleModalClose, i
 							},
 						]}
 					>
-						<DatePicker className={styles.inputField} />
+						<DatePicker
+							placeholder="DD-MM-YYYY"
+							format={'DD-MM-YYYY'}
+							className={styles.inputField}
+						/>
 					</Form.Item>
 
 					<Form.Item
