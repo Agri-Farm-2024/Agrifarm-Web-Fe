@@ -69,7 +69,7 @@ export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isMod
 		>
 			<Form
 				form={form}
-				name="UpdatePlant"
+				name="CreateStandardProcessRequest"
 				labelCol={{
 					span: 8,
 				}}

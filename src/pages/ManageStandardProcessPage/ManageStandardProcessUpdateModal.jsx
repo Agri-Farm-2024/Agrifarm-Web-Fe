@@ -100,7 +100,7 @@ export const ManageStandardProcessUpdateModal = ({
 			{selectedProcess && (
 				<Form
 					form={form}
-					name="UpdatePlant"
+					name="UpdateStandardProcess"
 					labelCol={{
 						span: 8,
 					}}
@@ -365,11 +365,33 @@ export const ManageStandardProcessUpdateModal = ({
 														required: true,
 														message: 'Vui lòng không bỏ trống!',
 													},
+													({getFieldValue}) => ({
+														validator(_, value) {
+															if (!value || index === 0) {
+																return Promise.resolve();
+															}
+															const prevStageDayTo = getFieldValue([
+																'plantingSchedule',
+																index - 1,
+																'dayTo',
+															]);
+															if (
+																prevStageDayTo &&
+																value <= prevStageDayTo
+															) {
+																return Promise.reject(
+																	'Ngày bắt đầu của giai đoạn phải lớn hơn ngày kết thúc của giai đoạn trước.'
+																);
+															}
+															return Promise.resolve();
+														},
+													}),
 												]}
 												label={`Từ ngày`}
 											>
-												<Input
+												<InputNumber
 													className={styles.inputField}
+													disabled
 													placeholder="Ngày"
 												/>
 											</Form.Item>
@@ -385,10 +407,26 @@ export const ManageStandardProcessUpdateModal = ({
 														required: true,
 														message: 'Vui lòng không bỏ trống!',
 													},
+													({getFieldValue}) => ({
+														validator(_, value) {
+															const dayFromValue = getFieldValue([
+																'plantingSchedule',
+																field.name,
+																'dayFrom',
+															]);
+															if (!value || value >= dayFromValue) {
+																return Promise.resolve();
+															}
+															return Promise.reject(
+																'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.'
+															);
+														},
+													}),
 												]}
 												label="đến ngày"
 											>
-												<Input
+												<InputNumber
+													disabled
 													placeholder="Ngày"
 													className={styles.inputField}
 												/>
@@ -435,9 +473,9 @@ export const ManageStandardProcessUpdateModal = ({
 												},
 											]}
 										>
-											{(subFields, subOpt, index) => (
+											{(subFields, subOpt) => (
 												<div
-													key={`${index} Actions contianer ${subFields.key} ${index}`}
+													key={`${index} Actions contianer ${subFields.key}`}
 													style={{
 														display: 'flex',
 														flexDirection: 'column',
@@ -446,7 +484,7 @@ export const ManageStandardProcessUpdateModal = ({
 														paddingLeft: 10,
 													}}
 												>
-													{subFields.map((subField) => (
+													{subFields.map((subField, subIndex) => (
 														<div
 															style={{
 																width: '100%',
@@ -461,7 +499,7 @@ export const ManageStandardProcessUpdateModal = ({
 																	gap: 5,
 																	alignItems: 'start',
 																}}
-																key={`${index} Actions contianer dayFrom ${field.key}+${subField.key}`}
+																key={`${subIndex} Actions contianer dayFrom ${field.key}+${subField.key}`}
 															>
 																<Form.Item
 																	name={[
@@ -470,7 +508,7 @@ export const ManageStandardProcessUpdateModal = ({
 																	]}
 																	wrapperCol={8}
 																	labelCol={4}
-																	key={`${index} Actions dayFrom ${field.key}+${subField.key}`}
+																	key={`${subIndex} Actions dayFrom ${field.key}+${subField.key}`}
 																	style={{width: '20%'}}
 																	rules={[
 																		{
@@ -478,20 +516,84 @@ export const ManageStandardProcessUpdateModal = ({
 																			message:
 																				'Vui lòng không bỏ trống!',
 																		},
+																		({getFieldValue}) => ({
+																			validator(_, value) {
+																				if (
+																					!value ||
+																					index === 0
+																				) {
+																					return Promise.resolve();
+																				}
+																				const prevStageDayTo =
+																					subIndex == 0
+																						? getFieldValue(
+																								[
+																									'plantingSchedule',
+																									index -
+																										1,
+																									'actions',
+																									subFields.length,
+																									'dayTo',
+																								]
+																							)
+																						: getFieldValue(
+																								[
+																									'plantingSchedule',
+																									field.name,
+																									'actions',
+																									subIndex -
+																										1,
+																									'dayTo',
+																								]
+																							);
+																				console.log(
+																					'prevStageDayTo',
+																					prevStageDayTo
+																				);
+																				if (
+																					!prevStageDayTo ||
+																					value >
+																						prevStageDayTo
+																				) {
+																					return Promise.resolve();
+																				}
+																				return Promise.reject(
+																					'Ngày bắt đầu của giai đoạn phải lớn hơn ngày kết thúc của giai đoạn trước.'
+																				);
+																			},
+																		}),
 																	]}
 																	label={`Từ ngày`}
 																>
-																	<Input
+																	<InputNumber
 																		className={
 																			styles.inputField
 																		}
+																		onChange={(value) => {
+																			const currentFields =
+																				form.getFieldValue(
+																					'plantingSchedule'
+																				);
+																			// Cập nhật giá trị dayFrom cho stage khi dayFrom của action đầu tiên thay đổi
+																			if (subIndex === 0) {
+																				currentFields[
+																					index
+																				].dayFrom = value;
+																				form.setFieldsValue(
+																					{
+																						plantingSchedule:
+																							currentFields,
+																					}
+																				);
+																			}
+																		}}
 																		placeholder="Ngày"
 																	/>
 																</Form.Item>
 																<Form.Item
 																	required={false}
 																	name={[subField.name, 'dayTo']}
-																	key={`${index} Actions dayTo ${field.key}+${subField.key}`}
+																	key={`${subIndex} Actions dayTo ${field.key}+${subField.key}`}
 																	wrapperCol={8}
 																	labelCol={4}
 																	style={{width: '20%'}}
@@ -501,14 +603,57 @@ export const ManageStandardProcessUpdateModal = ({
 																			message:
 																				'Vui lòng không bỏ trống!',
 																		},
+																		({getFieldValue}) => ({
+																			validator(_, value) {
+																				const dayFromValue =
+																					getFieldValue([
+																						'plantingSchedule',
+																						field.name,
+																						'actions',
+																						subField.name,
+																						'dayFrom',
+																					]);
+																				if (
+																					!value ||
+																					value >=
+																						dayFromValue
+																				) {
+																					return Promise.resolve();
+																				}
+																				return Promise.reject(
+																					'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.'
+																				);
+																			},
+																		}),
 																	]}
 																	label="đến ngày"
 																>
-																	<Input
+																	<InputNumber
 																		placeholder="Ngày"
 																		className={
 																			styles.inputField
 																		}
+																		onChange={(value) => {
+																			const currentFields =
+																				form.getFieldValue(
+																					'plantingSchedule'
+																				);
+																			// Cập nhật giá trị dayTo cho stage khi dayTo của action cuối cùng thay đổi
+																			if (
+																				subIndex ===
+																				subFields.length - 1
+																			) {
+																				currentFields[
+																					index
+																				].dayTo = value;
+																				form.setFieldsValue(
+																					{
+																						plantingSchedule:
+																							currentFields,
+																					}
+																				);
+																			}
+																		}}
 																	/>
 																</Form.Item>
 																<Form.Item
@@ -517,7 +662,7 @@ export const ManageStandardProcessUpdateModal = ({
 																		subField.name,
 																		'actionTitle',
 																	]}
-																	key={`${index} Actions actionTitle ${field.key}+${subField.key}`}
+																	key={`${subIndex} Actions actionTitle ${field.key}+${subField.key}`}
 																	rules={[
 																		{
 																			required: true,
@@ -556,7 +701,7 @@ export const ManageStandardProcessUpdateModal = ({
 																	subField.name,
 																	'actionDescription',
 																]}
-																key={`${index} Actions actionDescription ${field.key}+${subField.key}`}
+																key={`${subIndex} Actions actionDescription ${field.key}+${subField.key}`}
 																rules={[
 																	{
 																		required: true,
