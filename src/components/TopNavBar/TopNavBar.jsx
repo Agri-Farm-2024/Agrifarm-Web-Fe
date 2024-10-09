@@ -4,6 +4,7 @@ import {BellOutlined} from '@ant-design/icons'; // Import icon for notification 
 import {useDispatch} from 'react-redux';
 import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
+import userSlice from '../../redux/slices/userSlice';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
@@ -21,8 +22,8 @@ const TopNavbar = () => {
 		// Function to handle clicks outside the sign-out button
 		const handleClickOutside = (event) => {
 			if (signOutRef.current && !signOutRef.current.contains(event.target)) {
-				setShowSignOutButton(false); // Hide the sign-out button
-				setShowSignOutPopup(false); // Hide the confirmation popup
+				setShowSignOutButton(false);
+				setShowSignOutPopup(false);
 			}
 		};
 
@@ -40,17 +41,17 @@ const TopNavbar = () => {
 	};
 
 	const handleProfileClick = () => {
-		setShowSignOutButton(true); // Display the sign-out button
+		setShowSignOutButton(true);
 	};
 
 	const handleSignOut = () => {
-		setShowSignOutPopup(true); // Show confirmation popup
-		setShowSignOutButton(false); // Hide the sign-out button
+		setShowSignOutPopup(true);
+		setShowSignOutButton(false);
 	};
 
 	const handleCancelSignOut = () => {
-		setShowSignOutPopup(false); // Hide confirmation popup
-		setShowSignOutButton(false); // Hide the sign-out button
+		setShowSignOutPopup(false);
+		setShowSignOutButton(false);
 	};
 
 	const handleConfirmSignOut = () => {
@@ -73,6 +74,7 @@ const TopNavbar = () => {
 		// 		status: '',
 		// 	})
 		// );
+		dispatch(userSlice.actions.setUser({role: ''}));
 		message.success('Logout successful!');
 		navigate('/login');
 	};

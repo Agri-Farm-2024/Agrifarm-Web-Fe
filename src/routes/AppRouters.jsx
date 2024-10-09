@@ -21,13 +21,29 @@ import {ManageEmployeesPage} from '../pages/ManageEmployeesPage/ManageEmployeesP
 import {ManageMaterialPage} from '../pages/ManageMaterialPage/ManageMaterialPage';
 import {ManagePlantPage} from '../pages/ManagePlantPage/ManagePlantPage';
 import {ManageServicesInusePage} from '../pages/ManageServicesInusePage/ManageServicesInusePage';
+import {ManageStandardProcessPage} from '../pages/ManageStandardProcessPage/ManageStandardProcessPage';
+import {ManagerDashBoardPage} from '../pages/ManagerDashBoardPage/ManagerDashBoardPage';
+import {ManageServicePage} from '../pages/ManageServicePage/ManageServicePage';
+import {ManageServicePackagePage} from '../pages/ManageServicePackagePage/ManageServicePackagePage';
+import {ManageLandPage} from '../pages/ManageLandPage/ManageLandPage';
+import {ManageTransactionPage} from '../pages/ManageTransactionPage/ManageTransactionPage';
+import {ManageRentalEquipmentPage} from '../pages/ManageRentalEquipmentPage/ManageRentalEquipmentPage';
+import {ManageAgriProductPurchaseRequestPage} from '../pages/ManageAgriProductPurchaseRequestPage/ManageAgriProductPurchaseRequestPage';
+import {ManageOrderPage} from '../pages/ManageOrderPage/ManageOrderPage';
 
 export const AppRouters = () => {
 	return (
 		<DefaultLayout>
 			<Routes>
 				<Route path="/" element={<Navigate to="/dashboard" />} />
-				<Route path="/dashboard" element={<DashboardPage />} />
+				<Route
+					path="/dashboard"
+					element={
+						<PrivateRoute roles={['staff', 'manager']}>
+							<DashboardPage />
+						</PrivateRoute>
+					}
+				/>
 				<Route path="/booking-land" element={<BookingLandPage />} />
 				<Route path="/land-requests" element={<LandLeaseRequestPage />} />
 				<Route path="/service-requests" element={<ServiceRequestPage />} />
@@ -40,9 +56,103 @@ export const AppRouters = () => {
 				<Route path="/services-inuse" element={<ManageServicesInusePage />} />
 				<Route path="/reminders" element={<ReminderPage />} />
 				<Route path="/product-purchase-invoices" element={<ProductPurchaseInvoicePage />} />
-				<Route path="/manage-employees" element={<ManageEmployeesPage />} />
-				<Route path="/manage-materials" element={<ManageMaterialPage />} />
-				<Route path="/manage-plants" element={<ManagePlantPage />} />
+
+				<Route
+					path="/manage-employees"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageEmployeesPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-materials"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageMaterialPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-plants"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManagePlantPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-standard-process"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageStandardProcessPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manager-dashboard"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManagerDashBoardPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-service"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageServicePage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-service-package"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageServicePackagePage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-land"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageLandPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-transaction"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageTransactionPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-rental-equipment"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageRentalEquipmentPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-agri-product-purchase-request"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageAgriProductPurchaseRequestPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-order"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageOrderPage />
+						</PrivateRoute>
+					}
+				/>
 
 				<Route path="/login" element={<LoginPage />} />
 
