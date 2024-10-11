@@ -1,17 +1,19 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import styles from './PermissionDeniedPage.module.css';
+import {Button, Result} from 'antd';
 
 const PermissionDeniedPage = () => {
 	return (
-		<div className={styles.permissionDeniedContainer}>
-			<h1 className={styles.heading}>Permission Denied</h1>
-			<p className={styles.paragraph}>You don't have permission to access this page.</p>
-			<p className={styles.paragraph}>Please contact the administrator for assistance.</p>
-			<Link to="/" className={styles.homeLink}>
-				<button className={styles.homeButton}>Go to Home</button>
-			</Link>
-		</div>
+		<Result
+			status="403"
+			title="Quyền truy cập bị từ chối"
+			subTitle="Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ với quản trị viên để được hỗ trợ."
+			extra={
+				<Link to="/">
+					<Button type="primary">Trở về trang chủ</Button>
+				</Link>
+			}
+		/>
 	);
 };
 
