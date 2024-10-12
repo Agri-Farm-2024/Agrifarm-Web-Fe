@@ -44,18 +44,107 @@ export const AppRouters = () => {
 						</PrivateRoute>
 					}
 				/>
-				<Route path="/booking-land" element={<BookingLandPage />} />
-				<Route path="/land-requests" element={<LandLeaseRequestPage />} />
-				<Route path="/service-requests" element={<ServiceRequestPage />} />
-				<Route path="/purchase-requests" element={<PurchaseRequestPage />} />
-				<Route path="/task-management" element={<TaskManagementPage />} />
-				<Route path="/log-monitoring" element={<DiaryMonitoringPage />} />
-				<Route path="/order-reports" element={<OrderReportsPage />} />
-				<Route path="/supply-invoices" element={<SupplyOrderPage />} />
-				<Route path="/land-reports" element={<LandReportsPage />} />
-				<Route path="/services-inuse" element={<ManageServicesInusePage />} />
-				<Route path="/reminders" element={<ReminderPage />} />
-				<Route path="/product-purchase-invoices" element={<ProductPurchaseInvoicePage />} />
+
+				{/* Staff */}
+				<Route
+					path="/booking-land"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<BookingLandPage />
+						</PrivateRoute>
+					}
+				/>
+
+				<Route
+					path="/land-requests"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<LandLeaseRequestPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/service-requests"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<ServiceRequestPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/purchase-requests"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<PurchaseRequestPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/task-management"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<TaskManagementPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/log-monitoring"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<DiaryMonitoringPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/order-reports"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<OrderReportsPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/supply-invoices"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<SupplyOrderPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/land-reports"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<LandReportsPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/services-inuse"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<ManageServicesInusePage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/reminders"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<ReminderPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/product-purchase-invoices"
+					element={
+						<PrivateRoute roles={['staff']}>
+							<ProductPurchaseInvoicePage />
+						</PrivateRoute>
+					}
+				/>
+
+				{/* Manager */}
 
 				<Route
 					path="/manage-employees"
