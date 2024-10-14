@@ -1,0 +1,83 @@
+.headerContainer {
+    width: 100%;
+    padding: 0 20px;
+}
+
+.headerContainer>p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #7fb640;
+}
+
+.headerContainer .filterContainer {
+    width: 70%;
+    display: flex;
+    float: right;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.headerContainer .filterContainer .fiterItem {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerContainer .filterContainer .fiterItem>span {
+    margin-right: 0.5rem;
+    width: 50%;
+    font-weight: bold;
+    text-align: right;
+}
+
+.filterContainer .fiterItem .filterInput {
+    width: 50%;
+}
+
+.tableContainer {
+    padding: 0 1rem;
+}
+
+.tableContainer .table {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 7px;
+}
+
+.modalContainer {
+    width: 100%;
+    padding-top: 1rem;
+}
+
+button {
+    border: none !important;
+    outline: none !important;
+}
+
+.modalContainer .bookingItem {
+    width: 50rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modalContainer .bookingItem .title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.modalContainer .bookingItem .content {
+    font-size: 1rem;
+}
+
+.evenRow {
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.oddRow {
+    cursor: pointer;
+    background-color: #fafafa;
+}

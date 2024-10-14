@@ -301,7 +301,7 @@ export const ManageLandPage = () => {
 
 	const columns = [
 		{
-			title: 'Mã Đất',
+			title: 'ID Đất',
 			dataIndex: 'landID',
 			key: 'landID',
 		},

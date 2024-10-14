@@ -1,7 +1,7 @@
 import {DatePicker, Input, Table, Button, Space, Popconfirm, Tag, Select} from 'antd';
 import React, {useState} from 'react';
 import styles from './LandLeaseRequestPage.module.css';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {CheckOutlined, DeleteOutlined, EditOutlined, FileAddOutlined} from '@ant-design/icons';
 import {formatNumber} from '../../utils';
 import {LandLeaseRequestDetailModal} from './LandLeaseRequestDetailModal';
 import {LandLeaseRequestUpdateModal} from './LandLeaseRequestUpdateModal';
@@ -185,8 +185,31 @@ export const LandLeaseRequestPage = () => {
 			key: 'actions',
 			render: (_, record) => (
 				<Space size="middle">
+					<Popconfirm
+						title="Chấp nhận"
+						description="Bạn muốn chấp nhận yêu cầu này?"
+						onConfirm={(e) => {
+							e.stopPropagation();
+							handleRemove(record.key);
+						}}
+						onClick={(e) => e.stopPropagation()}
+						onCancel={(e) => e.stopPropagation()}
+						okText="Chấp nhận"
+						cancelText="Huỷ"
+					>
+						<Button
+							icon={<CheckOutlined />}
+							color="primary"
+							variant="filled"
+							onClick={(e) => {
+								e.stopPropagation();
+								// handleUpdateClick(record);
+							}}
+						/>
+					</Popconfirm>
+
 					<Button
-						icon={<EditOutlined />}
+						icon={<FileAddOutlined />}
 						color="primary"
 						variant="filled"
 						onClick={(e) => {
