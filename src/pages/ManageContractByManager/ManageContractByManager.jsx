@@ -1,8 +1,8 @@
 import {DatePicker, Input, InputNumber, Table, Tag} from 'antd';
 import React, {useState} from 'react';
-import styles from './BookingLandPage.module.css';
+import styles from './ManageContractByManager.module.css';
 import {formatNumber} from '../../utils';
-import {BookingLandDetailModal} from './BookingLandDetailModal';
+import {ManageContractDetailModal} from './ManageContractDetailModal';
 
 const columns = [
 	{
@@ -95,7 +95,7 @@ const data = [
 		bookingId: 'BK002',
 		landRenterName: 'Nguyen Van A',
 		landId: 'MD001',
-		landName: 'Mảnh đất số 1',
+		landName: 'Mảnh đất số 2',
 		dateStart: '25/09/2020',
 		dateEnd: '25/09/2020',
 		status: 'Chờ phê duyệt',
@@ -107,7 +107,7 @@ const data = [
 		bookingId: 'BK003',
 		landRenterName: 'Nguyen Van A',
 		landId: 'MD001',
-		landName: 'Mảnh đất số 1',
+		landName: 'Mảnh đất số 3',
 		dateStart: '25/09/2020',
 		dateEnd: '25/09/2020',
 		status: 'Chờ thanh toán',
@@ -119,7 +119,7 @@ const data = [
 		bookingId: 'BK004',
 		landRenterName: 'Nguyen Van A',
 		landId: 'MD001',
-		landName: 'Mảnh đất số 1',
+		landName: 'Mảnh đất số 5',
 		dateStart: '25/09/2020',
 		dateEnd: '25/09/2020',
 		status: 'Chấm dứt',
@@ -131,7 +131,7 @@ const data = [
 		bookingId: 'BK005',
 		landRenterName: 'Nguyen Van A',
 		landId: 'MD001',
-		landName: 'Mảnh đất số 1',
+		landName: 'Mảnh đất số 4',
 		dateStart: '25/09/2020',
 		dateEnd: '25/09/2020',
 		status: 'Sắp hết hạn',
@@ -143,7 +143,7 @@ const data = [
 		bookingId: 'BK005',
 		landRenterName: 'Nguyen Van A',
 		landId: 'MD001',
-		landName: 'Mảnh đất số 1',
+		landName: 'Mảnh đất số 6',
 		dateStart: '25/09/2020',
 		dateEnd: '25/09/2020',
 		status: 'Chờ ký tên',
@@ -153,7 +153,7 @@ const data = [
 	},
 ];
 
-const BookingLandPage = () => {
+const ManageContractByManager = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedBooking, setSelectedBooking] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +173,7 @@ const BookingLandPage = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
-				<p>Quản lý thuê đất</p>
+				<p>Danh sách hợp đồng</p>
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
 						<span>Lọc theo thời gian thuê (tháng):</span>
@@ -219,7 +219,7 @@ const BookingLandPage = () => {
 					className={styles.table}
 				/>
 
-				<BookingLandDetailModal
+				<ManageContractDetailModal
 					isModalOpen={isModalOpen}
 					handleModalClose={handleModalClose}
 					selectedBooking={selectedBooking}
@@ -229,4 +229,4 @@ const BookingLandPage = () => {
 	);
 };
 
-export default BookingLandPage;
+export default ManageContractByManager;

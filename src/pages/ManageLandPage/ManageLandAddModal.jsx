@@ -117,7 +117,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 
 	const handleSubmit = () => {
 		if (validateInputs()) {
-			const hideLoading = message.loading('Đang xử lý...', 0); // 0 means it will persist until manually closed
+			const hideLoading = message.loading('Đang xử lý...', 0);
 			console.log(landData);
 			setTimeout(() => {
 				hideLoading();

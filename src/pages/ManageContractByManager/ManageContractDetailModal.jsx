@@ -1,15 +1,20 @@
 import React, {useState} from 'react';
-import styles from './BookingLandPage.module.css';
+import styles from './ManageContractByManager.module.css';
 import {Button, Image, message, Modal, Upload} from 'antd';
 import {formatNumber} from '../../utils';
 import {UploadOutlined} from '@ant-design/icons';
 
-export const BookingLandDetailModal = ({selectedBooking, handleModalClose, isModalOpen}) => {
+export const ManageContractDetailModal = ({selectedBooking, handleModalClose, isModalOpen}) => {
 	const [visibleContract, setVisibleContract] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
 
-	const handleUpdateBooking = () => {
-		console.log('Update');
+	const handleApproveContract = () => {
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		handleModalClose();
+		setTimeout(() => {
+			hideLoading();
+			message.success('Đã phê duyệt hợp đồng');
+		}, 1000);
 	};
 
 	const handleImageUpload = ({file}) => {
@@ -26,10 +31,10 @@ export const BookingLandDetailModal = ({selectedBooking, handleModalClose, isMod
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết hợp đồng</span>}
 			open={isModalOpen}
-			onOk={handleUpdateBooking}
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
 			style={{top: 20}}
+			cancelText="Hủy"
 		>
 			{selectedBooking && (
 				<div className={styles.modalContainer}>
@@ -71,24 +76,30 @@ export const BookingLandDetailModal = ({selectedBooking, handleModalClose, isMod
 						<p className={styles.title}>Trạng thái:</p>
 						<p className={styles.content}>{selectedBooking.status}</p>
 					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Hình ảnh hợp đồng:</p>
-						{selectedBooking.image ? (
-							<Button type="primary" onClick={() => setVisibleContract(true)}>
-								Xem hợp đồng
-							</Button>
-						) : (
-							<Upload
-								showUploadList={false}
-								beforeUpload={() => false} // Prevent automatic upload
-								onChange={handleImageUpload}
-							>
-								<Button type="primary" icon={<UploadOutlined />}>
-									Tải hợp đồng
+					{selectedBooking.status === 'Chờ phê duyệt' ? (
+						<Button type="primary" onClick={handleApproveContract}>
+							Phê duyệt hợp đồng
+						</Button>
+					) : (
+						<div className={styles.bookingItem}>
+							<p className={styles.title}>Hình ảnh hợp đồng:</p>
+							{selectedBooking.image ? (
+								<Button type="primary" onClick={() => setVisibleContract(true)}>
+									Xem hợp đồng
 								</Button>
-							</Upload>
-						)}
-					</div>
+							) : (
+								<Upload
+									showUploadList={false}
+									beforeUpload={() => false} // Prevent automatic upload
+									onChange={handleImageUpload}
+								>
+									<Button type="primary" icon={<UploadOutlined />}>
+										Tải hợp đồng
+									</Button>
+								</Upload>
+							)}
+						</div>
+					)}
 
 					<Image
 						width={200}
