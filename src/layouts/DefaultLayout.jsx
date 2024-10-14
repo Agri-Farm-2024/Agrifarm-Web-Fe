@@ -66,7 +66,6 @@ export const DefaultLayout = ({children}) => {
 		'/manage-plants',
 		'/manage-standard-process',
 		'/manager-dashboard',
-		'/manage-service',
 		'/manage-service-package',
 		'/manage-land',
 		'/manage-transaction',
@@ -105,7 +104,6 @@ export const DefaultLayout = ({children}) => {
 			'/manage-standard-process',
 			<FundProjectionScreenOutlined />
 		),
-		getItem('Quản lý dịch vụ', '/manage-service', <AccountBookOutlined />),
 		getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
 		getItem('Quản lý mảnh đất', '/manage-land', <AppstoreOutlined />),
 		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),
