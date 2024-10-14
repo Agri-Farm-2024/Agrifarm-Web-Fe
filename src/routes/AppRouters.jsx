@@ -29,6 +29,8 @@ import {ManageTransactionPage} from '../pages/ManageTransactionPage/ManageTransa
 import {ManageRentalEquipmentPage} from '../pages/ManageRentalEquipmentPage/ManageRentalEquipmentPage';
 import {ManageAgriProductPurchaseRequestPage} from '../pages/ManageAgriProductPurchaseRequestPage/ManageAgriProductPurchaseRequestPage';
 import {ManageOrderPage} from '../pages/ManageOrderPage/ManageOrderPage';
+import {ManageViewLand} from '../pages/ManageViewLand/ManageViewLand';
+import ManageContractByManager from '../pages/ManageContractByManager/ManageContractByManager';
 
 export const AppRouters = () => {
 	return (
@@ -199,6 +201,22 @@ export const AppRouters = () => {
 					element={
 						<PrivateRoute roles={['manager']}>
 							<ManageLandPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-view-land"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageViewLand />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-contract-manager"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageContractByManager />
 						</PrivateRoute>
 					}
 				/>

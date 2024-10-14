@@ -86,7 +86,7 @@ export const ManageLandDetailModal = ({selectedLand, handleModalClose, isModalOp
 								<p className={styles.title} style={{marginBottom: 0}}>
 									{subItem.sub_title}:
 								</p>
-								<span>{subItem.sub_desc}</span>
+								<span style={{width: '80%'}}>{subItem.sub_desc}</span>
 							</div>
 						))}
 					</div>

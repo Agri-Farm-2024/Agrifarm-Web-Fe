@@ -236,7 +236,7 @@ export const ManageServicePackagePage = () => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
-				<p>Quản lý nhân viên</p>
+				<p>Quản lý gói dịch vụ</p>
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
 						<span>Lọc theo trạng thái:</span>

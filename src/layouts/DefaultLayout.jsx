@@ -24,6 +24,7 @@ import {
 	AppstoreOutlined,
 	TransactionOutlined,
 	TruckOutlined,
+	FundViewOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -72,6 +73,8 @@ export const DefaultLayout = ({children}) => {
 		'/manage-rental-equipment',
 		'/manage-agri-product-purchase-request',
 		'/manage-order',
+		'/manage-view-land',
+		'/manage-contract-manager',
 	];
 
 	const staffMenuItems = [
@@ -97,16 +100,26 @@ export const DefaultLayout = ({children}) => {
 	const managerMenuItems = [
 		getItem('Dashboard', '/manager-dashboard', <DashboardOutlined />),
 		getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
-		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
-		getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
-		getItem(
-			'Quản lý quy trình chuẩn',
-			'/manage-standard-process',
-			<FundProjectionScreenOutlined />
-		),
-		getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
-		getItem('Quản lý mảnh đất', '/manage-land', <AppstoreOutlined />),
+
+		getItem('Quản lý quy trình', 'sub1', <ControlOutlined />, [
+			getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
+			getItem(
+				'Quản lý quy trình chuẩn',
+				'/manage-standard-process',
+				<FundProjectionScreenOutlined />
+			),
+		]),
+		getItem('Quản lý dịch vụ', 'sub2', <ControlOutlined />, [
+			getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
+		]),
+		getItem('Quản lý mảnh đất', 'sub3', <AppstoreOutlined />, [
+			getItem('Danh sách mảnh đất', '/manage-land', <AppstoreOutlined />),
+			getItem('Yêu cầu xem đất', '/manage-view-land', <FundViewOutlined />),
+			getItem('Danh sách hợp đồng', '/manage-contract-manager', <FileDoneOutlined />),
+		]),
+
 		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),
+		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
 		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
 		getItem(
 			'Quản lý yêu cầu thu mua',
