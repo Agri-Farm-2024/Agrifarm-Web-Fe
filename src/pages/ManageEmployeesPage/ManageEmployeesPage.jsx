@@ -1,7 +1,6 @@
 import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useState} from 'react';
 import styles from './ManageEmployeesPage.module.css';
-import {formatNumber} from '../../utils';
 import {ManageEmployeesDetailModal} from './ManageEmployeesDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageEmployeeUpdateModal} from './ManageEmployeeUpdateModal';

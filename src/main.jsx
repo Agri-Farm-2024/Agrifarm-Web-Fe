@@ -20,6 +20,9 @@ createRoot(document.getElementById('root')).render(
 					Table: {
 						rowHoverBg: '#f1f1f1',
 					},
+					Tooltip: {
+						colorBgSpotlight: 'rgba(0, 0, 0, 0.7)',
+					},
 				},
 			}}
 		>
