@@ -67,7 +67,6 @@ export const DefaultLayout = ({children}) => {
 		'/manage-plants',
 		'/manage-standard-process',
 		'/manager-dashboard',
-		'/manage-service',
 		'/manage-service-package',
 		'/manage-land',
 		'/manage-transaction',
@@ -111,7 +110,6 @@ export const DefaultLayout = ({children}) => {
 			),
 		]),
 		getItem('Quản lý dịch vụ', 'sub2', <ControlOutlined />, [
-			getItem('Dịch vụ cụ thể', '/manage-service', <AccountBookOutlined />),
 			getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
 		]),
 		getItem('Quản lý mảnh đất', 'sub3', <AppstoreOutlined />, [
