@@ -31,6 +31,7 @@ import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
 import {useSelector} from 'react-redux';
 import {getUserSelector} from '../redux/selectors';
+import {getRole} from '../utils';
 
 const {Footer, Sider, Content} = Layout;
 const {SubMenu} = Menu;
@@ -43,7 +44,7 @@ export const DefaultLayout = ({children}) => {
 	const location = useLocation();
 	const [selectMenu, setSelectMenu] = useState(location.pathname);
 
-	const userSelector = useSelector(getUserSelector);
+	const userSelector = useSelector(getUserSelector)?.user;
 	console.log('userselector: ' + JSON.stringify(userSelector));
 
 	//Location will display the sider menu
@@ -133,7 +134,7 @@ export const DefaultLayout = ({children}) => {
 	];
 
 	// Define the menu items
-	const items = userSelector.role == 'manager' ? managerMenuItems : staffMenuItems;
+	const items = getRole(userSelector?.role) == 'manager' ? managerMenuItems : staffMenuItems;
 
 	const handleClickMenuItem = (e) => {
 		setSelectMenu(e.key);
