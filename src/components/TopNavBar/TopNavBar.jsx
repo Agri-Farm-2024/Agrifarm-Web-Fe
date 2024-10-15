@@ -4,7 +4,8 @@ import {BellOutlined} from '@ant-design/icons'; // Import icon for notification 
 import {useDispatch} from 'react-redux';
 import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
-import userSlice from '../../redux/slices/userSlice';
+import {userSlice} from '../../redux/slices/userSlice';
+import {getRole} from '../../utils';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
@@ -56,7 +57,7 @@ const TopNavbar = () => {
 
 	const handleConfirmSignOut = () => {
 		localStorage.removeItem('user');
-		// dispatch(
+
 		// 	userLoginSlice.actions.logout({
 		// 		userId: '',
 		// 		userPhone: '',
@@ -74,8 +75,14 @@ const TopNavbar = () => {
 		// 		status: '',
 		// 	})
 		// );
-		dispatch(userSlice.actions.setUser({role: ''}));
-		message.success('Logout successful!');
+		dispatch(
+			userSlice.actions.setUser({
+				user: {
+					role: null,
+				},
+			})
+		);
+		message.success('Đăng xuất thành công!');
 		navigate('/login');
 	};
 
@@ -103,8 +110,8 @@ const TopNavbar = () => {
 						onClick={handleProfileClick}
 					/>
 					<div className={styles.userInfo}>
-						<span className={styles.userName}>{user?.name}</span>
-						<span className={styles.userRole}>{user?.role}</span>
+						<span className={styles.userName}>{user?.full_name}</span>
+						<span className={styles.userRole}>{getRole(user?.role)}</span>
 					</div>
 					{showSignOutButton && (
 						<button
