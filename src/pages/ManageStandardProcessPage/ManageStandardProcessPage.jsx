@@ -79,6 +79,14 @@ const data = [
 				},
 			],
 		},
+		materials: [
+			{
+				materialId: 'VT001',
+				materialImg: '',
+				materialName: 'Xẻng',
+				quantity: 15,
+			},
+		],
 	},
 ];
 
