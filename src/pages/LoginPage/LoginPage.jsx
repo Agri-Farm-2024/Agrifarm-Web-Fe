@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import styles from './LoginPage.module.css';
-import {Button, Form, Input, Modal} from 'antd';
+import {Button, Form, Input, message, Modal} from 'antd';
 import {imageExporter} from '../../assets/images';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
-import userSlice from '../../redux/slices/userSlice';
+import userSlice, {handleLogin} from '../../redux/slices/userSlice';
+import {toast} from 'react-toastify';
 
 const LoginPage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,15 +44,26 @@ const LoginPage = () => {
 
 	const onFinish = (values) => {
 		console.log('Success:', values);
-		if (values.email == 'manager@gmail.com') {
-			dispatch(userSlice.actions.setUser({role: 'manager'}));
-			navigate('/manager-dashboard');
-		}
-		if (values.email == 'staff@gmail.com') {
-			dispatch(userSlice.actions.setUser({role: 'staff'}));
-			navigate('/dashboard');
-		}
+		toast.loading('Đang đăng nhập...', {autoClose: false});
+
+		dispatch(handleLogin(values))
+			.then((response) => {
+				toast.dismiss(); // Remove the loading message
+				const user = response.payload.metadata.user;
+				if (user) {
+					toast.success('Đăng nhập thành công!');
+					navigate(user.role === 1 ? '/manager-dashboard' : '/dashboard');
+				} else {
+					toast.error('Email hoặc mật khẩu không đúng!');
+				}
+			})
+			.catch((error) => {
+				toast.dismiss(); // Remove the loading message
+				console.error(error);
+				toast.error(error);
+			});
 	};
+
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
 	};
@@ -81,6 +93,7 @@ const LoginPage = () => {
 						onFinish={onFinish}
 						onFinishFailed={onFinishFailed}
 						autoComplete="off"
+						initialValues={{email: 'manager@gmail.com', password: '123'}}
 					>
 						<Form.Item
 							label="Email"
