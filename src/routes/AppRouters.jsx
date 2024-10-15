@@ -31,6 +31,7 @@ import {ManageAgriProductPurchaseRequestPage} from '../pages/ManageAgriProductPu
 import {ManageOrderPage} from '../pages/ManageOrderPage/ManageOrderPage';
 import {ManageViewLand} from '../pages/ManageViewLand/ManageViewLand';
 import ManageContractByManager from '../pages/ManageContractByManager/ManageContractByManager';
+import {ManagePlantSeasonPage} from '../pages/ManagePlantSeasonPage/ManagePlantSeasonPage';
 
 export const AppRouters = () => {
 	return (
@@ -249,6 +250,14 @@ export const AppRouters = () => {
 					element={
 						<PrivateRoute roles={['manager']}>
 							<ManageOrderPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-plant-season"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManagePlantSeasonPage />
 						</PrivateRoute>
 					}
 				/>
