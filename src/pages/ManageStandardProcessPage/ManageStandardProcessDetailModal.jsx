@@ -98,6 +98,24 @@ export const ManageStandardProcessDetailModal = ({
 											</p>
 										</div>
 									))}
+								<p
+									className={styles.title}
+									style={{paddingLeft: 40, color: '#7fb640'}}
+								>
+									Vật tư cần cho giai đoạn
+								</p>
+								{plan.materials &&
+									plan.materials.length > 0 &&
+									plan.materials.map((material, index) => (
+										<ul
+											style={{paddingLeft: 40}}
+											className={styles.bookingItem}
+										>
+											<li className={styles.content}>
+												{`${material.materialName} - ${material.materialQuantity}`}
+											</li>
+										</ul>
+									))}
 							</>
 						))}
 				</div>

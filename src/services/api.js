@@ -22,11 +22,11 @@ api.interceptors.response.use(
 		return response;
 	},
 	async (error) => {
-		if (error.response.status === 401) {
+		if (error.response?.status === 401) {
 			console.log('401 error');
 			window.location.href = '/login';
 		}
-		if (error.response.status === 403) {
+		if (error.response?.status === 403) {
 			console.log('403 error');
 			window.location.href = '/permission-denied';
 			toast.error('403 error');

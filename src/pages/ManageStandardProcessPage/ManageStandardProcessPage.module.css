@@ -41,10 +41,10 @@
 	padding: 0 20px;
 }
 
-button {
+/* button {
 	border: none !important;
 	outline: none !important;
-}
+} */
 
 .tableContainer .table {
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
