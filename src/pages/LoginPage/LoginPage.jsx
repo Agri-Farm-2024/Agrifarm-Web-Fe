@@ -54,6 +54,10 @@ const LoginPage = () => {
 					toast.success('Đăng nhập thành công!');
 					navigate(user.role === 1 ? '/manager-dashboard' : '/dashboard');
 				} else {
+					if (response.payload.statusCode === 500) {
+						toast.error('Hệ thống đang gặp lỗi !!');
+						return;
+					}
 					toast.error('Email hoặc mật khẩu không đúng!');
 				}
 			})

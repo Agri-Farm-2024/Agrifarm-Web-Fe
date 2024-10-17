@@ -31,7 +31,7 @@ export const userSlice = createSlice({
 				dob: '1990-01-01',
 				avatar_url: 'http://example.com/avatar.jpg',
 				status: 'pending',
-				role: 1,
+				role: '',
 			},
 			token: {
 				accessToken:

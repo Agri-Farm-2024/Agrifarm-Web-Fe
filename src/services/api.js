@@ -26,11 +26,11 @@ api.interceptors.response.use(
 			console.log('401 error');
 			window.location.href = '/login';
 		}
-		if (error.response.status === 403) {
-			console.log('403 error');
-			window.location.href = '/permission-denied';
+		if (error.response?.status === 403) {
 			toast.error('403 error');
 		}
+		console.log('403 error');
+		window.location.href = '/permission-denied';
 		return Promise.reject(error);
 	}
 );
