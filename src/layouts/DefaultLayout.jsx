@@ -25,6 +25,7 @@ import {
 	TransactionOutlined,
 	TruckOutlined,
 	FundViewOutlined,
+	SunOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -76,6 +77,7 @@ export const DefaultLayout = ({children}) => {
 		'/manage-order',
 		'/manage-view-land',
 		'/manage-contract-manager',
+		'/manage-plant-season',
 	];
 
 	const staffMenuItems = [
@@ -104,6 +106,7 @@ export const DefaultLayout = ({children}) => {
 
 		getItem('Quản lý quy trình', 'sub1', <ControlOutlined />, [
 			getItem('Quản lý giống cây', '/manage-plants', <ControlOutlined />),
+			getItem('Quản lý mùa vụ', '/manage-plant-season', <SunOutlined />),
 			getItem(
 				'Quản lý quy trình chuẩn',
 				'/manage-standard-process',

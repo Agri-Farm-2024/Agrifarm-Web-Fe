@@ -54,6 +54,12 @@ const data = [
 								'Tưới nước nhẹ nhàng hàng ngày để giữ ẩm cho đất.\nĐảm bảo điều kiện nhiệt độ từ 18-22°C cho hạt nảy mầm.\nKiểm tra tỷ lệ nảy mầm và xử lý cây con không đều hoặc chết.',
 						},
 					],
+					materials: [
+						{
+							materialName: 'Xẻng',
+							materialQuantity: 15,
+						},
+					],
 				},
 				{
 					stageTitle: 'Chăm Sóc Cây Con',
@@ -74,6 +80,16 @@ const data = [
 							actionTitle: 'Làm sạch cây con',
 							actionDescription:
 								'Thực hiện làm sạch cây con, loại bỏ cây yếu hoặc bị bệnh.\nBón thúc lần đầu bằng phân hữu cơ hoặc phân vi sinh (10-15 kg/ha) để kích thích sự phát triển.',
+						},
+					],
+					materials: [
+						{
+							materialName: 'Xẻng',
+							materialQuantity: 15,
+						},
+						{
+							materialName: 'Cuốc',
+							materialQuantity: 25,
 						},
 					],
 				},

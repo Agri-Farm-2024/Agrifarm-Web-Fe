@@ -78,7 +78,7 @@ export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isMod
 					span: 16,
 				}}
 				size="large"
-				className={styles.formContainer}
+				className={styles.formCreateContainer}
 				onFinish={onFinish}
 				onFinishFailed={onFinishFailed}
 				autoComplete="off"
