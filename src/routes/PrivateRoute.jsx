@@ -14,16 +14,16 @@ const PrivateRoute = ({children, roles}) => {
 	// 	return <Navigate to="/login" />;
 	// }
 	console.log('User private router: ' + JSON.stringify(userSelector));
-	if (!userSelector || userSelector.role === '') {
+	if (!userSelector || !userSelector.role || userSelector.role === '') {
 		console.log('Private route redirect');
 		console.log('userSelector', userSelector);
-		toast.error('Please login!');
+		toast.error('Hãy đăng nhập!');
 		return <Navigate to="/login" />;
 	}
 
 	// Kiểm tra xem người dùng có vai trò phù hợp không
 	if (!roles.includes(getRole(userSelector.role))) {
-		console.log('Private route redirect');
+		console.log('/permission-denied');
 		return <Navigate to="/permission-denied" />;
 	}
 
