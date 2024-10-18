@@ -4,8 +4,8 @@ import {BellOutlined} from '@ant-design/icons'; // Import icon for notification 
 import {useDispatch} from 'react-redux';
 import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
-import {userSlice} from '../../redux/slices/userSlice';
 import {getRole} from '../../utils';
+import userSlice from '../../redux/slices/userSlice';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
