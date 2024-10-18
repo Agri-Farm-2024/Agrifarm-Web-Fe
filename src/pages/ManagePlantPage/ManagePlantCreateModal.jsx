@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
-import {Form, Input, InputNumber, Modal, Select} from 'antd';
+import {Form, Input, InputNumber, Modal, Select, message} from 'antd';
 import dayjs from 'dayjs';
+import {useDispatch, useSelector} from 'react-redux';
+import {createPlant} from '../../redux/slices/plantSlice';
+import {isLoadingPlant} from '../../redux/selectors';
 
 const statusOptions = [
 	{
@@ -55,8 +58,38 @@ const plantTypeOptions = [
 export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
 
+	const loading = useSelector(isLoadingPlant);
+
+	const dispatch = useDispatch();
+
 	const onFinish = (values) => {
 		console.log('Success:', values);
+
+		const formData = {
+			name: values.plantName,
+			status: 'active',
+		};
+
+		dispatch(createPlant(formData))
+			.then((response) => {
+				console.log('response', response);
+				if (response.payload && response.payload.statusCode) {
+					if (response.payload.statusCode !== 201) {
+						if (response.payload.message === 'Plant name already exist') {
+							message.error(`Tên giống cây đã tồn tại trên trang trại`);
+						}
+					}
+
+					if (response.payload.statusCode === 201) {
+						message.success('Tạo giống cây thành công.');
+						handleModalClose();
+					}
+				}
+			})
+			.catch((err) => {
+				message.error('Tạo giống cây thất bại');
+				console.log('Tạo giống cây thất bại', err);
+			});
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
@@ -78,6 +111,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 			cancelText="Đóng"
 			centered
 			width={800}
+			okButtonProps={{loading: loading}}
 		>
 			<Form
 				form={form}
@@ -106,123 +140,6 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 					]}
 				>
 					<Input className={styles.inputField} />
-				</Form.Item>
-
-				<Form.Item
-					label="Loại giống cây"
-					name="plantType"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-					]}
-				>
-					<Select
-						className={styles.inputField}
-						allowClear
-						placeholder="Chọn loại giống cây"
-						options={plantTypeOptions}
-					></Select>
-				</Form.Item>
-
-				<Form.Item
-					label="Thời gian sinh trưởng (ngày)"
-					name="growthTime"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-						{
-							min: 0,
-							message: 'Thời gian sinh trưởng không hợp lệ!',
-						},
-					]}
-				>
-					<InputNumber
-						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-						className={styles.inputField}
-					/>
-				</Form.Item>
-
-				<Form.Item
-					label="Năng suất trung bình (kg/m2)"
-					name="averageYield"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-						{
-							min: 0,
-							message: 'Năng suất trung bình không hợp lệ!',
-						},
-					]}
-				>
-					<InputNumber
-						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-						className={styles.inputField}
-					/>
-				</Form.Item>
-
-				<Form.Item
-					label="Trạng thái"
-					name="status"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-					]}
-				>
-					<Select
-						className={styles.inputField}
-						allowClear
-						placeholder="Chọn trạng thái"
-						options={statusOptions}
-					></Select>
-				</Form.Item>
-
-				<Form.Item
-					label="Quy trình"
-					name="process"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-					]}
-				>
-					<Select
-						className={styles.inputField}
-						allowClear
-						placeholder="Chọn quy trình"
-						options={processOptions}
-					></Select>
-				</Form.Item>
-
-				<Form.Item
-					label="Giá thu mua (VND/kg)"
-					name="purchasedPrice"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-						{
-							min: 0,
-							message: 'Giá thu mua không hợp lệ!',
-						},
-					]}
-				>
-					<InputNumber
-						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-						className={styles.inputField}
-					/>
 				</Form.Item>
 			</Form>
 		</Modal>
