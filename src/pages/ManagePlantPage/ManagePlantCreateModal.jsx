@@ -103,7 +103,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 
 	return (
 		<Modal
-			title={<span style={{fontSize: '1.5rem'}}>Tạo vật tư</span>}
+			title={<span style={{fontSize: '1.5rem'}}>Tạo giống cây</span>}
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}

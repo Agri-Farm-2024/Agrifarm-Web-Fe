@@ -14,6 +14,32 @@ export const createPlant = createAsyncThunk(
 	}
 );
 
+export const createCrop = createAsyncThunk(
+	'plantSlice/createCrop',
+	async (seasonInfo, {rejectWithValue}) => {
+		try {
+			const response = await api.post('/plants/createPlantSeason', seasonInfo);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const getPlantList = createAsyncThunk(
+	'plantSlice/getPlantList',
+	async (params, {rejectWithValue}) => {
+		try {
+			const response = await api.get('/plants/plant', {params: params});
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const plantSlice = createSlice({
 	name: 'plantSlice',
 	initialState: {
@@ -32,6 +58,29 @@ const plantSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(createPlant.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Plant creation failed';
+			})
+			.addCase(createCrop.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(createCrop.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(createCrop.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Season creation failed';
+			})
+			.addCase(getPlantList.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getPlantList.fulfilled, (state, action) => {
+				state.loading = false;
+				state.plant = action.payload;
+			})
+			.addCase(getPlantList.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Plant creation failed';
 			});
