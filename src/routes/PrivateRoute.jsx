@@ -17,7 +17,7 @@ const PrivateRoute = ({children, roles}) => {
 	if (!userSelector || !userSelector.role || userSelector.role === '') {
 		console.log('Private route redirect');
 		console.log('userSelector', userSelector);
-		toast.error('Hãy đăng nhập!');
+		toast.info('Hãy đăng nhập!');
 		return <Navigate to="/login" />;
 	}
 

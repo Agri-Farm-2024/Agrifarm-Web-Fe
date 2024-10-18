@@ -28,7 +28,7 @@ api.interceptors.response.use(
 		}
 		if (error.response?.status === 403) {
 			console.log('403 error');
-			window.location.href = '/permission-denied';
+			// window.location.href = '/permission-denied';
 			toast.error('403 error');
 		}
 		return Promise.reject(error);

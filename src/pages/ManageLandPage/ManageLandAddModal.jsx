@@ -2,15 +2,16 @@ import React, {useState} from 'react';
 import styles from './ManageLandPage.module.css';
 import {Image, Modal, Input, Select, Upload, Button, message} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
+import {useDispatch} from 'react-redux';
+import {createLand} from '../../redux/slices/landSlice';
 
 export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
+	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
 	const [landData, setLandData] = useState({
 		nameLand: '',
 		area: '',
-		position: '',
-		landOfStatus: undefined,
-		status: undefined,
-		assignStaff: undefined,
+		pricePermonth: '',
 		description: {
 			title: '',
 			desc: '',
@@ -21,33 +22,46 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 			],
 		},
 		images: [],
+		// landOfStatus: undefined,
+		// status: undefined,
+		// assignStaff: undefined,
 	});
 	const [errors, setErrors] = useState({});
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;
 
-		// Update landData state
 		setLandData({...landData, [name]: value});
 
-		// Validation for required fields and numeric input for 'area'
 		if (name === 'area') {
 			if (!/^\d*\.?\d*$/.test(value) && value.trim() !== '') {
-				// Check for non-numeric input
 				setErrors({...errors, [name]: 'Trường này chỉ chấp nhận số'});
 			} else if (value.trim() === '') {
-				// Check for empty input
 				setErrors({...errors, [name]: 'Trường này không được để trống'});
+			} else if (Number(value) < 1000) {
+				setErrors({...errors, [name]: 'Diện tích không được nhỏ hơn 1000 m2'});
+			} else if (Number(value) >= 10000) {
+				setErrors({...errors, [name]: 'Diện tích không được lớn hơn 10,000 m2'});
 			} else {
-				const {[name]: removedError, ...rest} = errors; // Remove error if valid
+				const {[name]: removedError, ...rest} = errors;
+				setErrors(rest);
+			}
+		} else if (name === 'pricePermonth') {
+			if (!/^\d*\.?\d*$/.test(value) && value.trim() !== '') {
+				setErrors({...errors, [name]: 'Trường này chỉ chấp nhận số'});
+			} else if (value.trim() === '') {
+				setErrors({...errors, [name]: 'Trường này không được để trống'});
+			} else if (Number(value) < 1000000) {
+				setErrors({...errors, [name]: 'Giá thuê phải lớn hơn 1 triệu VND'});
+			} else {
+				const {[name]: removedError, ...rest} = errors;
 				setErrors(rest);
 			}
 		} else {
-			// Handle other fields (required validation)
 			if (value.trim() === '') {
 				setErrors({...errors, [name]: 'Trường này không được để trống'});
 			} else {
-				const {[name]: removedError, ...rest} = errors; // Remove error if valid
+				const {[name]: removedError, ...rest} = errors;
 				setErrors(rest);
 			}
 		}
@@ -77,12 +91,12 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 		const requiredFields = [
 			'nameLand',
 			'area',
-			'position',
-			'landOfStatus',
-			'status',
-			'assignStaff',
+			'pricePermonth',
 			'description.title',
 			'description.desc',
+			// 'landOfStatus',
+			// 'status',
+			// 'assignStaff',
 		];
 
 		const newErrors = {};
@@ -117,32 +131,78 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 
 	const handleSubmit = () => {
 		if (validateInputs()) {
-			const hideLoading = message.loading('Đang xử lý...', 0);
-			console.log(landData);
-			setTimeout(() => {
-				hideLoading();
-				message.success('Cập nhật thành công.');
-				handleModalClose();
-				// Reset landData after submission
-				setLandData({
-					nameLand: '',
-					area: '',
-					position: '',
-					landOfStatus: undefined,
-					status: undefined,
-					assignStaff: undefined,
-					description: {
-						title: '',
-						desc: '',
-						sub: [
-							{sub_title: '', sub_desc: ''},
-							{sub_title: '', sub_desc: ''},
-							{sub_title: '', sub_desc: ''},
-						],
-					},
-					images: [],
+			// console.log(landData);
+
+			const landInfor = {
+				name: landData.nameLand,
+				title: landData.description.title,
+				description: landData.description.desc,
+				acreage_land: Number(landData.area),
+				price_booking_per_month: Number(landData.pricePermonth),
+				sub_description: landData.description.sub.map((item) => ({
+					sub_title: item.sub_title,
+					sub_description: item.sub_desc,
+				})),
+				images: [
+					'https://www.google.com.vn/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+				],
+				videos: [
+					'https://www.youtube.com/watch?v=8p9jSRxJ8jw',
+					'https://www.youtube.com/watch?v=8p9jSRxJ8jw',
+				],
+			};
+			console.log(landInfor);
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			setLoading(true);
+
+			dispatch(createLand(landInfor))
+				.then((res) => {
+					console.log(res);
+					setLoading(false);
+					hideLoading();
+					if (res.payload.statusCode !== 201) {
+						if (res.payload.message === 'Land name already exist') {
+							message.error(`Tên mảnh đất đã tồn tại trên trang trại`);
+						}
+						if (res.payload.message === 'numeric field overflow') {
+							message.error(`Diện tích vượt quá quy định`);
+						}
+					}
+
+					if (res.payload.statusCode === 201) {
+						message.success('Tạo mảnh đất thành công.');
+						handleModalClose();
+						// Reset landData
+						setLandData({
+							nameLand: '',
+							area: '',
+							pricePermonth: '',
+							description: {
+								title: '',
+								desc: '',
+								sub: [
+									{sub_title: '', sub_desc: ''},
+									{sub_title: '', sub_desc: ''},
+									{sub_title: '', sub_desc: ''},
+								],
+							},
+							images: [],
+							// landOfStatus: undefined,
+							// status: undefined,
+							// assignStaff: undefined,
+						});
+					}
+				})
+				.catch((err) => {
+					hideLoading();
+					message.error('Unexpected error:', err);
 				});
-			}, 1000);
+
+			// const hideLoading = message.loading('Đang xử lý...', 0);
+			// setTimeout(() => {
+			// 	hideLoading();
+			//
+			// }, 1000);
 		} else {
 			message.error('Hãy điền đủ trường nhé');
 		}
@@ -158,7 +218,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 			cancelText="Hủy"
 			width={'max-content'}
 			okText="Thêm"
-			okButtonProps={{disabled: Object.keys(errors).length > 0}}
+			okButtonProps={{disabled: Object.keys(errors).length > 0, loading: loading}}
 		>
 			<div className={styles.modalContainer}>
 				<div style={{display: 'flex'}}>
@@ -176,7 +236,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							)}
 						</div>
 						<div className={styles.bookingItem}>
-							<p className={styles.title}>Diện tích:</p>
+							<p className={styles.title}>Diện tích(m2):</p>
 							<Input
 								name="area"
 								value={landData.area}
@@ -185,7 +245,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							/>
 							{errors['area'] && <p className={styles.error}>{errors['area']}</p>}
 						</div>
-						<div className={styles.bookingItem}>
+						{/* <div className={styles.bookingItem}>
 							<p className={styles.title}>Vị trí:</p>
 							<Input
 								name="position"
@@ -196,8 +256,8 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							{errors['position'] && (
 								<p className={styles.error}>{errors['position']}</p>
 							)}
-						</div>
-						<div className={styles.bookingItem}>
+						</div> */}
+						{/* <div className={styles.bookingItem}>
 							<p className={styles.title}>Tình trạng đất:</p>
 							<Select
 								value={landData.landOfStatus}
@@ -244,6 +304,18 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							</Select>
 							{errors['assignStaff'] && (
 								<p className={styles.error}>{errors['assignStaff']}</p>
+							)}
+						</div> */}
+						<div className={styles.bookingItem}>
+							<p className={styles.title}>Giá thuê mỗi tháng:</p>
+							<Input
+								name="pricePermonth"
+								value={landData.pricePermonth}
+								onChange={handleChange}
+								style={{width: '50%'}}
+							/>
+							{errors['pricePermonth'] && (
+								<p className={styles.error}>{errors['pricePermonth']}</p>
 							)}
 						</div>
 						<div
