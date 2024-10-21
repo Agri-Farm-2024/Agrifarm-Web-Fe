@@ -54,6 +54,12 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 			.then((response) => {
 				console.log('response', response);
 				if (response.payload && response.payload.statusCode) {
+					if (response.payload.statusCode !== 201) {
+						if (response.payload.message === 'Plant season already exist') {
+							message.error(`Mùa vụ đã tồn tại`);
+						}
+					}
+
 					if (response.payload.statusCode === 201) {
 						message.success('Tạo mùa vụ thành công.');
 						handleModalClose();
@@ -191,7 +197,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 						allowClear
 						placeholder="Chọn loại cây"
 						notFoundContent={plantTypeOptionsLoading ? <Spin size="small" /> : null}
-						options={plantTypeOptions}
+						options={plantTypeOptions || []}
 						onPopupScroll={handleScroll}
 					></Select>
 				</Form.Item>

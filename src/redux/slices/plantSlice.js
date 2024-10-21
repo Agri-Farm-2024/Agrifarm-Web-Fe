@@ -27,12 +27,25 @@ export const createCrop = createAsyncThunk(
 	}
 );
 
+export const removePlant = createAsyncThunk(
+	'plantSlice/removePlant',
+	async (plantId, {rejectWithValue}) => {
+		try {
+			const response = await api.delete(`/plants/${plantId}`);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const getPlantList = createAsyncThunk(
 	'plantSlice/getPlantList',
 	async (params, {rejectWithValue}) => {
 		try {
-			const response = await api.get('/plants/plant', {params: params});
-			return response.data;
+			const response = await api.get('/plants', {params: params});
+			return response.data.metadata;
 		} catch (error) {
 			console.error(error);
 			return rejectWithValue(error.response.data);
@@ -83,6 +96,17 @@ const plantSlice = createSlice({
 			.addCase(getPlantList.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Plant creation failed';
+			})
+			.addCase(removePlant.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(removePlant.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(removePlant.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Plant deleting failed';
 			});
 	},
 });
