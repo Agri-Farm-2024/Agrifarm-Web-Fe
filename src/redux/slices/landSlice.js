@@ -15,10 +15,30 @@ export const createLand = createAsyncThunk(
 	}
 );
 
+export const getListOfRequestViewLand = createAsyncThunk(
+	'landSlice/getListOfRequestViewLand',
+	async ({page_size, page_index, status}, {rejectWithValue}) => {
+		console.log({page_size, page_index, status});
+		const urlAPI =
+			status === 'all'
+				? `/requests?&type=view_land&page_size=${page_size}&page_index=${page_index}`
+				: `/requests?status=${status}&type=view_land&page_size=${page_size}&page_index=${page_index}`;
+		try {
+			const response = await api.get(urlAPI);
+			console.log(response.data.metadata);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const landSlice = createSlice({
 	name: 'landSlice',
 	initialState: {
 		land: {},
+		request: {},
 		loading: false,
 		error: null,
 	},
@@ -40,6 +60,19 @@ export const landSlice = createSlice({
 			.addCase(createLand.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Land creation failed';
+			})
+
+			.addCase(getListOfRequestViewLand.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getListOfRequestViewLand.fulfilled, (state, action) => {
+				state.loading = false;
+				state.request = action.payload;
+			})
+			.addCase(getListOfRequestViewLand.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Get request fail';
 			});
 	},
 });

@@ -27,3 +27,13 @@
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 7px;
 }
+
+.evenRow {
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.oddRow {
+    cursor: pointer;
+    background-color: #fafafa;
+}   

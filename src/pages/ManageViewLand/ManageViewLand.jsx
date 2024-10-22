@@ -1,98 +1,121 @@
-import React, {useState} from 'react';
-import {Table, Select, Button, Space, Tag, Modal} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Table, Select, Button, Space, Tag, Modal, message} from 'antd';
 import styles from './ManageViewLand.module.css';
+import {useDispatch, useSelector} from 'react-redux';
+import {getListOfRequestViewLand} from '../../redux/slices/landSlice';
+import {ManageViewLandDetailModal} from './ManageViewLandDetailModal';
+import {getListOfStaff} from '../../redux/slices/userSlice';
+import {assignForTask} from '../../redux/slices/requestSlice';
 
 const {Option} = Select;
 
-const requestViewLand = [
-	{
-		id: 'YC0001',
-		customer: 'Minh Châu',
-		email: 'minhchau@gmail.com',
-		phone: '0386041438',
-		dateToCome: '17/11/2022',
-		timeToCome: '08:00',
-		desc: 'Tôi muốn coi mảnh đất này để canh tác',
-		assignStaff: 'Dang Ninh',
-		status: 'Đã phân công',
-	},
-	{
-		id: 'YC0001',
-		customer: 'Ngọc Anh',
-		email: 'ngocanh@gmail.com',
-		phone: '0381234567',
-		dateToCome: '20/11/2022',
-		timeToCome: '09:30',
-		desc: 'Tôi muốn kiểm tra chất lượng đất',
-		assignStaff: null,
-		status: 'Chờ phân công',
-	},
-	{
-		id: 'YC0001',
-		customer: 'Hùng Dũng',
-		email: 'hungdung@gmail.com',
-		phone: '0398765432',
-		dateToCome: '22/11/2022',
-		timeToCome: '14:00',
-		desc: 'Xem đất canh tác',
-		assignStaff: 'Dang Ninh',
-		status: 'Đang xem',
-	},
-];
-
 export const ManageViewLand = () => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const [filterStatus, setFilterStatus] = useState('');
 	const [filterStaff, setFilterStaff] = useState('');
-	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isModalAssignVisible, setIsModalAssignVisible] = useState(false);
 	const [selectedRecord, setSelectedRecord] = useState(null);
+	const [staffList, setStaffList] = useState([]);
 	const [assignedStaff, setAssignedStaff] = useState(null);
+	const [taskID, setTaskID] = useState(null);
+	const [request, setRequest] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	const pageSize = 10;
+	const dispatch = useDispatch();
 
-	const filteredRequests = requestViewLand.filter((request) => {
-		const matchesStatus = filterStatus ? request.status === filterStatus : true;
-		const matchesStaff = filterStaff ? request.assignStaff === filterStaff : true;
-		return matchesStatus && matchesStaff;
-	});
+	const loadingFromRedux = useSelector((state) => state.landSlice.loading);
+
+	useEffect(() => {
+		fetchRequests(currentPage, filterStatus, filterStaff);
+	}, [currentPage, filterStatus, filterStaff]);
+
+	useEffect(() => {
+		dispatch(getListOfStaff())
+			.then((res) => {
+				if (res.payload.statusCode === 200) {
+					console.log('getListOfStaff: ' + JSON.stringify(res.payload.metadata.users));
+					setStaffList(res.payload.metadata.users);
+				}
+			})
+			.catch((error) => {
+				console.error('Caught error:', error);
+			});
+	}, []);
+
+	const fetchRequests = (page, status, staff) => {
+		dispatch(getListOfRequestViewLand({page_size: pageSize, page_index: page, status, staff}))
+			.then((response) => {
+				if (response.payload.statusCode === 200) {
+					console.log('Data fetched:', response.payload.metadata);
+					setRequest(response.payload.metadata.requests);
+					setTotalPages(response.payload.metadata.pagination.total_page);
+				} else {
+					console.error('Error fetching data:', response.payload);
+				}
+			})
+			.catch((error) => {
+				console.error('Caught error:', error);
+			});
+	};
 
 	const columns = [
 		{
-			title: 'ID Yêu Cầu',
-			dataIndex: 'id',
-			key: 'id',
+			title: 'Khách Hàng',
+			dataIndex: 'guest_full_name',
+			key: 'guest_full_name',
 			render: (text) => <a>{text}</a>,
 		},
 		{
-			title: 'Khách Hàng',
-			dataIndex: 'customer',
-			key: 'customer',
+			title: 'Email',
+			dataIndex: 'guest_email',
+			key: 'guest_email',
 		},
 		{
-			title: 'Email',
-			dataIndex: 'email',
-			key: 'email',
+			title: 'Số Điện Thoại',
+			dataIndex: 'guest_phone',
+			key: 'guest_phone',
 		},
-		// {
-		// 	title: 'Số Điện Thoại',
-		// 	dataIndex: 'phone',
-		// 	key: 'phone',
-		// },
+
 		{
 			title: 'Ngày Đến',
 			key: 'dateToCome',
-			render: ({dateToCome, timeToCome}) => (
+			render: ({time_start}) => (
 				<div>
-					{dateToCome} - {timeToCome}
+					{new Date(time_start).toLocaleString('vi-VN', {
+						year: 'numeric',
+						month: 'long',
+						day: '2-digit',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false,
+						timeZone: 'Asia/Ho_Chi_Minh',
+					})}
+				</div>
+			),
+		},
+		{
+			title: 'Ngày gửi',
+			key: 'created_at',
+			render: ({created_at}) => (
+				<div>
+					{new Date(created_at).toLocaleString('vi-VN', {
+						year: 'numeric',
+						month: 'long',
+						day: '2-digit',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false,
+						timeZone: 'Asia/Ho_Chi_Minh',
+					})}
 				</div>
 			),
 		},
 		{
 			title: 'Mô Tả',
-			dataIndex: 'desc',
-			key: 'desc',
-		},
-		{
-			title: 'Nhân Viên',
-			dataIndex: 'assignStaff',
-			key: 'assignStaff',
+			key: 'description',
+			render: ({description}) => <div>{description ? description : 'Không có'}</div>,
 		},
 		{
 			title: 'Trạng Thái',
@@ -101,44 +124,72 @@ export const ManageViewLand = () => {
 			render: (status) => (
 				<Tag
 					color={
-						status === 'Đã phân công'
-							? 'green'
-							: status === 'Chờ phân công'
-								? 'blue'
-								: 'orange'
+						status === 'assigned' ? 'blue' : status === 'completed' ? 'green' : 'orange'
 					}
 				>
-					{status}
+					{status === 'assigned'
+						? 'Đã phân công'
+						: status === 'completed'
+							? 'Hoàn thành'
+							: 'Chờ phân công'}
 				</Tag>
 			),
 		},
-		{
-			title: 'Hành Động',
-			key: 'actions',
-			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						disabled={record.status !== 'Chờ phân công'}
-						type="primary"
-						onClick={() => {
-							setSelectedRecord(record);
-							setIsModalVisible(true);
-						}}
-					>
-						Chọn nhân viên
-					</Button>
-				</Space>
-			),
-		},
+		// {
+		// 	title: 'Hành Động',
+		// 	key: 'actions',
+		// 	render: (_, record) => (
+		// 		<Space size="middle">
+		// 			<Button
+		// 				disabled={record.status !== 'pending'}
+		// 				type="primary"
+		// 				onClick={(e) => {
+		// 					e.stopPropagation();
+
+		// 					setSelectedRecord(record);
+		// 					setIsModalAssignVisible(true);
+		// 				}}
+		// 			>
+		// 				Chọn nhân viên
+		// 			</Button>
+		// 		</Space>
+		// 	),
+		// },
 	];
 
 	const handleAssign = () => {
-		if (selectedRecord) {
-			// Here you can update the staff assignment in your actual data management logic
-			// For this example, we just log the information
-			console.log(`Assigned ${assignedStaff} to ${selectedRecord.customer}`);
-			setIsModalVisible(false);
+		if (taskID && assignedStaff) {
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			dispatch(assignForTask({taskID: taskID, staffID: assignedStaff}))
+				.then((res) => {
+					hideLoading();
+					if (res.payload.statusCode === 200) {
+						message.success('Đã phân công');
+						fetchRequests(currentPage, filterStatus, filterStaff);
+						setIsModalAssignVisible(false);
+						setIsModalOpen(false);
+					}
+				})
+				.catch((error) => {
+					hideLoading();
+					console.error('Caught error:', error);
+					message.error('Không thành công');
+				});
 		}
+	};
+
+	const handleOpenAssignModal = (task) => {
+		setTaskID(task);
+		setIsModalAssignVisible(true);
+	};
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
+
+	const handleRowClick = (record) => {
+		setSelectedRecord(record);
+		setIsModalOpen(true);
 	};
 
 	return (
@@ -149,39 +200,58 @@ export const ManageViewLand = () => {
 				<span>Lọc theo trạng thái:</span>
 				<Select
 					placeholder="Chọn Trạng Thái"
-					onChange={(value) => setFilterStatus(value)}
+					onChange={(value) => {
+						setFilterStatus(value);
+						setCurrentPage(1); // Reset to first page on filter change
+					}}
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
-					<Option value="Đã phân công">Đã phân công</Option>
-					<Option value="Chờ phân công">Chờ phân công</Option>
-					<Option value="Đang xem">Đang xem</Option>
+					<Option value="assigned">Đã phân công</Option>
+					<Option value="pending">Chờ phân công</Option>
+					<Option value="completed">Hoàn thành</Option>
 				</Select>
 
-				<span>Lọc theo nhân viên:</span>
+				{/* <span>Lọc theo nhân viên:</span>
 				<Select
 					placeholder="Chọn Nhân Viên"
-					onChange={(value) => setFilterStaff(value)}
+					onChange={(value) => {
+						setFilterStaff(value);
+						setCurrentPage(1); // Reset to first page on filter change
+					}}
 					style={{width: '20%'}}
 				>
 					<Option value="">Tất cả</Option>
 					<Option value="Dang Ninh">Dang Ninh</Option>
 					<Option value="Ba Phuoc">Ba Phuoc</Option>
-				</Select>
+				</Select> */}
 			</div>
 
 			<Table
+				loading={loadingFromRedux}
 				columns={columns}
-				dataSource={filteredRequests}
-				pagination={{pageSize: 5}}
-				rowKey="email"
+				dataSource={request}
+				pagination={{
+					current: currentPage,
+					pageSize,
+					total: Number(totalPages) * Number(pageSize),
+					onChange: handlePageChange,
+				}}
+				rowKey="id"
 				className={styles.tableContainer}
+				onRow={(record) => ({
+					onClick: () => handleRowClick(record),
+				})}
+				rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
 			/>
 
 			<Modal
 				title="Chọn Nhân Viên Phân Công"
-				visible={isModalVisible}
-				onCancel={() => setIsModalVisible(false)}
+				visible={isModalAssignVisible}
+				onCancel={() => {
+					setIsModalAssignVisible(false);
+					setAssignedStaff(null); // Clear assigned staff on modal close
+				}}
 				onOk={handleAssign}
 				cancelText="Hủy"
 				okText="Phân công"
@@ -191,10 +261,19 @@ export const ManageViewLand = () => {
 					onChange={(value) => setAssignedStaff(value)}
 					style={{width: '100%'}}
 				>
-					<Option value="Dang Ninh">Dang Ninh</Option>
-					<Option value="Ba Phuoc">Ba Phuoc</Option>
+					{staffList.map((staff) => (
+						<Option value={`${staff.id}`} key={staff.id}>
+							{staff.full_name}
+						</Option>
+					))}
 				</Select>
 			</Modal>
+			<ManageViewLandDetailModal
+				isModalOpen={isModalOpen}
+				handleModalClose={() => setIsModalOpen(false)}
+				selectedRequest={selectedRecord}
+				handleOpenAssignModal={handleOpenAssignModal}
+			/>
 		</div>
 	);
 };
