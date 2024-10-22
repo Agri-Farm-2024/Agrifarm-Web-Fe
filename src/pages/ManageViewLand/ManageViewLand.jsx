@@ -1,44 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Table, Select, Button, Space, Tag, Modal} from 'antd';
 import styles from './ManageViewLand.module.css';
+import {useDispatch, useSelector} from 'react-redux';
+import {getListOfRequestViewLand} from '../../redux/slices/landSlice';
 
 const {Option} = Select;
-
-const requestViewLand = [
-	{
-		id: 'YC0001',
-		customer: 'Minh Châu',
-		email: 'minhchau@gmail.com',
-		phone: '0386041438',
-		dateToCome: '17/11/2022',
-		timeToCome: '08:00',
-		desc: 'Tôi muốn coi mảnh đất này để canh tác',
-		assignStaff: 'Dang Ninh',
-		status: 'Đã phân công',
-	},
-	{
-		id: 'YC0001',
-		customer: 'Ngọc Anh',
-		email: 'ngocanh@gmail.com',
-		phone: '0381234567',
-		dateToCome: '20/11/2022',
-		timeToCome: '09:30',
-		desc: 'Tôi muốn kiểm tra chất lượng đất',
-		assignStaff: null,
-		status: 'Chờ phân công',
-	},
-	{
-		id: 'YC0001',
-		customer: 'Hùng Dũng',
-		email: 'hungdung@gmail.com',
-		phone: '0398765432',
-		dateToCome: '22/11/2022',
-		timeToCome: '14:00',
-		desc: 'Xem đất canh tác',
-		assignStaff: 'Dang Ninh',
-		status: 'Đang xem',
-	},
-];
 
 export const ManageViewLand = () => {
 	const [filterStatus, setFilterStatus] = useState('');
@@ -46,48 +12,72 @@ export const ManageViewLand = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [selectedRecord, setSelectedRecord] = useState(null);
 	const [assignedStaff, setAssignedStaff] = useState(null);
+	const [request, setRequest] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	const pageSize = 10;
+	const dispatch = useDispatch();
 
-	const filteredRequests = requestViewLand.filter((request) => {
-		const matchesStatus = filterStatus ? request.status === filterStatus : true;
-		const matchesStaff = filterStaff ? request.assignStaff === filterStaff : true;
-		return matchesStatus && matchesStaff;
-	});
+	const loadingFromRedux = useSelector((state) => state.landSlice.loading);
+
+	useEffect(() => {
+		fetchRequests(currentPage, filterStatus, filterStaff);
+	}, [currentPage, filterStatus, filterStaff]);
+
+	const fetchRequests = (page, status, staff) => {
+		dispatch(getListOfRequestViewLand({page_size: pageSize, page_index: page, status, staff}))
+			.then((response) => {
+				if (response.payload.statusCode === 200) {
+					console.log('Data fetched:', response.payload.metadata);
+					setRequest(response.payload.metadata.requests);
+					setTotalPages(response.payload.metadata.pagination.total_page);
+				} else {
+					console.error('Error fetching data:', response.payload);
+				}
+			})
+			.catch((error) => {
+				console.error('Caught error:', error);
+			});
+	};
 
 	const columns = [
 		{
-			title: 'ID Yêu Cầu',
-			dataIndex: 'id',
-			key: 'id',
+			title: 'Khách Hàng',
+			dataIndex: 'guest_full_name',
+			key: 'guest_full_name',
 			render: (text) => <a>{text}</a>,
 		},
 		{
-			title: 'Khách Hàng',
-			dataIndex: 'customer',
-			key: 'customer',
+			title: 'Email',
+			dataIndex: 'guest_email',
+			key: 'guest_email',
 		},
 		{
-			title: 'Email',
-			dataIndex: 'email',
-			key: 'email',
+			title: 'Số Điện Thoại',
+			dataIndex: 'guest_phone',
+			key: 'guest_phone',
 		},
-		// {
-		// 	title: 'Số Điện Thoại',
-		// 	dataIndex: 'phone',
-		// 	key: 'phone',
-		// },
 		{
 			title: 'Ngày Đến',
 			key: 'dateToCome',
-			render: ({dateToCome, timeToCome}) => (
+			render: ({time_start}) => (
 				<div>
-					{dateToCome} - {timeToCome}
+					{new Date(time_start).toLocaleString('vi-VN', {
+						year: 'numeric',
+						month: 'long',
+						day: '2-digit',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false,
+						timeZone: 'Asia/Ho_Chi_Minh',
+					})}
 				</div>
 			),
 		},
 		{
 			title: 'Mô Tả',
-			dataIndex: 'desc',
-			key: 'desc',
+			key: 'description',
+			render: ({description}) => <div>{description ? description : 'Không có'}</div>,
 		},
 		{
 			title: 'Nhân Viên',
@@ -101,14 +91,14 @@ export const ManageViewLand = () => {
 			render: (status) => (
 				<Tag
 					color={
-						status === 'Đã phân công'
-							? 'green'
-							: status === 'Chờ phân công'
-								? 'blue'
-								: 'orange'
+						status === 'assigned' ? 'blue' : status === 'completed' ? 'green' : 'orange'
 					}
 				>
-					{status}
+					{status === 'assigned'
+						? 'Đã phân công'
+						: status === 'completed'
+							? 'Hoàn thành'
+							: 'Chờ phân công'}
 				</Tag>
 			),
 		},
@@ -118,7 +108,7 @@ export const ManageViewLand = () => {
 			render: (_, record) => (
 				<Space size="middle">
 					<Button
-						disabled={record.status !== 'Chờ phân công'}
+						disabled={record.status !== 'pending'}
 						type="primary"
 						onClick={() => {
 							setSelectedRecord(record);
@@ -133,12 +123,15 @@ export const ManageViewLand = () => {
 	];
 
 	const handleAssign = () => {
-		if (selectedRecord) {
-			// Here you can update the staff assignment in your actual data management logic
-			// For this example, we just log the information
-			console.log(`Assigned ${assignedStaff} to ${selectedRecord.customer}`);
+		if (selectedRecord && assignedStaff) {
+			console.log(`Assigned ${assignedStaff} to ${selectedRecord.guest_full_name}`);
 			setIsModalVisible(false);
+			// You might want to dispatch an action to update the assigned staff in your backend here
 		}
+	};
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
 	};
 
 	return (
@@ -149,19 +142,25 @@ export const ManageViewLand = () => {
 				<span>Lọc theo trạng thái:</span>
 				<Select
 					placeholder="Chọn Trạng Thái"
-					onChange={(value) => setFilterStatus(value)}
+					onChange={(value) => {
+						setFilterStatus(value);
+						setCurrentPage(1); // Reset to first page on filter change
+					}}
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
-					<Option value="Đã phân công">Đã phân công</Option>
-					<Option value="Chờ phân công">Chờ phân công</Option>
-					<Option value="Đang xem">Đang xem</Option>
+					<Option value="assigned">Đã phân công</Option>
+					<Option value="pending">Chờ phân công</Option>
+					<Option value="completed">Hoàn thành</Option>
 				</Select>
 
 				<span>Lọc theo nhân viên:</span>
 				<Select
 					placeholder="Chọn Nhân Viên"
-					onChange={(value) => setFilterStaff(value)}
+					onChange={(value) => {
+						setFilterStaff(value);
+						setCurrentPage(1); // Reset to first page on filter change
+					}}
 					style={{width: '20%'}}
 				>
 					<Option value="">Tất cả</Option>
@@ -171,17 +170,26 @@ export const ManageViewLand = () => {
 			</div>
 
 			<Table
+				loading={loadingFromRedux}
 				columns={columns}
-				dataSource={filteredRequests}
-				pagination={{pageSize: 5}}
-				rowKey="email"
+				dataSource={request}
+				pagination={{
+					current: currentPage,
+					pageSize,
+					total: Number(totalPages) * Number(pageSize),
+					onChange: handlePageChange,
+				}}
+				rowKey="id"
 				className={styles.tableContainer}
 			/>
 
 			<Modal
 				title="Chọn Nhân Viên Phân Công"
 				visible={isModalVisible}
-				onCancel={() => setIsModalVisible(false)}
+				onCancel={() => {
+					setIsModalVisible(false);
+					setAssignedStaff(null); // Clear assigned staff on modal close
+				}}
 				onOk={handleAssign}
 				cancelText="Hủy"
 				okText="Phân công"

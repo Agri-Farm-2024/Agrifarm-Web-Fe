@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import userSlice from './slices/userSlice';
 import plantSlice from './slices/plantSlice';
 import serviceSlice from './slices/serviceSlice';
+import {landSlice} from './slices/landSlice';
 
 const rootPersistConfig = {
 	key: 'root',
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
 	userSlice: userSlice.reducer,
 	plantSlice: plantSlice.reducer,
 	serviceSlice: serviceSlice.reducer,
+	landSlice: landSlice.reducer,
 	//add more slices here
 });
 
