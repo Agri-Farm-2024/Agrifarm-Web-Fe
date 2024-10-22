@@ -27,11 +27,13 @@ export const createCrop = createAsyncThunk(
 	}
 );
 
-export const removePlant = createAsyncThunk(
-	'plantSlice/removePlant',
-	async (plantId, {rejectWithValue}) => {
+export const updateStatusPlant = createAsyncThunk(
+	'plantSlice/updateStatusPlant',
+	async (formData, {rejectWithValue}) => {
 		try {
-			const response = await api.delete(`/plants/${plantId}`);
+			const response = await api.patch(`/plants/${formData.plantId}`, {
+				status: formData.status,
+			});
 			return response.data;
 		} catch (error) {
 			console.error(error);
@@ -97,16 +99,16 @@ const plantSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload || 'Plant creation failed';
 			})
-			.addCase(removePlant.pending, (state) => {
+			.addCase(updateStatusPlant.pending, (state) => {
 				state.loading = true;
 				state.error = null;
 			})
-			.addCase(removePlant.fulfilled, (state, action) => {
+			.addCase(updateStatusPlant.fulfilled, (state, action) => {
 				state.loading = false;
 			})
-			.addCase(removePlant.rejected, (state, action) => {
+			.addCase(updateStatusPlant.rejected, (state, action) => {
 				state.loading = false;
-				state.error = action.payload || 'Plant deleting failed';
+				state.error = action.payload;
 			});
 	},
 });
