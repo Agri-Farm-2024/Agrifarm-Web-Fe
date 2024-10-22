@@ -3,11 +3,11 @@ import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
 import {formatNumber} from '../../utils';
 import {ManagePlantDetailModal} from './ManagePlantDetailModal';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, RetweetOutlined} from '@ant-design/icons';
 import {ManagePlantUpdateModal} from './ManagePlantUpdateModal';
 import {ManagePlantCreateModal} from './ManagePlantCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
-import {getPlantList, removePlant} from '../../redux/slices/plantSlice';
+import {getPlantList, updateStatusPlant} from '../../redux/slices/plantSlice';
 import {isLoadingPlant, plantListSelector} from '../../redux/selectors';
 
 const data = [
@@ -155,29 +155,40 @@ export const ManagePlantPage = () => {
 			key: 'action',
 			render: (_, record) => (
 				<Space size="middle">
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log('CLick');
-							setSelectedPlant(record);
-							setIsUpdateModalOpen(true);
-						}}
-						color="primary"
-						variant="filled"
-						icon={<EditOutlined />}
-					></Button>
-
-					<Popconfirm
-						onClick={(e) => e.stopPropagation()}
-						title="Xoá giống cây"
-						description="Bạn muốn xoá giống cây này?"
-						onConfirm={(e) => handleRemovePlant(e, record.id)}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Xoá"
-						cancelText="Huỷ"
-					>
-						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
+					{record.status == 'active' && (
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Xoá giống cây"
+							description="Bạn muốn xoá giống cây này?"
+							onConfirm={(e) => handleUpdateStatusPlant(e, record.id, true)}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Xoá"
+							cancelText="Huỷ"
+						>
+							<Button
+								color="danger"
+								variant="filled"
+								icon={<DeleteOutlined />}
+							></Button>
+						</Popconfirm>
+					)}
+					{record.status == 'inactive' && (
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Khôi phục giống cây"
+							description="Bạn muốn khôi phục giống cây này?"
+							onConfirm={(e) => handleUpdateStatusPlant(e, record.id, false)}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Khôi phục"
+							cancelText="Huỷ"
+						>
+							<Button
+								color="primary"
+								variant="filled"
+								icon={<RetweetOutlined />}
+							></Button>
+						</Popconfirm>
+					)}
 				</Space>
 			),
 		},
@@ -218,17 +229,29 @@ export const ManagePlantPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleRemovePlant = (e, plantId) => {
+	const handleUpdateStatusPlant = (e, plantId, isDelete) => {
 		e.stopPropagation();
 		console.log('Remove Plant', plantId);
-		dispatch(removePlant(plantId))
+		const formData = {
+			plantId: plantId,
+			status: isDelete ? 'inactive' : 'active',
+		};
+		dispatch(updateStatusPlant(formData))
 			.then((response) => {
 				console.log('remove response: ' + JSON.stringify(response));
 				if (response.payload && response.payload.statusCode == 200) {
-					message.success('Xoá giống cây thành công!');
-					fetchPlantList(1);
+					if (isDelete) {
+						message.success('Xoá giống cây thành công!');
+					} else {
+						message.success('Đã khôi phục giống cây!');
+					}
+					fetchPlantList(currentPage);
 				} else {
-					message.error('Xoá giống cây thất bại!');
+					if (isDelete) {
+						message.error('Xoá giống cây thất bại!');
+					} else {
+						message.error('Khôi phục giống cây thất bại!');
+					}
 				}
 			})
 			.catch((error) => {
@@ -321,12 +344,6 @@ export const ManagePlantPage = () => {
 				<ManagePlantDetailModal
 					isModalOpen={isModalOpen}
 					handleModalClose={handleModalClose}
-					selectedPlant={selectedPlant}
-				/>
-
-				<ManagePlantUpdateModal
-					isModalOpen={isUpdateModalOpen}
-					handleModalClose={handleUpdateModalClose}
 					selectedPlant={selectedPlant}
 				/>
 
