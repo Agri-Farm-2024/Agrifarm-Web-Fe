@@ -17,6 +17,20 @@ export const handleLogin = createAsyncThunk(
 	}
 );
 
+export const getListOfStaff = createAsyncThunk(
+	'userLoginSlice/getListOfStaff',
+	async (_, {rejectWithValue}) => {
+		try {
+			const data = await api.get(`/users?role=2&page_size=20&page_index=1`);
+
+			return data.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: {
@@ -40,6 +54,7 @@ const userSlice = createSlice({
 					'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3NjRiNjE0LTMyYTgtNDQyZi05ZTM4LTNmZDcwNGQ1OGY3NSIsImVtYWlsIjoibWFuYWdlckBnbWFpbC5jb20iLCJmdWxsX25hbWUiOiJNYW5hZ2VyIiwicm9sZSI6MSwiaWF0IjoxNzI4OTk0NjM4fQ.KwwR__XA3aGUtkkxQQRKaEEjRw0d9cYMOWwZDFLlXral1tbYKvDh_E0IwqBLkZbpoY8poZgrHLPDEvf16cIfDU4XRyugyXCUsil8h041fVcTe0OCqy4cjJ4NFtzNZvEPM0qBYU6HGnL1UQ8uMfM_LixdtkUwQ57vlWkhbqw-Mxz0LOlJJMjPr-kULnenQ9JwcsrnQBwpQcpAjSNYIzonfPlXJ2E93ZqJNJ1g5zbmjYGOsd4Px9vrpY_zk751lsIA_H-1v3biAp0gWifx72Yr_OfJXU6C0KYQjgw6Q6giZAXsRvgQ0OUgBbaf8aUh7szm60yOrtEAbEKbE9BHNv464fTwDxg_SosAHdvWcwdSj_74ML9r21D6h7pfh-0j_6NxY_TtXGdTVOE9AmtfpZMYioUcL3cDs26Y4cBJeqfgdgspMLkBrAzai2Jl88og8hWCrVFYNe7ueDzd6JhjeXb2iwfWaewaR1SXpcQjj1K6q8H3HfXIpAlRxjILQ8k6PIYNjjavwo8qPIqtXD3FyZqxhkuo_hzHIjW1EZKRvVYVuslwS4zHQZTjcT-6HDN8HillyI57u-F7VvlJueRC2U22Ha1ZOLgkb51zv6Kc4BKi_hxPFS5TZs68CIQeRvx174VUm4gFUWR6apSlcULLPagJadgh5br-hNBqY_Q50H6ONQI',
 			},
 		},
+		listOfStaff: [],
 		loading: false,
 		error: null,
 	},
@@ -60,6 +75,19 @@ const userSlice = createSlice({
 				localStorage.setItem('user', JSON.stringify(action.payload.metadata));
 			})
 			.addCase(handleLogin.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Login failed';
+			})
+
+			.addCase(getListOfStaff.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getListOfStaff.fulfilled, (state, action) => {
+				state.loading = false;
+				state.listOfStaff = action.payload.metadata;
+			})
+			.addCase(getListOfStaff.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Login failed';
 			});

@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './ManagePlantPage.module.css';
 import {Descriptions, Modal, Tag} from 'antd';
 import {formatNumber} from '../../utils';
 
