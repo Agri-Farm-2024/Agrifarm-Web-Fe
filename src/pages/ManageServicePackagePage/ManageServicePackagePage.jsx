@@ -1,11 +1,12 @@
 import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageServicePackagePage.module.css';
 import {ManageServicePackageDetailModal} from './ManageServicePackageDetailModal';
 import {CaretRightOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageServicePackageUpdateModal} from './ManageServicePackageUpdateModal';
 import {formatNumber} from '../../utils';
 import {ManageServicePackageCreateModal} from './ManageServicePackageCreateModal';
+import {useDispatch} from 'react-redux';
 
 const data = [
 	{
@@ -204,6 +205,16 @@ export const ManageServicePackagePage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
+
+	const dispatch = useDispatch();
+
+	// useEffect(() => {
+	// 	const params ={
+
+	// 	}
+
+	// 	dispatch(getServicePackageList())
+	// }, [])
 
 	const handleRowClick = (record) => {
 		setSelectedServicePackage(record);

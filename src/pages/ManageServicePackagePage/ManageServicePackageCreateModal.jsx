@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageServicePackagePage.module.css';
-import {Form, Input, InputNumber, Modal, Radio, Select} from 'antd';
+import {Form, Input, InputNumber, Modal, Radio, Select, message} from 'antd';
+import {createServicePackage} from '../../redux/slices/serviceSlice';
+import {useDispatch} from 'react-redux';
 
 const statusOptions = [
 	{
@@ -19,9 +21,40 @@ const statusOptions = [
 
 export const ManageServicePackageCreateModal = ({handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
+	const dispatch = useDispatch();
 
 	const onFinish = (values) => {
 		console.log('Success:', values);
+
+		const formData = {
+			name: values.servicePackageName,
+			description: values.servicePackageDescription,
+			process_of_plant: true,
+			material: !!values.isMaterial, //convert to boolean
+			purchase: !!values.isPurchase,
+			price: values.price,
+		};
+
+		dispatch(createServicePackage(formData))
+			.then((response) => {
+				console.log('response', response);
+				if (response.payload && response.payload.statusCode) {
+					if (response.payload.statusCode !== 201) {
+						if (response.payload.message === 'Service package already exists') {
+							message.error(`Gói dịch vụ đã tồn tại`);
+						}
+					}
+
+					if (response.payload.statusCode === 201) {
+						message.success('Tạo gói dịch vụ thành công.');
+						handleModalClose();
+					}
+				}
+			})
+			.catch((err) => {
+				message.error('Tạo gói dịch vụ thất bại');
+				console.log('Tạo gói dịch vụ thất bại', err);
+			});
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
@@ -102,7 +135,7 @@ export const ManageServicePackageCreateModal = ({handleModalClose, isModalOpen})
 					</Radio.Group>
 				</Form.Item>
 
-				<Form.Item
+				{/* <Form.Item
 					label="Trạng thái"
 					name="status"
 					rules={[
@@ -118,7 +151,7 @@ export const ManageServicePackageCreateModal = ({handleModalClose, isModalOpen})
 						placeholder="Chọn trạng thái"
 						options={statusOptions}
 					></Select>
-				</Form.Item>
+				</Form.Item> */}
 
 				<Form.Item
 					label="Giá gói dịch vụ (VND)"

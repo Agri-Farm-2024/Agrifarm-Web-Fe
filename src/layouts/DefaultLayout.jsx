@@ -36,7 +36,7 @@ import {getRole} from '../utils';
 const {Footer, Sider, Content} = Layout;
 const {SubMenu} = Menu;
 
-const getItem = (label, key, icon, children) => ({key, icon, label, children});
+const getItem = (label, key, icon, items) => ({key, icon, label, items});
 
 export const DefaultLayout = ({children}) => {
 	const navigate = useNavigate();
@@ -183,10 +183,10 @@ export const DefaultLayout = ({children}) => {
 					selectedKeys={[selectMenu]}
 					mode="inline"
 				>
-					{items.map((item) =>
-						item.children ? (
+					{items.map((item, index) =>
+						item.items ? (
 							<SubMenu key={item.key} icon={item.icon} title={item.label}>
-								{item.children.map((child) => (
+								{item.items.map((child, indexItem) => (
 									<Menu.Item key={child.key} icon={child.icon}>
 										<Link to={child.key}>{child.label}</Link>
 									</Menu.Item>

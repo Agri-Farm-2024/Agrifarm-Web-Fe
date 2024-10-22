@@ -1,11 +1,14 @@
-import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag, message} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
 import {formatNumber} from '../../utils';
 import {ManagePlantDetailModal} from './ManagePlantDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManagePlantUpdateModal} from './ManagePlantUpdateModal';
 import {ManagePlantCreateModal} from './ManagePlantCreateModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getPlantList, removePlant} from '../../redux/slices/plantSlice';
+import {isLoadingPlant, plantListSelector} from '../../redux/selectors';
 
 const data = [
 	{
@@ -107,50 +110,41 @@ const plantTypeOptions = [
 export const ManagePlantPage = () => {
 	const columns = [
 		{
-			title: 'ID giống cây',
-			dataIndex: 'plantId',
-			key: 'plantId',
-			render: (text) => <a>{text}</a>,
+			title: '#',
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => index + 1,
 		},
+		// {
+		// 	title: 'ID giống cây',
+		// 	dataIndex: 'id',
+		// 	key: 'id',
+		// 	render: (text) => <a>{text}</a>,
+		// },
 		{
 			title: 'Tên giống cây',
-			dataIndex: 'plantName',
-			key: 'plantName',
+			dataIndex: 'name',
+			key: 'name',
 		},
-		{
-			title: 'Loại giống cây',
-			dataIndex: 'plantType',
-			key: 'plantType',
-		},
-		{
-			title: 'Thời gian sinh trưởng (ngày)',
-			dataIndex: 'growthTime',
-			key: 'growthTime',
-		},
-		{
-			title: 'Năng suất trung bình (kg/m2)',
-			dataIndex: 'averageYield',
-			key: 'averageYield',
-		},
+		// {
+		// 	title: 'Thời gian sinh trưởng (ngày)',
+		// 	dataIndex: 'growthTime',
+		// 	key: 'growthTime',
+		// },
 		{
 			title: 'Trạng thái',
 			key: 'status',
 			dataIndex: 'status',
 			render: (_, {status}) => (
 				<>
-					{status == 'Đang hỗ trợ' && (
+					{status == 'active' && (
 						<Tag color="green" key={status}>
-							{status}
+							Đang hỗ trợ
 						</Tag>
 					)}
-					{status == 'Ngừng hỗ trợ' && (
+					{status == 'inactive' && (
 						<Tag color="red" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Tạm ngừng' && (
-						<Tag color="gold" key={status}>
-							{status}
+							Ngừng hỗ trợ
 						</Tag>
 					)}
 				</>
@@ -177,7 +171,7 @@ export const ManagePlantPage = () => {
 						onClick={(e) => e.stopPropagation()}
 						title="Xoá giống cây"
 						description="Bạn muốn xoá giống cây này?"
-						onConfirm={handleRemovePlant}
+						onConfirm={(e) => handleRemovePlant(e, record.id)}
 						onCancel={(e) => e.stopPropagation()}
 						okText="Xoá"
 						cancelText="Huỷ"
@@ -196,14 +190,50 @@ export const ManagePlantPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
 
+	const plantList = useSelector(plantListSelector);
+	const loading = useSelector(isLoadingPlant);
+	console.log(plantList);
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		fetchPlantList(1);
+	}, []);
+
+	const fetchPlantList = (pageNumber) => {
+		try {
+			setCurrentPage(pageNumber);
+			const params = {
+				page_size: pageSize,
+				page_index: pageNumber,
+			};
+			dispatch(getPlantList(params));
+		} catch (error) {
+			console.log('Error fetching plant list: ' + error);
+		}
+	};
+
 	const handleRowClick = (record) => {
 		setSelectedPlant(record);
 		setIsModalOpen(true);
 	};
 
-	const handleRemovePlant = (e) => {
+	const handleRemovePlant = (e, plantId) => {
 		e.stopPropagation();
-		console.log('Remove Plant');
+		console.log('Remove Plant', plantId);
+		dispatch(removePlant(plantId))
+			.then((response) => {
+				console.log('remove response: ' + JSON.stringify(response));
+				if (response.payload && response.payload.statusCode == 200) {
+					message.success('Xoá giống cây thành công!');
+					fetchPlantList(1);
+				} else {
+					message.error('Xoá giống cây thất bại!');
+				}
+			})
+			.catch((error) => {
+				console.log('remove error: ' + error);
+			});
 	};
 
 	const handleModalClose = () => {
@@ -226,7 +256,7 @@ export const ManagePlantPage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý giống cây</p>
 				<div className={styles.filterContainer}>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo tên giống cây:</span>
 						<Input className={styles.filterInput} />
 					</div>
@@ -251,7 +281,7 @@ export const ManagePlantPage = () => {
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
 						></Select>
-					</div>
+					</div> */}
 					<Button
 						type="primary"
 						onClick={() => {
@@ -264,8 +294,9 @@ export const ManagePlantPage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="plantId"
-					dataSource={data}
+					rowKey="id"
+					loading={isLoadingPlant}
+					dataSource={plantList.plants || []}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
@@ -277,9 +308,11 @@ export const ManagePlantPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: plantList.pagination
+							? plantList?.pagination.total_page * pageSize //total items
+							: 1,
 						onChange: (page) => {
-							setCurrentPage(page);
+							fetchPlantList(page);
 						},
 					}}
 					className={styles.table}

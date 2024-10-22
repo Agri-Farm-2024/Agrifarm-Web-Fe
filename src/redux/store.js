@@ -1,8 +1,9 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import {persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import {userSlice} from './slices/userSlice';
+import userSlice from './slices/userSlice';
 import plantSlice from './slices/plantSlice';
+import serviceSlice from './slices/serviceSlice';
 
 const rootPersistConfig = {
 	key: 'root',
@@ -13,6 +14,7 @@ const rootPersistConfig = {
 const rootReducer = combineReducers({
 	userSlice: userSlice.reducer,
 	plantSlice: plantSlice.reducer,
+	serviceSlice: serviceSlice.reducer,
 	//add more slices here
 });
 
