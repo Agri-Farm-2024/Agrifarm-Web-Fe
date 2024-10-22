@@ -1,17 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Select, Button, Space, Tag, Modal} from 'antd';
+import {Table, Select, Button, Space, Tag, Modal, message} from 'antd';
 import styles from './ManageViewLand.module.css';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfRequestViewLand} from '../../redux/slices/landSlice';
+import {ManageViewLandDetailModal} from './ManageViewLandDetailModal';
+import {getListOfStaff} from '../../redux/slices/userSlice';
+import {assignForTask} from '../../redux/slices/requestSlice';
 
 const {Option} = Select;
 
 export const ManageViewLand = () => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
 	const [filterStatus, setFilterStatus] = useState('');
 	const [filterStaff, setFilterStaff] = useState('');
-	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isModalAssignVisible, setIsModalAssignVisible] = useState(false);
 	const [selectedRecord, setSelectedRecord] = useState(null);
+	const [staffList, setStaffList] = useState([]);
 	const [assignedStaff, setAssignedStaff] = useState(null);
+	const [taskID, setTaskID] = useState(null);
 	const [request, setRequest] = useState([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
@@ -23,6 +30,19 @@ export const ManageViewLand = () => {
 	useEffect(() => {
 		fetchRequests(currentPage, filterStatus, filterStaff);
 	}, [currentPage, filterStatus, filterStaff]);
+
+	useEffect(() => {
+		dispatch(getListOfStaff())
+			.then((res) => {
+				if (res.payload.statusCode === 200) {
+					console.log('getListOfStaff: ' + JSON.stringify(res.payload.metadata.users));
+					setStaffList(res.payload.metadata.users);
+				}
+			})
+			.catch((error) => {
+				console.error('Caught error:', error);
+			});
+	}, []);
 
 	const fetchRequests = (page, status, staff) => {
 		dispatch(getListOfRequestViewLand({page_size: pageSize, page_index: page, status, staff}))
@@ -57,6 +77,7 @@ export const ManageViewLand = () => {
 			dataIndex: 'guest_phone',
 			key: 'guest_phone',
 		},
+
 		{
 			title: 'Ngày Đến',
 			key: 'dateToCome',
@@ -75,14 +96,26 @@ export const ManageViewLand = () => {
 			),
 		},
 		{
+			title: 'Ngày gửi',
+			key: 'created_at',
+			render: ({created_at}) => (
+				<div>
+					{new Date(created_at).toLocaleString('vi-VN', {
+						year: 'numeric',
+						month: 'long',
+						day: '2-digit',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false,
+						timeZone: 'Asia/Ho_Chi_Minh',
+					})}
+				</div>
+			),
+		},
+		{
 			title: 'Mô Tả',
 			key: 'description',
 			render: ({description}) => <div>{description ? description : 'Không có'}</div>,
-		},
-		{
-			title: 'Nhân Viên',
-			dataIndex: 'assignStaff',
-			key: 'assignStaff',
 		},
 		{
 			title: 'Trạng Thái',
@@ -102,36 +135,61 @@ export const ManageViewLand = () => {
 				</Tag>
 			),
 		},
-		{
-			title: 'Hành Động',
-			key: 'actions',
-			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						disabled={record.status !== 'pending'}
-						type="primary"
-						onClick={() => {
-							setSelectedRecord(record);
-							setIsModalVisible(true);
-						}}
-					>
-						Chọn nhân viên
-					</Button>
-				</Space>
-			),
-		},
+		// {
+		// 	title: 'Hành Động',
+		// 	key: 'actions',
+		// 	render: (_, record) => (
+		// 		<Space size="middle">
+		// 			<Button
+		// 				disabled={record.status !== 'pending'}
+		// 				type="primary"
+		// 				onClick={(e) => {
+		// 					e.stopPropagation();
+
+		// 					setSelectedRecord(record);
+		// 					setIsModalAssignVisible(true);
+		// 				}}
+		// 			>
+		// 				Chọn nhân viên
+		// 			</Button>
+		// 		</Space>
+		// 	),
+		// },
 	];
 
 	const handleAssign = () => {
-		if (selectedRecord && assignedStaff) {
-			console.log(`Assigned ${assignedStaff} to ${selectedRecord.guest_full_name}`);
-			setIsModalVisible(false);
-			// You might want to dispatch an action to update the assigned staff in your backend here
+		if (taskID && assignedStaff) {
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			dispatch(assignForTask({taskID: taskID, staffID: assignedStaff}))
+				.then((res) => {
+					hideLoading();
+					if (res.payload.statusCode === 200) {
+						message.success('Đã phân công');
+						fetchRequests(currentPage, filterStatus, filterStaff);
+						setIsModalAssignVisible(false);
+						setIsModalOpen(false);
+					}
+				})
+				.catch((error) => {
+					hideLoading();
+					console.error('Caught error:', error);
+					message.error('Không thành công');
+				});
 		}
+	};
+
+	const handleOpenAssignModal = (task) => {
+		setTaskID(task);
+		setIsModalAssignVisible(true);
 	};
 
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
+	};
+
+	const handleRowClick = (record) => {
+		setSelectedRecord(record);
+		setIsModalOpen(true);
 	};
 
 	return (
@@ -154,7 +212,7 @@ export const ManageViewLand = () => {
 					<Option value="completed">Hoàn thành</Option>
 				</Select>
 
-				<span>Lọc theo nhân viên:</span>
+				{/* <span>Lọc theo nhân viên:</span>
 				<Select
 					placeholder="Chọn Nhân Viên"
 					onChange={(value) => {
@@ -166,7 +224,7 @@ export const ManageViewLand = () => {
 					<Option value="">Tất cả</Option>
 					<Option value="Dang Ninh">Dang Ninh</Option>
 					<Option value="Ba Phuoc">Ba Phuoc</Option>
-				</Select>
+				</Select> */}
 			</div>
 
 			<Table
@@ -181,13 +239,17 @@ export const ManageViewLand = () => {
 				}}
 				rowKey="id"
 				className={styles.tableContainer}
+				onRow={(record) => ({
+					onClick: () => handleRowClick(record),
+				})}
+				rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
 			/>
 
 			<Modal
 				title="Chọn Nhân Viên Phân Công"
-				visible={isModalVisible}
+				visible={isModalAssignVisible}
 				onCancel={() => {
-					setIsModalVisible(false);
+					setIsModalAssignVisible(false);
 					setAssignedStaff(null); // Clear assigned staff on modal close
 				}}
 				onOk={handleAssign}
@@ -199,10 +261,19 @@ export const ManageViewLand = () => {
 					onChange={(value) => setAssignedStaff(value)}
 					style={{width: '100%'}}
 				>
-					<Option value="Dang Ninh">Dang Ninh</Option>
-					<Option value="Ba Phuoc">Ba Phuoc</Option>
+					{staffList.map((staff) => (
+						<Option value={`${staff.id}`} key={staff.id}>
+							{staff.full_name}
+						</Option>
+					))}
 				</Select>
 			</Modal>
+			<ManageViewLandDetailModal
+				isModalOpen={isModalOpen}
+				handleModalClose={() => setIsModalOpen(false)}
+				selectedRequest={selectedRecord}
+				handleOpenAssignModal={handleOpenAssignModal}
+			/>
 		</div>
 	);
 };
