@@ -17,13 +17,12 @@ export const createServicePackage = createAsyncThunk(
 
 export const getServicePackageList = createAsyncThunk(
 	'serviceSlice/getServicePackageList',
-	async (params, {rejectWithValue}) => {
+	async () => {
 		try {
-			const response = await api.get('/services/getListServicePackages', {params: params});
-			return response.data;
+			const response = await api.get('/services/getListServicePackages');
+			return response.data.metadata;
 		} catch (error) {
 			console.error(error);
-			return rejectWithValue(error.response.data);
 		}
 	}
 );
@@ -31,7 +30,7 @@ export const getServicePackageList = createAsyncThunk(
 const serviceSlice = createSlice({
 	name: 'serviceSlice',
 	initialState: {
-		service: {},
+		service: [],
 		loading: false,
 		error: null,
 	},
