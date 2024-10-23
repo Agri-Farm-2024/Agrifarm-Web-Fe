@@ -11,7 +11,7 @@ const seasonTypeOptions = [
 		label: 'Mùa thuận',
 	},
 	{
-		value: 'out_season',
+		value: 'off_season',
 		label: 'Mùa nghịch',
 	},
 ];
@@ -62,7 +62,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 
 					if (response.payload.statusCode === 201) {
 						message.success('Tạo mùa vụ thành công.');
-						handleModalClose();
+						handleModalClose(true);
 					}
 				}
 			})
@@ -84,22 +84,18 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 		dispatch(getPlantList(formData))
 			.then((response) => {
 				console.log('response:', response);
-				if (response.payload && response.payload.statusCode) {
-					if (response.payload.statusCode === 200) {
-						const newOptions = response.payload.metadata.plants.map(
-							(option, index) => ({
-								key: index + option.name,
-								label: option.name,
-								value: option.id || index + option.name,
-							})
-						);
-						console.log('newOptions:', newOptions);
-						setPlantTypeOptions(newOptions);
+				if (response.payload && response.payload.plants) {
+					const newOptions = response.payload.plants.map((option, index) => ({
+						key: index + option.name,
+						label: option.name,
+						value: option.id || index + option.name,
+					}));
+					console.log('newOptions:', newOptions);
+					setPlantTypeOptions(newOptions);
 
-						//Check whether has more options to fetch
-						if (response.payload.metadata.pagination.total_page == pageIndex) {
-							setHasMorePlants(true);
-						}
+					//Check whether has more options to fetch
+					if (response.payload.pagination.total_page == pageIndex) {
+						setHasMorePlants(true);
 					}
 				} else {
 					console.log('Fetch plant type failed', response);
@@ -112,7 +108,11 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 
 	const handleScroll = (e) => {
 		const {target} = e;
-		if (target.scrollTop + target.offsetHeight === target.scrollHeight && hasMore && !loading) {
+		if (
+			target.scrollTop + target.offsetHeight === target.scrollHeight &&
+			hasMorePlants &&
+			!plantTypeOptionsLoading
+		) {
 			// Load more options when scrolled to the bottom and more data is available
 			const newPageIndex = plantPageNumber + 1;
 			setPlantPageNumber(newPageIndex);
@@ -133,8 +133,10 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}
+			okButtonProps={{loading: plantTypeOptionsLoading}}
 			okText="Tạo"
 			cancelText="Đóng"
+			maskClosable={false}
 			centered
 			width={800}
 		>
@@ -196,7 +198,6 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 						className={styles.inputField}
 						allowClear
 						placeholder="Chọn loại cây"
-						notFoundContent={plantTypeOptionsLoading ? <Spin size="small" /> : null}
 						options={plantTypeOptions || []}
 						onPopupScroll={handleScroll}
 					></Select>

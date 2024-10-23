@@ -1,13 +1,50 @@
 import React from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
-import {Modal} from 'antd';
-import {formatNumber} from '../../utils';
+import {Descriptions, Modal} from 'antd';
+import {formatDate, formatNumber} from '../../utils';
 
 export const ManagePlantSeasonDetailModal = ({
 	selectedPlantSeason,
 	handleModalClose,
 	isModalOpen,
 }) => {
+	const detailItems = selectedPlantSeason && [
+		{
+			key: 'ID',
+			label: 'ID',
+			children: <p>{selectedPlantSeason.name}</p>,
+		},
+		{
+			key: 'plant',
+			label: 'Loại cây',
+			children: <p>{selectedPlantSeason?.plant?.name}</p>,
+		},
+		{
+			key: 'month_start',
+			label: 'Tháng bắt đầu',
+			children: <p>{selectedPlantSeason?.month_start}</p>,
+		},
+		{
+			key: 'price_purchase_per_kg',
+			label: 'Đơn giá',
+			children: <p>{formatNumber(selectedPlantSeason?.price_purchase_per_kg)} VND/kg</p>,
+		},
+		{
+			key: 'price_process',
+			label: 'Giá quy trình theo mùa vụ',
+			children: <p>{formatNumber(selectedPlantSeason?.price_process)} VND</p>,
+		},
+		{
+			key: 'created_at',
+			label: 'Ngày tạo',
+			children: <p>{formatDate(selectedPlantSeason.created_at)}</p>,
+		},
+		{
+			key: 'updated_at',
+			label: 'Ngày cập nhật gần nhất',
+			children: <p>{formatDate(selectedPlantSeason.updated_at)}</p>,
+		},
+	];
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Thông tin mùa vụ</span>}
@@ -18,42 +55,13 @@ export const ManagePlantSeasonDetailModal = ({
 			width={600}
 		>
 			{selectedPlantSeason && (
-				<div className={styles.modalContainer}>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>ID mùa vụ:</p>
-						<p className={styles.content}>{selectedPlantSeason.plantSeasonId}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Tên mùa vụ:</p>
-						<p className={styles.content}>{selectedPlantSeason.plantSeasonName}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Tháng bắt đầu:</p>
-						<p className={styles.content}>{selectedPlantSeason.monthStart}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Loại cây:</p>
-						<p className={styles.content}>{selectedPlantSeason.plantName}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Đơn giá:</p>
-						<p className={styles.content}>
-							{formatNumber(selectedPlantSeason.pricePurchasePerKg)} VND/kg
-						</p>
-					</div>
-
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Giá quy trình theo mùa vụ:</p>
-						<p className={styles.content}>
-							{formatNumber(selectedPlantSeason.priceProcess)} VND
-						</p>
-					</div>
-
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Loại mùa vụ:</p>
-						<p className={styles.content}>{selectedPlantSeason.seasonType}</p>
-					</div>
-				</div>
+				<Descriptions
+					style={{marginTop: 20}}
+					labelStyle={{width: '10rem', fontWeight: 'bold'}}
+					column={1}
+					bordered
+					items={detailItems}
+				/>
 			)}
 		</Modal>
 	);
