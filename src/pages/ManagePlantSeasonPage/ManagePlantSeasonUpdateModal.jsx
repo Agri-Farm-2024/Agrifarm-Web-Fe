@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
-import {DatePicker, Form, Input, InputNumber, Modal, Select} from 'antd';
+import {DatePicker, Form, Input, InputNumber, Modal, Select, message} from 'antd';
 import dayjs from 'dayjs';
+import {isLoadingPlant} from '../../redux/selectors';
+import {useDispatch, useSelector} from 'react-redux';
+import {getPlantList, updatePlantSeason} from '../../redux/slices/plantSlice';
 
 const seasonTypeOptions = [
 	{
-		value: 'Mùa thuận',
 		label: 'Mùa thuận',
+		value: 'in_season',
 	},
 	{
-		value: 'Mùa nghịch',
 		label: 'Mùa nghịch',
+		value: 'off_season',
 	},
 ];
 
@@ -35,23 +38,99 @@ export const ManagePlantSeasonUpdateModal = ({
 	isModalOpen,
 }) => {
 	const [form] = Form.useForm();
+	const [plantTypeOptions, setPlantTypeOptions] = useState([]);
+	const [hasMorePlants, setHasMorePlants] = useState(true);
+	const [plantPageNumber, setPlantPageNumber] = useState(1);
+	const plantLoading = useSelector(isLoadingPlant);
+
+	const dispatch = useDispatch();
 
 	const onFinish = (values) => {
 		console.log('Success:', values);
+		const formData = {
+			id: selectedPlantSeason.id,
+			...values,
+		};
+		dispatch(updatePlantSeason(formData))
+			.then((response) => {
+				console.log('response', response);
+				if (response.payload && response.payload.statusCode) {
+					if (response.payload.statusCode !== 200) {
+						if (response.payload.message === 'Plant season already exist') {
+							message.error(`Mùa vụ đã tồn tại`);
+						}
+					}
+
+					if (response.payload.statusCode === 200) {
+						message.success('Cập nhật mùa vụ thành công.');
+						handleModalClose(true);
+					}
+				}
+			})
+			.catch((err) => {
+				message.error('Cập nhật mùa vụ thất bại');
+				console.log('Cập nhật mùa vụ thất bại', err);
+			});
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
 	};
 
+	const fetchPlantTypeOptions = (pageIndex) => {
+		const formData = {
+			page_index: pageIndex,
+			page_size: 10,
+		};
+
+		dispatch(getPlantList(formData))
+			.then((response) => {
+				console.log('response:', response);
+				if (response.payload && response.payload.plants) {
+					const newOptions = response.payload.plants.map((option, index) => ({
+						key: index + option.name,
+						label: option.name,
+						value: option.id || index + option.name,
+					}));
+					console.log('newOptions:', newOptions);
+					setPlantTypeOptions(newOptions);
+
+					//Check whether has more options to fetch
+					if (response.payload.pagination.total_page == pageIndex) {
+						setHasMorePlants(true);
+					}
+				} else {
+					console.log('Fetch plant type failed', response);
+				}
+			})
+			.catch((error) => {
+				console.log('Error', error);
+			});
+	};
+
+	const handleScroll = (e) => {
+		const {target} = e;
+		if (
+			target.scrollTop + target.offsetHeight === target.scrollHeight &&
+			hasMorePlants &&
+			!plantLoading
+		) {
+			// Load more options when scrolled to the bottom and more data is available
+			const newPageIndex = plantPageNumber + 1;
+			setPlantPageNumber(newPageIndex);
+			fetchPlantTypes(newPageIndex);
+		}
+	};
+
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
-			form.setFieldValue('plantSeasonName', selectedPlantSeason.plantSeasonName);
-			form.setFieldValue('plantName', selectedPlantSeason.plantName);
-			form.setFieldValue('monthStart', dayjs(selectedPlantSeason.monthStart, 'MM-YYYY'));
-			form.setFieldValue('pricePurchasePerKg', selectedPlantSeason.pricePurchasePerKg);
-			form.setFieldValue('priceProcess', selectedPlantSeason.priceProcess);
-			form.setFieldValue('seasonType', selectedPlantSeason.seasonType);
+			setPlantPageNumber(1);
+			fetchPlantTypeOptions(1);
+			form.setFieldValue('plant_id', selectedPlantSeason.plant_id);
+			form.setFieldValue('month_start', selectedPlantSeason.month_start);
+			form.setFieldValue('price_purchase_per_kg', selectedPlantSeason.price_purchase_per_kg);
+			form.setFieldValue('price_process', selectedPlantSeason.price_process);
+			form.setFieldValue('type', selectedPlantSeason.type);
 		}
 	}, [isModalOpen]);
 	return (
@@ -60,10 +139,12 @@ export const ManagePlantSeasonUpdateModal = ({
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}
+			okButtonProps={{loading: plantLoading}}
 			okText="Cập nhật"
 			cancelText="Đóng"
 			centered
 			width={800}
+			maskClosable={false}
 		>
 			{selectedPlantSeason && (
 				<Form
@@ -83,20 +164,8 @@ export const ManagePlantSeasonUpdateModal = ({
 					autoComplete="off"
 				>
 					<Form.Item
-						label="Tên mùa vụ"
-						name="plantSeasonName"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Input label="Tên mùa vụ" className={styles.inputField} />
-					</Form.Item>
-					<Form.Item
 						label="Tháng bắt đầu"
-						name="monthStart"
+						name="month_start"
 						rules={[
 							{
 								required: true,
@@ -104,17 +173,12 @@ export const ManagePlantSeasonUpdateModal = ({
 							},
 						]}
 					>
-						<DatePicker
-							picker="month"
-							placeholder="MM-YYYY"
-							format={'MM-YYYY'}
-							className={styles.inputField}
-						/>
+						<InputNumber placeholder="Tháng bắt đầu" className={styles.inputField} />
 					</Form.Item>
 
 					<Form.Item
 						label="Loại cây"
-						name="plantName"
+						name="plant_id"
 						rules={[
 							{
 								required: true,
@@ -126,13 +190,14 @@ export const ManagePlantSeasonUpdateModal = ({
 							className={styles.inputField}
 							allowClear
 							placeholder="Chọn loại cây"
-							options={plantTypeOptions}
+							options={plantTypeOptions || []}
+							onPopupScroll={handleScroll}
 						></Select>
 					</Form.Item>
 
 					<Form.Item
 						label="Đơn giá (VND/kg)"
-						name="pricePurchasePerKg"
+						name="price_purchase_per_kg"
 						rules={[
 							{
 								required: true,
@@ -154,8 +219,8 @@ export const ManagePlantSeasonUpdateModal = ({
 					</Form.Item>
 
 					<Form.Item
-						label="Giá quy trình theo mù vụ"
-						name="priceProcess"
+						label="Giá quy trình theo mùa vụ"
+						name="price_process"
 						rules={[
 							{
 								required: true,
@@ -178,7 +243,7 @@ export const ManagePlantSeasonUpdateModal = ({
 
 					<Form.Item
 						label="Loại mùa vụ"
-						name="seasonType"
+						name="type"
 						rules={[
 							{
 								required: true,
@@ -191,6 +256,7 @@ export const ManagePlantSeasonUpdateModal = ({
 							allowClear
 							placeholder="Chọn loại mùa vụ"
 							options={seasonTypeOptions}
+							loading={plantLoading}
 						></Select>
 					</Form.Item>
 				</Form>

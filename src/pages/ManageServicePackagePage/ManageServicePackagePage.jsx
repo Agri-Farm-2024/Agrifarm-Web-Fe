@@ -6,7 +6,9 @@ import {CaretRightOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icon
 import {ManageServicePackageUpdateModal} from './ManageServicePackageUpdateModal';
 import {formatNumber} from '../../utils';
 import {ManageServicePackageCreateModal} from './ManageServicePackageCreateModal';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {isLoadingService, servicePackageListSelector} from '../../redux/selectors';
+import {getServicePackageList} from '../../redux/slices/serviceSlice';
 
 const data = [
 	{
@@ -90,63 +92,44 @@ const serviceTypeOptions = [
 export const ManageServicePackagePage = () => {
 	const columns = [
 		{
-			title: 'ID gói dịch vụ',
-			dataIndex: 'servicePackageId',
-			key: 'servicePackageId',
-			render: (text) => <a>{text}</a>,
+			title: '#',
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{index + 1}</a>,
 		},
 		{
 			title: 'Tên gói dịch vụ',
-			dataIndex: 'servicePackageName',
-			key: 'servicePackageName',
+			dataIndex: 'name',
+			key: 'name',
 		},
 		{
 			title: 'Mô tả',
-			dataIndex: 'servicePackageDescription',
-			key: 'servicePackageDescription',
+			dataIndex: 'description',
+			key: 'description',
 		},
 		{
-			title: 'Bao tiêu',
-			dataIndex: 'isPurchase',
-			key: 'isPurchase',
-			render: (isPurchase) => <>{isPurchase == true ? 'Có' : 'Không'}</>,
-		},
-		{
-			title: 'Bao vật tư',
-			dataIndex: 'isMaterial',
-			key: 'isMaterial',
-			render: (isMaterial) => <>{isMaterial == true ? 'Có' : 'Không'}</>,
-		},
-		{
-			title: 'Giá gói dịch vụ (VND)',
-			dataIndex: 'price',
-			key: 'price',
-			render: (price) => <>{formatNumber(price)}</>,
-		},
-		{
-			title: 'Trạng thái',
-			key: 'status',
-			dataIndex: 'status',
-			render: (_, {status}) => (
-				<>
-					{status == 'Đang áp dụng' && (
-						<Tag color="green" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Ngừng áp dụng' && (
-						<Tag color="red" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Chưa bắt đầu' && (
-						<Tag color="default" key={status}>
-							{status}
-						</Tag>
-					)}
-				</>
+			title: 'Dịch vụ đi kèm',
+			dataIndex: 'optional_service',
+			key: 'optional_service',
+			render: (_, record) => (
+				<Space>
+					{record.purchase && <Tag color="geekblue">Bao tiêu</Tag>}
+					{record.material && <Tag color="purple">Bao vật tư</Tag>}
+				</Space>
 			),
 		},
+		// {
+		// 	title: 'Bao vật tư',
+		// 	dataIndex: 'isMaterial',
+		// 	key: 'isMaterial',
+		// 	render: (isMaterial) => <>{isMaterial == true ? 'Có' : 'Không'}</>,
+		// },
+		// {
+		// 	title: 'Giá gói dịch vụ (VND)',
+		// 	dataIndex: 'price',
+		// 	key: 'price',
+		// 	render: (price) => <>{formatNumber(price)}</>,
+		// },
 		{
 			title: 'Hành động',
 			key: 'action',
@@ -208,13 +191,16 @@ export const ManageServicePackagePage = () => {
 
 	const dispatch = useDispatch();
 
-	// useEffect(() => {
-	// 	const params ={
+	const serviceList = useSelector(servicePackageListSelector);
+	const serviceLoading = useSelector(isLoadingService);
 
-	// 	}
-
-	// 	dispatch(getServicePackageList())
-	// }, [])
+	useEffect(() => {
+		try {
+			dispatch(getServicePackageList());
+		} catch (error) {
+			console.log('Error get service package', error);
+		}
+	}, []);
 
 	const handleRowClick = (record) => {
 		setSelectedServicePackage(record);
@@ -249,7 +235,7 @@ export const ManageServicePackagePage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý gói dịch vụ</p>
 				<div className={styles.filterContainer}>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo trạng thái:</span>
 						<Select
 							style={{
@@ -270,7 +256,7 @@ export const ManageServicePackagePage = () => {
 							placeholder="Chọn loại dịch vụ"
 							options={serviceTypeOptions}
 						></Select>
-					</div>
+					</div> */}
 
 					<Button
 						type="primary"
@@ -285,7 +271,7 @@ export const ManageServicePackagePage = () => {
 			<div className={styles.tableContainer}>
 				<Table
 					rowKey="servicePackageId"
-					dataSource={data}
+					dataSource={serviceList}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({

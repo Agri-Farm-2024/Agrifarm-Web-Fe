@@ -1,6 +1,18 @@
+import dayjs from 'dayjs';
+
 //Add functions to reuse here
 export function formatNumber(number) {
-	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	if (number) {
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	}
+	return number;
+}
+//Format timestamp to "DD/MM/YYYY"
+export function formatDate(date) {
+	if (date) {
+		return dayjs(date).format('DD/MM/YYYY');
+	}
+	return date;
 }
 
 export const getRole = (input) => {

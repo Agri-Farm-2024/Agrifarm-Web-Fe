@@ -1,11 +1,14 @@
 import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
 import {ManagePlantSeasonDetailModal} from './ManagePlantSeasonDetailModal';
 import {CaretRightOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManagePlantSeasonUpdateModal} from './ManagePlantSeasonUpdateModal';
 import {formatNumber} from '../../utils';
 import {ManagePlantSeasonCreateModal} from './ManagePlantSeasonCreateModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getPlantSeasonList} from '../../redux/slices/plantSlice';
+import {isLoadingPlant, plantSeasonListSelector} from '../../redux/selectors';
 
 const data = [
 	{
@@ -89,38 +92,53 @@ const plantTypeOptions = [
 export const ManagePlantSeasonPage = () => {
 	const columns = [
 		{
-			title: 'ID mùa vụ',
-			dataIndex: 'plantSeasonId',
-			key: 'plantSeasonId',
-			render: (text) => <a>{text}</a>,
-		},
-		{
-			title: 'Tên mùa vụ',
-			dataIndex: 'plantSeasonName',
-			key: 'plantSeasonName',
+			title: '#',
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
 		},
 		{
 			title: 'Loại cây',
-			dataIndex: 'plantName',
-			key: 'plantName',
+			dataIndex: 'plant',
+			key: 'plant',
+			render: (plant) => <>{plant.name}</>,
 		},
 		{
 			title: 'Tháng bắt đầu',
-			dataIndex: 'monthStart',
-			key: 'monthStart',
+			dataIndex: 'month_start',
+			key: 'month_start',
 		},
 		{
-			title: 'Đơn giá',
-			dataIndex: 'pricePurchasePerKg',
-			key: 'pricePurchasePerKg',
+			title: 'Đơn giá (VND/kg)',
+			dataIndex: 'price_purchase_per_kg',
+			key: 'price_purchase_per_kg',
+			render: (price) => <>{formatNumber(price)}</>,
 		},
 		{
 			title: 'Giá quy trình theo mùa vụ (VND)',
-			dataIndex: 'priceProcess',
-			key: 'priceProcess',
+			dataIndex: 'price_process',
+			key: 'price_process',
 			render: (price) => <>{formatNumber(price)}</>,
 		},
-
+		{
+			title: 'Loại mùa vụ',
+			key: 'type',
+			dataIndex: 'type',
+			render: (_, {type}) => (
+				<>
+					{type == 'in_season' && (
+						<Tag color="green" key={type}>
+							{type}
+						</Tag>
+					)}
+					{type == 'off_season' && (
+						<Tag color="red" key={type}>
+							{type}
+						</Tag>
+					)}
+				</>
+			),
+		},
 		{
 			title: 'Hành động',
 			key: 'action',
@@ -161,6 +179,29 @@ export const ManagePlantSeasonPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
 
+	const dispatch = useDispatch();
+
+	const plantSeasonList = useSelector(plantSeasonListSelector);
+	console.log('plantSeason', plantSeasonList);
+	const loading = useSelector(isLoadingPlant);
+
+	useEffect(() => {
+		fetchPlantSeasonList(1);
+	}, []);
+
+	const fetchPlantSeasonList = (pageNumber) => {
+		try {
+			setCurrentPage(pageNumber);
+			const params = {
+				page_size: pageSize,
+				page_index: pageNumber,
+			};
+			dispatch(getPlantSeasonList(params));
+		} catch (error) {
+			console.log('Error fetching plant season list: ' + error);
+		}
+	};
+
 	const handleRowClick = (record) => {
 		setSelectedPlantSeason(record);
 		setIsModalOpen(true);
@@ -171,12 +212,18 @@ export const ManagePlantSeasonPage = () => {
 		console.log('handleStopPlantSeason');
 	};
 
-	const handleModalClose = () => {
+	const handleModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			fetchPlantSeasonList(1);
+		}
 		setIsModalOpen(false);
 		setSelectedPlantSeason(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSucess) => {
+		if (isUpdateSucess) {
+			fetchPlantSeasonList(currentPage);
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedPlantSeason(null);
 	};
@@ -189,7 +236,7 @@ export const ManagePlantSeasonPage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý mùa vụ</p>
 				<div className={styles.filterContainer}>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo loại cây:</span>
 						<Select
 							style={{
@@ -210,7 +257,7 @@ export const ManagePlantSeasonPage = () => {
 							placeholder="Chọn loại mùa vụ"
 							options={seasonTypeOptions}
 						></Select>
-					</div>
+					</div> */}
 
 					<Button
 						type="primary"
@@ -224,8 +271,9 @@ export const ManagePlantSeasonPage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="PlantSeasonId"
-					dataSource={data}
+					rowKey="id"
+					loading={loading}
+					dataSource={(plantSeasonList && plantSeasonList.plant_seasons) || []}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
@@ -237,9 +285,11 @@ export const ManagePlantSeasonPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: plantSeasonList.pagination
+							? plantSeasonList?.pagination.total_page * pageSize //total items
+							: 1,
 						onChange: (page) => {
-							setCurrentPage(page);
+							fetchPlantSeasonList(page);
 						},
 					}}
 					className={styles.table}

@@ -113,24 +113,13 @@ export const ManagePlantPage = () => {
 			title: '#',
 			dataIndex: 'index',
 			key: 'index',
-			render: (text, record, index) => index + 1,
+			render: (text, record, index) => (currentPage - 1) * 10 + index + 1,
 		},
-		// {
-		// 	title: 'ID giống cây',
-		// 	dataIndex: 'id',
-		// 	key: 'id',
-		// 	render: (text) => <a>{text}</a>,
-		// },
 		{
 			title: 'Tên giống cây',
 			dataIndex: 'name',
 			key: 'name',
 		},
-		// {
-		// 	title: 'Thời gian sinh trưởng (ngày)',
-		// 	dataIndex: 'growthTime',
-		// 	key: 'growthTime',
-		// },
 		{
 			title: 'Trạng thái',
 			key: 'status',
@@ -259,12 +248,18 @@ export const ManagePlantPage = () => {
 			});
 	};
 
-	const handleModalClose = () => {
+	const handleModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			fetchPlantList(1);
+		}
 		setIsModalOpen(false);
 		setSelectedPlant(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSucess) => {
+		if (isUpdateSucess) {
+			fetchPlantList(currentPage);
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedPlant(null);
 	};
@@ -318,8 +313,8 @@ export const ManagePlantPage = () => {
 			<div className={styles.tableContainer}>
 				<Table
 					rowKey="id"
-					loading={isLoadingPlant}
-					dataSource={plantList.plants || []}
+					loading={loading}
+					dataSource={(plantList && plantList.plants) || []}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({

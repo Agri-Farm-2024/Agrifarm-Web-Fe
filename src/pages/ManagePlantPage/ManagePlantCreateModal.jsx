@@ -82,7 +82,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 
 					if (response.payload.statusCode === 201) {
 						message.success('Tạo giống cây thành công.');
-						handleModalClose();
+						handleModalClose(true);
 					}
 				}
 			})
@@ -112,6 +112,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 			centered
 			width={800}
 			okButtonProps={{loading: loading}}
+			maskClosable={false}
 		>
 			<Form
 				form={form}

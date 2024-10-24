@@ -84,6 +84,7 @@ export const ManagePlantUpdateModal = ({selectedPlant, handleModalClose, isModal
 			cancelText="Đóng"
 			centered
 			width={800}
+			maskClosable={false}
 		>
 			{selectedPlant && (
 				<Form
