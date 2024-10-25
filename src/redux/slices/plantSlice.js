@@ -53,7 +53,10 @@ export const updatePlantSeason = createAsyncThunk(
 				type: formData.type,
 				plant_id: formData.plant_id,
 			};
-			const response = await api.put(`/plants/updatePlantSeason/${formData.id}`, updateData);
+			const response = await api.put(
+				`/plants/updatePlantSeason/${formData.plant_season_id}`,
+				updateData
+			);
 			return response.data;
 		} catch (error) {
 			console.error(error);

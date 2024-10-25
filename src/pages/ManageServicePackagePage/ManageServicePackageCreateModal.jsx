@@ -47,7 +47,7 @@ export const ManageServicePackageCreateModal = ({handleModalClose, isModalOpen})
 
 					if (response.payload.statusCode === 201) {
 						message.success('Tạo gói dịch vụ thành công.');
-						handleModalClose();
+						handleModalClose(true);
 					}
 				}
 			})

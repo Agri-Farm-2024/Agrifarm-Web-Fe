@@ -58,6 +58,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 						if (response.payload.message === 'Plant season already exist') {
 							message.error(`Mùa vụ đã tồn tại`);
 						}
+						message.error('Tạo mùa vụ thất bại');
 					}
 
 					if (response.payload.statusCode === 201) {
@@ -88,7 +89,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 					const newOptions = response.payload.plants.map((option, index) => ({
 						key: index + option.name,
 						label: option.name,
-						value: option.id || index + option.name,
+						value: option.plant_id || index + option.name,
 					}));
 					console.log('newOptions:', newOptions);
 					setPlantTypeOptions(newOptions);

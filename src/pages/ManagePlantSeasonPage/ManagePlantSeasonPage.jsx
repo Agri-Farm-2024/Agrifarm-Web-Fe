@@ -212,10 +212,7 @@ export const ManagePlantSeasonPage = () => {
 		console.log('handleStopPlantSeason');
 	};
 
-	const handleModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
-			fetchPlantSeasonList(1);
-		}
+	const handleModalClose = () => {
 		setIsModalOpen(false);
 		setSelectedPlantSeason(null);
 	};
@@ -228,7 +225,10 @@ export const ManagePlantSeasonPage = () => {
 		setSelectedPlantSeason(null);
 	};
 
-	const handleCreateModalClose = () => {
+	const handleCreateModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			fetchPlantSeasonList(1);
+		}
 		setIsCreateModalOpen(false);
 	};
 	return (

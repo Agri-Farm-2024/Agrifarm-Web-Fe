@@ -5,8 +5,8 @@ import {formatNumber} from '../../utils';
 export const ManagePlantDetailModal = ({selectedPlant, handleModalClose, isModalOpen}) => {
 	const detailItems = selectedPlant && [
 		{
-			key: 'ID',
-			label: 'ID',
+			key: 'plant',
+			label: 'Loại cây',
 			children: <p>{selectedPlant.name}</p>,
 		},
 		{
