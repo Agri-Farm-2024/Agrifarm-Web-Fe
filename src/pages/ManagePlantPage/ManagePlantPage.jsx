@@ -149,7 +149,7 @@ export const ManagePlantPage = () => {
 							onClick={(e) => e.stopPropagation()}
 							title="Xoá giống cây"
 							description="Bạn muốn xoá giống cây này?"
-							onConfirm={(e) => handleUpdateStatusPlant(e, record.id, true)}
+							onConfirm={(e) => handleUpdateStatusPlant(e, record.plant_id, true)}
 							onCancel={(e) => e.stopPropagation()}
 							okText="Xoá"
 							cancelText="Huỷ"
@@ -166,7 +166,7 @@ export const ManagePlantPage = () => {
 							onClick={(e) => e.stopPropagation()}
 							title="Khôi phục giống cây"
 							description="Bạn muốn khôi phục giống cây này?"
-							onConfirm={(e) => handleUpdateStatusPlant(e, record.id, false)}
+							onConfirm={(e) => handleUpdateStatusPlant(e, record.plant_id, false)}
 							onCancel={(e) => e.stopPropagation()}
 							okText="Khôi phục"
 							cancelText="Huỷ"
@@ -248,10 +248,7 @@ export const ManagePlantPage = () => {
 			});
 	};
 
-	const handleModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
-			fetchPlantList(1);
-		}
+	const handleModalClose = () => {
 		setIsModalOpen(false);
 		setSelectedPlant(null);
 	};
@@ -264,7 +261,11 @@ export const ManagePlantPage = () => {
 		setSelectedPlant(null);
 	};
 
-	const handleCreateModalClose = () => {
+	const handleCreateModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			console.log('Fetching new plant list when create a new plant');
+			fetchPlantList(1);
+		}
 		setIsCreateModalOpen(false);
 		setSelectedPlant(null);
 	};

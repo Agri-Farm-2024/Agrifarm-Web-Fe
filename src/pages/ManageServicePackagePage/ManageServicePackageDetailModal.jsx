@@ -12,7 +12,7 @@ export const ManageServicePackageDetailModal = ({
 		{
 			key: 'ID',
 			label: 'ID',
-			children: <p>{selectedServicePackage.id}</p>,
+			children: <p>{selectedServicePackage.service_package_id}</p>,
 		},
 		{
 			key: 'name',

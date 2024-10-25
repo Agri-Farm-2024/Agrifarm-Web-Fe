@@ -48,7 +48,7 @@ export const ManagePlantSeasonUpdateModal = ({
 	const onFinish = (values) => {
 		console.log('Success:', values);
 		const formData = {
-			id: selectedPlantSeason.id,
+			plant_season_id: selectedPlantSeason.plant_season_id,
 			...values,
 		};
 		dispatch(updatePlantSeason(formData))
@@ -89,7 +89,7 @@ export const ManagePlantSeasonUpdateModal = ({
 					const newOptions = response.payload.plants.map((option, index) => ({
 						key: index + option.name,
 						label: option.name,
-						value: option.id || index + option.name,
+						value: option.plant_id || index + option.name,
 					}));
 					console.log('newOptions:', newOptions);
 					setPlantTypeOptions(newOptions);

@@ -135,7 +135,7 @@ export const ManageServicePackagePage = () => {
 			key: 'action',
 			render: (_, record) => (
 				<Space size="middle">
-					<Tooltip title="Bắt đầu áp dụng">
+					{/* <Tooltip title="Bắt đầu áp dụng">
 						<Popconfirm
 							onClick={(e) => e.stopPropagation()}
 							title="Bắt đầu áp dụng gói dịch vụ này"
@@ -152,14 +152,14 @@ export const ManageServicePackagePage = () => {
 								icon={<CaretRightOutlined />}
 							></Button>
 						</Popconfirm>
-					</Tooltip>
+					</Tooltip> */}
 
 					<Button
 						onClick={(e) => {
 							e.stopPropagation();
-							console.log('CLick');
-							setSelectedServicePackage(record);
-							setIsUpdateModalOpen(true);
+							console.log('CLick Update');
+							// setSelectedServicePackage(record);
+							// setIsUpdateModalOpen(true);
 						}}
 						color="primary"
 						variant="filled"
@@ -227,7 +227,10 @@ export const ManageServicePackagePage = () => {
 		setSelectedServicePackage(null);
 	};
 
-	const handleCreateModalClose = () => {
+	const handleCreateModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			dispatch(getServicePackageList());
+		}
 		setIsCreateModalOpen(false);
 	};
 	return (
@@ -283,7 +286,7 @@ export const ManageServicePackagePage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: (serviceList && serviceList.length) || 1,
 						onChange: (page) => {
 							setCurrentPage(page);
 						},

@@ -12,7 +12,7 @@ export const ManagePlantSeasonDetailModal = ({
 		{
 			key: 'ID',
 			label: 'ID',
-			children: <p>{selectedPlantSeason.name}</p>,
+			children: <p>{selectedPlantSeason.plant_season_id}</p>,
 		},
 		{
 			key: 'plant',
