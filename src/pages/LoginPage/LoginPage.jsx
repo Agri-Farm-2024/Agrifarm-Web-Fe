@@ -58,6 +58,11 @@ const LoginPage = () => {
 						toast.error('Hệ thống đang gặp lỗi !!');
 						return;
 					}
+
+					if (response.payload.statusCode === 400) {
+						toast.info('Tài khoản chưa được kích hoạt !!');
+						return;
+					}
 					toast.error('Email hoặc mật khẩu không đúng!');
 				}
 			})

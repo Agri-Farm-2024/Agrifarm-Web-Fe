@@ -1,4 +1,4 @@
-import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, DatePicker, Empty, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageServicePackagePage.module.css';
 import {ManageServicePackageDetailModal} from './ManageServicePackageDetailModal';
@@ -272,27 +272,31 @@ export const ManageServicePackagePage = () => {
 				</div>
 			</div>
 			<div className={styles.tableContainer}>
-				<Table
-					rowKey="servicePackageId"
-					dataSource={serviceList}
-					columns={columns}
-					scroll={{x: 'max-content'}}
-					onRow={(record) => ({
-						onClick: () => handleRowClick(record),
-					})}
-					rowClassName={(record, index) =>
-						index % 2 === 0 ? styles.evenRow : styles.oddRow
-					}
-					pagination={{
-						pageSize: pageSize,
-						current: currentPage,
-						total: (serviceList && serviceList.length) || 1,
-						onChange: (page) => {
-							setCurrentPage(page);
-						},
-					}}
-					className={styles.table}
-				/>
+				{serviceList && (
+					<Table
+						rowKey="servicePackageId"
+						dataSource={serviceList || ['']}
+						columns={columns}
+						scroll={{x: 'max-content'}}
+						onRow={(record) => ({
+							onClick: () => handleRowClick(record),
+						})}
+						rowClassName={(record, index) =>
+							index % 2 === 0 ? styles.evenRow : styles.oddRow
+						}
+						pagination={{
+							pageSize: pageSize,
+							current: currentPage,
+							total: (serviceList && serviceList.length) || 1,
+							onChange: (page) => {
+								setCurrentPage(page);
+							},
+						}}
+						className={styles.table}
+					/>
+				)}
+
+				{!serviceList && <Empty />}
 
 				<ManageServicePackageDetailModal
 					isModalOpen={isModalOpen}

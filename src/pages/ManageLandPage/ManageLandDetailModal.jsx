@@ -73,22 +73,12 @@ export const ManageLandDetailModal = ({selectedLand, handleModalClose, isModalOp
 							<p className={styles.title}>Tiêu đề:</p>
 							<p className={styles.content}>{selectedLand.description.title}</p>
 						</div>
-						<div className={styles.bookingItem}>
-							<p className={styles.title}>Mô tả:</p>
-							<p className={styles.content}>{selectedLand.description.desc}</p>
-						</div>
-						{selectedLand.description.sub.map((subItem, index) => (
+						<div>
+							<p style={{fontSize: '1em', fontWeight: 'bold'}}>Mô tả:</p>
 							<div
-								key={index}
-								className={styles.bookingItem}
-								style={{flexDirection: 'column', alignItems: 'flex-start'}}
-							>
-								<p className={styles.title} style={{marginBottom: 0}}>
-									{subItem.sub_title}:
-								</p>
-								<span style={{width: '80%'}}>{subItem.sub_desc}</span>
-							</div>
-						))}
+								dangerouslySetInnerHTML={{__html: selectedLand.description.desc}}
+							/>
+						</div>
 					</div>
 				</div>
 			)}

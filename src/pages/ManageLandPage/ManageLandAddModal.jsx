@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import styles from './ManageLandPage.module.css';
-import {Image, Modal, Input, Select, Upload, Button, message} from 'antd';
+import {Image, Modal, Input, Select, Upload, Button, message, InputNumber} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 import {useDispatch} from 'react-redux';
 import {createLand} from '../../redux/slices/landSlice';
+import TextEditor from './TextEditor';
+import {uploadFile} from '../../services/uploadService';
 
 export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 	const dispatch = useDispatch();
@@ -14,16 +16,12 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 		pricePermonth: '',
 		description: {
 			title: '',
-			desc: '',
-			sub: [
-				{sub_title: '', sub_desc: ''},
-				{sub_title: '', sub_desc: ''},
-				{sub_title: '', sub_desc: ''},
-			],
+			desc: '<p><strong>1. Vị trí và diện tích:</strong>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><br></p><p><strong>2. Điều kiện đất đai:</strong>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><br></p><p><strong>3. Các dịch vụ hỗ trợ:</strong>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 		},
 		images: [],
-		// landOfStatus: undefined,
-		// status: undefined,
+		videos: [],
+		imagesToAPI: [],
+		videosToAPI: [],
 		// assignStaff: undefined,
 	});
 	const [errors, setErrors] = useState({});
@@ -67,24 +65,112 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 		}
 	};
 
-	const handleSelectChange = (name, value) => {
-		setLandData({...landData, [name]: value});
-		const {[name]: removedError, ...rest} = errors;
-		setErrors(rest);
+	const handleEditorChange = (content) => {
+		setLandData((prevData) => ({
+			...prevData,
+			description: {
+				...prevData.description,
+				desc: content,
+			},
+		}));
+
+		console.log(content);
+		const isEmpty = content.trim() === '' || content === '<p><br></p>' || content === '<p></p>';
+
+		if (isEmpty) {
+			setErrors((prevErrors) => ({
+				...prevErrors,
+				'description.desc': 'Trường này không được để trống',
+			}));
+		} else {
+			setErrors((prevErrors) => {
+				const {['description.desc']: removedError, ...rest} = prevErrors;
+				return rest;
+			});
+		}
 	};
 
 	const handleRemoveImage = (index) => {
 		const updatedImages = landData.images.filter((_, imgIndex) => imgIndex !== index);
 		setLandData({...landData, images: updatedImages});
 	};
+	const handleUpload = async ({file}) => {
+		// Create a preview URL for the image
+		const previewUrl = URL.createObjectURL(file);
 
-	const handleUpload = ({file}) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			const newImage = reader.result;
-			setLandData({...landData, images: [...landData.images, newImage]});
-		};
-		reader.readAsDataURL(file);
+		// Update landData to include the new image object
+		setLandData({
+			...landData,
+			images: [...landData.images, {file, previewUrl}],
+		});
+	};
+
+	const handleRemoveVideo = (index) => {
+		const updatedVideos = landData.videos.filter((_, vidIndex) => vidIndex !== index);
+		setLandData({...landData, videos: updatedVideos});
+	};
+
+	const handleVideoUpload = ({file}) => {
+		const maxSizeInMB = 2; // Set max size to 2MB
+		const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert to bytes
+
+		if (file.size > maxSizeInBytes) {
+			message.error(`Video không được vượt quá ${maxSizeInMB}MB. Hãy tải video khác!`);
+			return;
+		}
+
+		// Create a preview URL for the video
+		const previewURL = URL.createObjectURL(file);
+
+		// Update landData with the file and its preview URL
+		setLandData((prevData) => ({
+			...prevData,
+			videos: [...(prevData.videos || []), {file, previewURL}],
+		}));
+	};
+
+	const handleUploadFile = () => {
+		if (landData.images.length <= 0) {
+			message.error(`Hãy tải ảnh lên`);
+			return;
+		}
+
+		if (landData.videos.length <= 0) {
+			message.error(`Hãy tải video lên`);
+			return;
+		}
+
+		// Upload images
+		const imageUploadPromises = landData.images.map((file) =>
+			uploadFile(file.file).then((response) => response.metadata[0])
+		);
+
+		// Upload videos
+		const videoUploadPromises = landData.videos.map((file) =>
+			uploadFile(file.file).then((response) => response.metadata[0])
+		);
+
+		// Wait for all image and video uploads to complete
+		Promise.all(imageUploadPromises)
+			.then((uploadedImagesmetadata) => {
+				return Promise.all(videoUploadPromises).then((uploadedVideosmetadata) => {
+					// Update landData with all uploaded image and video metadata at once
+					setLandData((prevLandData) => ({
+						...prevLandData,
+						imagesToAPI: [...uploadedImagesmetadata],
+						videosToAPI: [...uploadedVideosmetadata],
+					}));
+
+					// Log trực tiếp các metadata vừa upload xong
+					console.log('Uploaded images metadata:', uploadedImagesmetadata);
+					console.log('Uploaded videos metadata:', uploadedVideosmetadata);
+					handleSubmit({images: uploadedImagesmetadata, videos: uploadedVideosmetadata});
+				});
+			})
+			.catch((error) => {
+				console.error('Error uploading files', error);
+				// Handle error as needed, e.g., show an error message to the user
+			});
 	};
 
 	const validateInputs = () => {
@@ -115,41 +201,20 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 			}
 		});
 
-		// Validate sub-title and sub-description fields
-		landData.description.sub.forEach((subItem, index) => {
-			if (!subItem.sub_title.trim()) {
-				newErrors[`description.sub.${index}.sub_title`] = 'Trường này không được để trống';
-			}
-			if (!subItem.sub_desc.trim()) {
-				newErrors[`description.sub.${index}.sub_desc`] = 'Trường này không được để trống';
-			}
-		});
-
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = ({images, videos}) => {
 		if (validateInputs()) {
-			// console.log(landData);
-
 			const landInfor = {
 				name: landData.nameLand,
 				title: landData.description.title,
 				description: landData.description.desc,
 				acreage_land: Number(landData.area),
 				price_booking_per_month: Number(landData.pricePermonth),
-				sub_description: landData.description.sub.map((item) => ({
-					sub_title: item.sub_title,
-					sub_description: item.sub_desc,
-				})),
-				images: [
-					'https://www.google.com.vn/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
-				],
-				videos: [
-					'https://www.youtube.com/watch?v=8p9jSRxJ8jw',
-					'https://www.youtube.com/watch?v=8p9jSRxJ8jw',
-				],
+				images: images,
+				videos: videos,
 			};
 			console.log(landInfor);
 			const hideLoading = message.loading('Đang xử lí...', 0);
@@ -180,13 +245,9 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							description: {
 								title: '',
 								desc: '',
-								sub: [
-									{sub_title: '', sub_desc: ''},
-									{sub_title: '', sub_desc: ''},
-									{sub_title: '', sub_desc: ''},
-								],
 							},
 							images: [],
+							videos: [],
 							// landOfStatus: undefined,
 							// status: undefined,
 							// assignStaff: undefined,
@@ -197,12 +258,6 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 					hideLoading();
 					message.error('Unexpected error:', err);
 				});
-
-			// const hideLoading = message.loading('Đang xử lý...', 0);
-			// setTimeout(() => {
-			// 	hideLoading();
-			//
-			// }, 1000);
 		} else {
 			message.error('Hãy điền đủ trường nhé');
 		}
@@ -213,14 +268,14 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 			title={<span style={{fontSize: '1.5rem'}}>Thêm mảnh đất</span>}
 			open={isModalOpen}
 			onCancel={handleModalClose}
-			onOk={handleSubmit}
+			onOk={handleUploadFile}
 			style={{top: 20}}
 			cancelText="Hủy"
 			width={'max-content'}
 			okText="Thêm"
 			okButtonProps={{disabled: Object.keys(errors).length > 0, loading: loading}}
 		>
-			<div className={styles.modalContainer}>
+			<div className={styles.modalContainer} style={{minHeight: 500}}>
 				<div style={{display: 'flex'}}>
 					<div>
 						<div className={styles.bookingItem}>
@@ -330,7 +385,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 										style={{width: 200, margin: 20, position: 'relative'}}
 									>
 										<Image
-											src={image}
+											src={image.previewUrl}
 											alt="Land Image"
 											style={{width: '100%', height: 200}}
 										/>
@@ -346,12 +401,57 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 								))}
 							</div>
 							<Upload
+								accept="image/*"
 								beforeUpload={() => false} // Prevent automatic upload
 								showUploadList={false}
 								onChange={handleUpload}
 							>
 								<Button type="primary" style={{margin: 20}} icon={<PlusOutlined />}>
 									Tải ảnh lên
+								</Button>
+							</Upload>
+						</div>
+						<div
+							className={styles.bookingItem}
+							style={{flexDirection: 'column', alignItems: 'flex-start'}}
+						>
+							<p className={styles.title}>Video:</p>
+
+							<div style={{display: 'flex', flexWrap: 'wrap'}}>
+								{landData.videos &&
+									landData.videos.map((video, index) => (
+										<div
+											key={index}
+											style={{
+												marginBottom: '10px',
+												display: 'flex',
+												alignItems: 'center',
+												position: 'relative',
+											}}
+										>
+											<video
+												src={video.previewURL}
+												controls
+												style={{width: '200px', margin: 20, height: 200}}
+											/>
+											<Button
+												type="primary"
+												danger
+												style={{position: 'absolute', top: 10, right: 10}}
+												onClick={() => handleRemoveVideo(index)}
+											>
+												Xóa
+											</Button>
+										</div>
+									))}
+							</div>
+							<Upload
+								accept="video/*"
+								showUploadList={false}
+								customRequest={({file}) => handleVideoUpload({file})}
+							>
+								<Button type="primary" style={{margin: 20}} icon={<PlusOutlined />}>
+									Tải video lên
 								</Button>
 							</Upload>
 						</div>
@@ -388,137 +488,39 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 								<p className={styles.error}>{errors['description.title']}</p>
 							)}
 						</div>
-						<div className={styles.bookingItem}>
-							<p className={styles.title}>Mô tả:</p>
-							<Input.TextArea
+						<div>
+							<p style={{fontSize: '1em', fontWeight: 'bold'}}>Mô tả:</p>
+							{/* <Input.TextArea
 								name="desc"
 								value={landData.description.desc}
 								onChange={(e) => {
-									const updatedDesc = e.target.value;
-									setLandData({
-										...landData,
-										description: {
-											...landData.description,
-											desc: updatedDesc,
-										},
+								const updatedDesc = e.target.value;
+								setLandData({
+									...landData,
+									description: {
+									...landData.description,
+									desc: updatedDesc,
+									},
+								});
+								if (updatedDesc.trim() === '') {
+									setErrors({
+									...errors,
+									'description.desc': 'Trường này không được để trống',
 									});
-									if (updatedDesc.trim() === '') {
-										setErrors({
-											...errors,
-											'description.desc': 'Trường này không được để trống',
-										});
-									} else {
-										const {['description.desc']: removedError, ...rest} =
-											errors;
-										setErrors(rest);
-									}
+								} else {
+									const { ['description.desc']: removedError, ...rest } = errors;
+									setErrors(rest);
+								}
 								}}
-								style={{width: '50%'}}
+								style={{ width: '50%' }}
+							/> */}
+							<TextEditor
+								initialValue={landData.description.desc} // Pass initial value from Formik
+								onChange={handleEditorChange}
 							/>
 							{errors['description.desc'] && (
 								<p className={styles.error}>{errors['description.desc']}</p>
 							)}
-						</div>
-						<div>
-							{landData.description.sub.map((subItem, index) => (
-								<div
-									key={index}
-									className={styles.bookingItem}
-									style={{
-										flexDirection: 'column',
-										alignItems: 'flex-start',
-										marginTop: 20,
-									}}
-								>
-									<p className={styles.title} style={{marginBottom: 0}}>
-										{index + 1}) Tiêu đề phụ:
-									</p>
-									<Input
-										value={subItem.sub_title}
-										onChange={(e) => {
-											const updatedSubItems = landData.description.sub.map(
-												(item, idx) =>
-													idx === index
-														? {...item, sub_title: e.target.value}
-														: item
-											);
-											setLandData({
-												...landData,
-												description: {
-													...landData.description,
-													sub: updatedSubItems,
-												},
-											});
-											if (e.target.value.trim() === '') {
-												setErrors({
-													...errors,
-													[`description.sub.${index}.sub_title`]:
-														'Trường này không được để trống',
-												});
-											} else {
-												const {
-													[`description.sub.${index}.sub_title`]:
-														removedError,
-													...rest
-												} = errors;
-												setErrors(rest);
-											}
-										}}
-										style={{width: '50%', marginBottom: 0, marginTop: -15}}
-									/>
-									{errors[`description.sub.${index}.sub_title`] && (
-										<p className={styles.error} style={{marginTop: -15}}>
-											{errors[`description.sub.${index}.sub_title`]}
-										</p>
-									)}
-									<div style={{width: '100%'}}>
-										<p
-											className={styles.title}
-											style={{marginBottom: 0, marginTop: 0}}
-										>
-											Mô tả phụ:
-										</p>
-										<Input.TextArea
-											value={subItem.sub_desc}
-											onChange={(e) => {
-												const updatedSubItems =
-													landData.description.sub.map((item, idx) =>
-														idx === index
-															? {...item, sub_desc: e.target.value}
-															: item
-													);
-												setLandData({
-													...landData,
-													description: {
-														...landData.description,
-														sub: updatedSubItems,
-													},
-												});
-												if (e.target.value.trim() === '') {
-													setErrors({
-														...errors,
-														[`description.sub.${index}.sub_desc`]:
-															'Trường này không được để trống',
-													});
-												} else {
-													const {
-														[`description.sub.${index}.sub_desc`]:
-															removedError,
-														...rest
-													} = errors;
-													setErrors(rest);
-												}
-											}}
-											style={{width: '80%'}}
-										/>
-										{errors[`description.sub.${index}.sub_desc`] && (
-											<p className={styles.error}>
-												{errors[`description.sub.${index}.sub_desc`]}
-											</p>
-										)}
-									</div>
-								</div>
-							))}
 						</div>
 					</div>
 				</div>
