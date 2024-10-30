@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import styles from './ManageLandPage.module.css';
 import {Image, Modal, Input, Select, Upload, Button, message} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
+import TextEditor from './TextEditor';
 
 export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOpen}) => {
 	const [landData, setLandData] = useState(selectedLand);
@@ -20,6 +21,31 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 		} else {
 			const {[name]: removedError, ...rest} = errors;
 			setErrors(rest);
+		}
+	};
+
+	const handleEditorChange = (content) => {
+		setLandData((prevData) => ({
+			...prevData,
+			description: {
+				...prevData.description,
+				desc: content,
+			},
+		}));
+
+		console.log(content);
+		const isEmpty = content.trim() === '' || content === '<p><br></p>' || content === '<p></p>';
+
+		if (isEmpty) {
+			setErrors((prevErrors) => ({
+				...prevErrors,
+				'description.desc': 'Trường này không được để trống',
+			}));
+		} else {
+			setErrors((prevErrors) => {
+				const {['description.desc']: removedError, ...rest} = prevErrors;
+				return rest;
+			});
 		}
 	};
 
@@ -253,9 +279,9 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 								<p className={styles.error}>{errors['description.title']}</p>
 							)}
 						</div>
-						<div className={styles.bookingItem}>
-							<p className={styles.title}>Mô tả:</p>
-							<Input.TextArea
+						<div>
+							<p style={{fontSize: '1em', fontWeight: 'bold'}}>Mô tả:</p>
+							{/* <Input.TextArea
 								name="desc"
 								value={landData.description.desc}
 								onChange={(e) => {
@@ -279,112 +305,14 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 									}
 								}}
 								style={{width: '60%'}}
+							/> */}
+							<TextEditor
+								initialValue={landData.description.desc} // Pass initial value from Formik
+								onChange={handleEditorChange}
 							/>
 							{errors['description.desc'] && (
 								<p className={styles.error}>{errors['description.desc']}</p>
 							)}
-						</div>
-
-						<div>
-							{landData.description.sub.map((subItem, index) => (
-								<div
-									key={index}
-									className={styles.bookingItem}
-									style={{
-										flexDirection: 'column',
-										alignItems: 'flex-start',
-										marginTop: 20,
-									}}
-								>
-									<p className={styles.title} style={{marginBottom: 0}}>
-										{index + 1}) Tiêu đề phụ:
-									</p>
-									<Input
-										value={subItem.sub_title}
-										onChange={(e) => {
-											const updatedSubItems = landData.description.sub.map(
-												(item, idx) =>
-													idx === index
-														? {...item, sub_title: e.target.value}
-														: item
-											);
-											setLandData({
-												...landData,
-												description: {
-													...landData.description,
-													sub: updatedSubItems,
-												},
-											});
-											if (e.target.value.trim() === '') {
-												setErrors({
-													...errors,
-													[`description.sub.${index}.sub_title`]:
-														'Trường này không được để trống',
-												});
-											} else {
-												const {
-													[`description.sub.${index}.sub_title`]:
-														removedError,
-													...rest
-												} = errors;
-												setErrors(rest);
-											}
-										}}
-										style={{width: '50%', marginBottom: 0, marginTop: -15}}
-									/>
-									{errors[`description.sub.${index}.sub_title`] && (
-										<p className={styles.error} style={{marginTop: -15}}>
-											{errors[`description.sub.${index}.sub_title`]}
-										</p>
-									)}
-									<div style={{width: '100%'}}>
-										<p
-											className={styles.title}
-											style={{marginBottom: 0, marginTop: 0}}
-										>
-											Mô tả phụ:
-										</p>
-										<Input.TextArea
-											value={subItem.sub_desc}
-											onChange={(e) => {
-												const updatedSubItems =
-													landData.description.sub.map((item, idx) =>
-														idx === index
-															? {...item, sub_desc: e.target.value}
-															: item
-													);
-												setLandData({
-													...landData,
-													description: {
-														...landData.description,
-														sub: updatedSubItems,
-													},
-												});
-												if (e.target.value.trim() === '') {
-													setErrors({
-														...errors,
-														[`description.sub.${index}.sub_desc`]:
-															'Trường này không được để trống',
-													});
-												} else {
-													const {
-														[`description.sub.${index}.sub_desc`]:
-															removedError,
-														...rest
-													} = errors;
-													setErrors(rest);
-												}
-											}}
-											style={{width: '80%'}}
-										/>
-										{errors[`description.sub.${index}.sub_desc`] && (
-											<p className={styles.error}>
-												{errors[`description.sub.${index}.sub_desc`]}
-											</p>
-										)}
-									</div>
-								</div>
-							))}
 						</div>
 					</div>
 				</div>

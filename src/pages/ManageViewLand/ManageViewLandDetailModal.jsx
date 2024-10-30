@@ -33,7 +33,7 @@ export const ManageViewLandDetailModal = ({
 		},
 	});
 	useEffect(() => {
-		dispatch(getRequestById(selectedRequest?.id))
+		dispatch(getRequestById(selectedRequest?.request_id))
 			.then((res) => {
 				if (res.payload.statusCode === 200) {
 					console.log(res.payload.metadata);
@@ -125,7 +125,7 @@ export const ManageViewLandDetailModal = ({
 							type="primary"
 							onClick={(e) => {
 								e.stopPropagation();
-								handleOpenAssignModal(data.task?.id);
+								handleOpenAssignModal(data.task?.task_id);
 							}}
 						>
 							Chọn nhân viên

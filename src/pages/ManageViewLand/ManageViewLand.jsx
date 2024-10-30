@@ -262,7 +262,7 @@ export const ManageViewLand = () => {
 					style={{width: '100%'}}
 				>
 					{staffList.map((staff) => (
-						<Option value={`${staff.id}`} key={staff.id}>
+						<Option value={`${staff.user_id}`} key={staff.user_id}>
 							{staff.full_name}
 						</Option>
 					))}

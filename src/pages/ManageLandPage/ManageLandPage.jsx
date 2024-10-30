@@ -20,7 +20,7 @@ const landList = [
 		assignStaff: 'Chi Bao',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -56,7 +56,7 @@ const landList = [
 		assignStaff: 'Dang Ninh',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -80,7 +80,7 @@ const landList = [
 		assignStaff: 'Ba Phuoc',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -104,7 +104,7 @@ const landList = [
 		assignStaff: 'Chi Bao',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -128,7 +128,7 @@ const landList = [
 		assignStaff: 'Dang Ninh',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -152,7 +152,7 @@ const landList = [
 		assignStaff: 'Chi Bao',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -176,7 +176,7 @@ const landList = [
 		assignStaff: 'Ba Phuoc',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -200,7 +200,7 @@ const landList = [
 		assignStaff: 'Dang Ninh',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -224,7 +224,7 @@ const landList = [
 		assignStaff: 'Chi Bao',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
@@ -248,7 +248,7 @@ const landList = [
 		assignStaff: 'Ba Phuoc',
 		description: {
 			title: 'Mảnh đất nông nghiệp tại AgriFarm',
-			desc: 'Chào mừng bạn đến với AgriFarm',
+			desc: '<p><strong>1. Vị trí và diện tích:</strong></p><p>Mảnh đất số 1 nằm ở khu vực trung tâm của trang trại AgriFarm, với diện tích 500 mét vuông. Vị trí này rất thuận lợi, chỉ cách nhà kho và nguồn nước chính của trang trại khoảng 100 mét, giúp bạn dễ dàng tiếp cận và quản lý các hoạt động canh tác.</p><p><strong>2. Điều kiện đất đai:</strong></p><p>Mảnh đất số 1 có lớp đất phù sa màu mỡ, giàu dinh dưỡng, rất phù hợp để trồng các loại rau xanh và cây ăn quả như cà chua, xà lách, và dưa leo. Đất đã được cải tạo kỹ lưỡng, đảm bảo độ tơi xốp và khả năng thoát nước tốt, giúp cây trồng phát triển nhanh chóng và khỏe mạnh.</p><p><strong>3. Các dịch vụ hỗ trợ:</strong></p><p>Khi thuê mảnh đất số 1 đồng thời sử dụng dịch vụ chăm sóc của AgriFarm, bạn sẽ được hưởng lợi từ các dịch vụ hỗ trợ chuyên nghiệp của AgriFarm, bao gồm tư vấn kỹ thuật trồng trọt, cung cấp phân bón hữu cơ và hỗ trợ kiểm soát sâu bệnh từ đội ngũ chuyên gia nông nghiệp của chúng tôi. Chúng tôi luôn sẵn sàng hỗ trợ bạn để đảm bảo mùa vụ đạt năng suất cao nhất.</p>',
 			sub: [
 				{
 					sub_title: 'Vị trí và diện tích',
