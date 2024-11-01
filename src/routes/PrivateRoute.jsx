@@ -15,10 +15,14 @@ const PrivateRoute = ({children, roles}) => {
 	// }
 	console.log('User private router: ' + JSON.stringify(userSelector));
 	if (!userSelector || !userSelector.role || userSelector.role === '') {
-		console.log('Private route redirect');
-		console.log('userSelector', userSelector);
-		toast.info('Hãy đăng nhập!');
-		return <Navigate to="/login" />;
+		if (userSelector && userSelector.role == 0) {
+			console.log('Admin user');
+		} else {
+			console.log('Private route redirect');
+			console.log('userSelector', userSelector);
+			toast.info('Hãy đăng nhập!');
+			return <Navigate to="/login" />;
+		}
 	}
 
 	// Kiểm tra xem người dùng có vai trò phù hợp không
