@@ -26,6 +26,7 @@ import {
 	TruckOutlined,
 	FundViewOutlined,
 	SunOutlined,
+	GoldOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -78,6 +79,7 @@ export const DefaultLayout = ({children}) => {
 		'/manage-view-land',
 		'/manage-contract-manager',
 		'/manage-plant-season',
+		'/manage-account',
 	];
 
 	const staffMenuItems = [
@@ -100,6 +102,11 @@ export const DefaultLayout = ({children}) => {
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];
 
+	const adminMenuItems = [
+		getItem('Quản lý tài khoản', '/manage-account', <TeamOutlined />),
+		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),
+	];
+
 	const managerMenuItems = [
 		getItem('Dashboard', '/manager-dashboard', <DashboardOutlined />),
 		getItem('Quản lý nhân viên', '/manage-employees', <TeamOutlined />),
@@ -113,7 +120,7 @@ export const DefaultLayout = ({children}) => {
 				<FundProjectionScreenOutlined />
 			),
 		]),
-		getItem('Quản lý dịch vụ', 'sub2', <ControlOutlined />, [
+		getItem('Quản lý dịch vụ', 'sub2', <GoldOutlined />, [
 			getItem('Quản lý gói dịch vụ', '/manage-service-package', <ApartmentOutlined />),
 		]),
 		getItem('Quản lý mảnh đất', 'sub3', <AppstoreOutlined />, [
@@ -134,7 +141,12 @@ export const DefaultLayout = ({children}) => {
 	];
 
 	// Define the menu items
-	const items = getRole(userSelector?.role) == 'manager' ? managerMenuItems : staffMenuItems;
+	const items =
+		getRole(userSelector?.role) == 'manager'
+			? managerMenuItems
+			: getRole(userSelector?.role) == 'staff'
+				? staffMenuItems
+				: adminMenuItems;
 
 	const handleClickMenuItem = (e) => {
 		setSelectMenu(e.key);

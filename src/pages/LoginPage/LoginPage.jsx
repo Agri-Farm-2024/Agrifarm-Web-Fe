@@ -52,7 +52,13 @@ const LoginPage = () => {
 				const user = response.payload.metadata.user;
 				if (user) {
 					toast.success('Đăng nhập thành công!');
-					navigate(user.role === 1 ? '/manager-dashboard' : '/dashboard');
+					navigate(
+						user.role === 1
+							? '/manager-dashboard'
+							: user.role === 2
+								? '/dashboard'
+								: '/manage-account'
+					);
 				} else {
 					if (response.payload.statusCode === 500) {
 						toast.error('Hệ thống đang gặp lỗi !!');
@@ -60,10 +66,13 @@ const LoginPage = () => {
 					}
 
 					if (response.payload.statusCode === 400) {
-						toast.info('Tài khoản chưa được kích hoạt !!');
+						if (response.payload.message == 'Invalid password') {
+							toast.error('Email hoặc mật khẩu không đúng!');
+						} else {
+							toast.info('Tài khoản chưa được kích hoạt !!');
+						}
 						return;
 					}
-					toast.error('Email hoặc mật khẩu không đúng!');
 				}
 			})
 			.catch((error) => {
