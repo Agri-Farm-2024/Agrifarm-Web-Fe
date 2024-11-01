@@ -1,82 +1,22 @@
-import {DatePicker, Input, InputNumber, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import {
+	Button,
+	DatePicker,
+	Input,
+	InputNumber,
+	message,
+	Popconfirm,
+	Select,
+	Space,
+	Table,
+	Tag,
+} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageContractByManager.module.css';
 import {formatNumber} from '../../utils';
 import {ManageContractDetailModal} from './ManageContractDetailModal';
-
-const columns = [
-	{
-		title: 'ID hợp đồng',
-		dataIndex: 'bookingId',
-		key: 'bookingId',
-		render: (text) => <a>{text}</a>,
-	},
-	{
-		title: 'Tên người thuê',
-		dataIndex: 'landRenterName',
-		key: 'landRenterName',
-	},
-	{
-		title: 'Tên mảnh đất',
-		dataIndex: 'landName',
-		key: 'landName',
-	},
-	{
-		title: 'Ngày bắt đầu',
-		dataIndex: 'dateStart',
-		key: 'dateStart',
-	},
-	{
-		title: 'Ngày kết thúc',
-		dataIndex: 'dateEnd',
-		key: 'dateEnd',
-	},
-	{
-		title: 'Trạng thái',
-		key: 'status',
-		dataIndex: 'status',
-		render: (_, {status}) => (
-			<>
-				{status == 'Đang hiệu lực' && (
-					<Tag color="green" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Sắp hết hạn' && (
-					<Tag color="red" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Chấm dứt' && (
-					<Tag color="default" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Chờ phê duyệt' && (
-					<Tag color="warning" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Chờ thanh toán' && (
-					<Tag color="magenta" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Chờ ký tên' && (
-					<Tag color="cyan" key={status}>
-						{status}
-					</Tag>
-				)}
-			</>
-		),
-	},
-	{
-		title: 'Tổng chi phí',
-		dataIndex: 'totalPrice',
-		key: 'totalPrice',
-		render: (text) => <>{formatNumber(text)} VND</>,
-	},
-];
+import {useDispatch, useSelector} from 'react-redux';
+import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
+import {CheckOutlined, DeleteOutlined} from '@ant-design/icons';
 
 const data = [
 	{
@@ -154,11 +94,35 @@ const data = [
 ];
 
 const ManageContractByManager = () => {
+	const [filterStatus, setFilterStatus] = useState('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedBooking, setSelectedBooking] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
-	const [totalPage, setTotalPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+
+	const dispatch = useDispatch();
+	const requests = useSelector((state) => state.landSlice.listOfBooking.metadata?.bookings);
+	const pagination = useSelector((state) => state.landSlice.listOfBooking.metadata?.pagination);
+	const loading = useSelector((state) => state.landSlice.loading);
+
+	useEffect(() => {
+		fetchRequests(); // Pass the current page to fetchRequests
+	}, [filterStatus, currentPage]);
+
+	const fetchRequests = async () => {
+		try {
+			await dispatch(
+				getListOfBooking({
+					page_size: pageSize,
+					page_index: currentPage,
+					status: filterStatus,
+					type: 'booking',
+				})
+			);
+		} catch (error) {
+			message.error('Error fetching data');
+		}
+	};
 
 	const handleRowClick = (record) => {
 		setSelectedBooking(record);
@@ -170,51 +134,223 @@ const ManageContractByManager = () => {
 		setSelectedBooking(null);
 	};
 
+	// Handle page change
+	const handlePageChange = (page) => {
+		setCurrentPage(page); // Update current page state
+	};
+
+	const handleApprove = (bookingID) => {
+		const body = {
+			booking_id: bookingID,
+			status: 'pending_sign',
+		};
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBooking(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchRequests(currentPage);
+					message.info('Đã chấp nhận yêu cầu');
+				} else {
+					message.info('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.info('Có lỗi trong quá trình cập nhật');
+			});
+	};
+
+	const handleRemove = (bookingID) => {
+		const body = {
+			booking_id: bookingID,
+			reason_for_reject: 'Mảnh đất không sẵn sàng cho thuê',
+			status: 'rejected',
+		};
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBooking(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchRequests(currentPage);
+					message.info('Đã từ chối');
+				} else {
+					message.info('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.info('Có lỗi trong quá trình cập nhật');
+			});
+	};
+
+	const columns = [
+		{
+			title: 'Mảnh đất',
+			dataIndex: 'land',
+			key: 'land',
+			render: (land) => <a>{land.name}</a>,
+		},
+		{
+			title: 'Khách Hàng',
+			dataIndex: 'land_renter',
+			key: 'land_renter',
+			render: (landRenter) => <div>{landRenter.full_name}</div>,
+		},
+
+		{
+			title: 'Thời Gian Bắt Đầu',
+			dataIndex: 'time_start',
+			key: 'time_start',
+			render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
+		},
+		{
+			title: 'Thời Gian Kết Thúc',
+			dataIndex: 'time_end',
+			key: 'time_end',
+			render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
+		},
+		{
+			title: 'Trạng thái',
+			key: 'status',
+			dataIndex: 'status',
+			render: (_, {status}) => (
+				<>
+					{status == 'comleted' && (
+						<Tag color="green" key={status}>
+							Đang hiệu lực
+						</Tag>
+					)}
+					{status == 'expired' && (
+						<Tag color="default" key={status}>
+							Sắp hết hạn
+						</Tag>
+					)}
+					{status == 'canceled' && (
+						<Tag color="red" key={status}>
+							Chấm dứt
+						</Tag>
+					)}
+					{status == 'pending_contract' && (
+						<Tag color="warning" key={status}>
+							Chờ phê duyệt
+						</Tag>
+					)}
+					{status == 'pending_payment' && (
+						<Tag color="magenta" key={status}>
+							Chờ thanh toán
+						</Tag>
+					)}
+					{status == 'pending_sign' && (
+						<Tag color="cyan" key={status}>
+							Chờ ký tên
+						</Tag>
+					)}
+					{status == 'rejected' && (
+						<Tag color="red" key={status}>
+							Hủy yêu cầu
+						</Tag>
+					)}
+				</>
+			),
+		},
+		{
+			title: 'Chi phí mỗi tháng',
+			dataIndex: 'price_per_month',
+			key: 'price_per_month',
+			render: (text) => <>{formatNumber(text)} VND</>,
+		},
+		{
+			title: 'Chi phí cọc',
+			dataIndex: 'price_per_month',
+			key: 'price_per_month',
+			render: (text) => <>{formatNumber(text)} VND</>,
+		},
+		{
+			title: 'Hành Động',
+			key: 'actions',
+			render: (_, record) => (
+				<Space size="middle">
+					<Popconfirm
+						title="Chấp nhận yêu cầu"
+						onConfirm={(e) => {
+							e.stopPropagation();
+							handleApprove(record.booking_id);
+						}}
+						onClick={(e) => e.stopPropagation()}
+						okText="Chấp nhận"
+						cancelText="Huỷ"
+					>
+						<Button
+							color="primary"
+							variant="filled"
+							disabled={record.status !== 'pending_contract'}
+							icon={<CheckOutlined />}
+						/>
+					</Popconfirm>
+					<Popconfirm
+						title="Từ chối yêu cầu"
+						onConfirm={(e) => {
+							e.stopPropagation();
+							handleRemove(record.booking_id);
+						}}
+						onClick={(e) => e.stopPropagation()}
+						okText="Từ chối"
+						cancelText="Huỷ"
+					>
+						<Button
+							color="danger"
+							variant="filled"
+							disabled={record.status !== 'pending_contract'}
+							icon={<DeleteOutlined />}
+						/>
+					</Popconfirm>
+				</Space>
+			),
+		},
+	];
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
 				<p>Danh sách hợp đồng</p>
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
-						<span>Lọc theo thời gian thuê (tháng):</span>
-						<InputNumber
+						<span>Lọc theo trạng thái:</span>
+						<Select
 							className={styles.filterInput}
-							placeholder="Nhập số tháng thuê"
-						/>
-					</div>
-					<div className={styles.fiterItem}>
-						<span>Lọc theo ngày thuê:</span>
-						<DatePicker
-							className={styles.filterInput}
-							placeholder="DD-MM-YYYY"
-							onChange={(date, dateString) => {
-								console.log(date, dateString);
-							}}
-							format={'DD-MM-YYYY'}
-						/>
+							placeholder="Chọn trạng thái"
+							onChange={(value) => setFilterStatus(value)}
+						>
+							<Option value="">Tất cả</Option>
+							<Option value="completed">Đang hiệu lực</Option>
+							<Option value="pending_contract">Chờ phê duyệt</Option>
+							<Option value="pending_payment">Chờ thanh toán</Option>
+							<Option value="pending_sign">Chờ ký tên</Option>
+							<Option value="canceled">Hủy hợp đồng</Option>
+							<Option value="expired">Hết hạn</Option>
+						</Select>
 					</div>
 				</div>
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="bookingId"
-					dataSource={data}
-					scroll={{x: 'max-content'}}
+					rowKey="booking_id"
 					columns={columns}
+					dataSource={requests}
+					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
 						onClick: () => handleRowClick(record),
 					})}
 					rowClassName={(record, index) =>
 						index % 2 === 0 ? styles.evenRow : styles.oddRow
 					}
+					loading={loading}
 					pagination={{
-						pageSize,
+						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
-						onChange: (page, size) => {
-							setCurrentPage(page);
-							setPageSize(size);
-						},
+						total: pagination?.total_page * pageSize,
+						onChange: handlePageChange,
 					}}
 					className={styles.table}
 				/>

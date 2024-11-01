@@ -1,164 +1,153 @@
-import {DatePicker, Input, Table, Button, Space, Popconfirm, Tag, Select} from 'antd';
-import React, {useState} from 'react';
+import {DatePicker, Input, Table, Button, Space, Popconfirm, Tag, Select, message} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './LandLeaseRequestPage.module.css';
 import {CheckOutlined, DeleteOutlined, EditOutlined, FileAddOutlined} from '@ant-design/icons';
 import {formatNumber} from '../../utils';
 import {LandLeaseRequestDetailModal} from './LandLeaseRequestDetailModal';
 import {LandLeaseRequestUpdateModal} from './LandLeaseRequestUpdateModal';
+import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
+import {useDispatch, useSelector} from 'react-redux';
 
 const {Option} = Select;
 
-const requests = [
-	{
-		key: 'YC0001',
-		Customer: 'Nguyễn Văn A',
-		landId: 'MD001',
-		address: '089 Kutch Green Căn hộ 448',
-		dateSendRequest: '04/09/2019',
-		timeToRent: 6, // tháng
-		status: 'Chờ xử lý',
-		totalPrice: 100000,
-	},
-	{
-		key: 'YC0002',
-		Customer: 'Trần Thị B',
-		landId: 'MD002',
-		address: '234 Green St. Căn hộ 2A',
-		dateSendRequest: '05/09/2019',
-		timeToRent: 12, // tháng
-		status: 'Chấp nhận',
-		totalPrice: 200000,
-	},
-	{
-		key: 'YC0003',
-		Customer: 'Lê Hoàng C',
-		landId: 'MD003',
-		address: '45 Lê Lợi, Quận 1',
-		dateSendRequest: '12/10/2019',
-		timeToRent: 9, // tháng
-		status: 'Chờ xử lý',
-		totalPrice: 150000,
-	},
-	{
-		key: 'YC0004',
-		Customer: 'Phạm Thị D',
-		landId: 'MD004',
-		address: '789 Nguyễn Trãi, Quận 5',
-		dateSendRequest: '15/11/2019',
-		timeToRent: 24, // tháng
-		status: 'Chấp nhận',
-		totalPrice: 500000,
-	},
-	{
-		key: 'YC0005',
-		Customer: 'Nguyễn Văn E',
-		landId: 'MD005',
-		address: '123 Bạch Đằng, Phường 3',
-		dateSendRequest: '20/12/2019',
-		timeToRent: 3, // tháng
-		status: 'Bị từ chối',
-		totalPrice: 50000,
-	},
-	{
-		key: 'YC0006',
-		Customer: 'Đỗ Thị F',
-		landId: 'MD006',
-		address: '456 Lý Thái Tổ, Phường 4',
-		dateSendRequest: '25/01/2020',
-		timeToRent: 18, // tháng
-		status: 'Chờ xử lý',
-		totalPrice: 300000,
-	},
-	{
-		key: 'YC0007',
-		Customer: 'Trần Văn G',
-		landId: 'MD007',
-		address: '789 Trần Hưng Đạo, Phường 5',
-		dateSendRequest: '02/02/2020',
-		timeToRent: 12, // tháng
-		status: 'Từ chối',
-		totalPrice: 250000,
-	},
-];
-
 export const LandLeaseRequestPage = () => {
-	const [filterCustomer, setFilterCustomer] = useState('');
 	const [filterStatus, setFilterStatus] = useState('');
-	const [filterDate, setFilterDate] = useState(null);
-	const [selectedRequest, setselectedRequest] = useState(null);
+	const [selectedRequest, setSelectedRequest] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1); // New state for pagination
+	const [pageSize, setPageSize] = useState(5); // New state for pagination
 
-	const handleRemove = (requestID) => {
-		console.log(`Xóa yêu cầu: ${requestID}`);
-		// Triển khai chức năng xóa tại đây
+	const dispatch = useDispatch();
+	const requests = useSelector((state) => state.landSlice.listOfBooking.metadata.bookings);
+	const pagination = useSelector((state) => state.landSlice.listOfBooking.metadata.pagination);
+	const loading = useSelector((state) => state.landSlice.loading);
+
+	useEffect(() => {
+		fetchRequests(currentPage); // Pass the current page to fetchRequests
+	}, [filterStatus, currentPage]);
+
+	const fetchRequests = async () => {
+		try {
+			await dispatch(
+				getListOfBooking({
+					page_size: pageSize,
+					page_index: currentPage,
+					status: filterStatus,
+					type: 'request',
+				})
+			);
+		} catch (error) {
+			message.error('Error fetching data');
+		}
 	};
 
 	const handleRowClick = (record) => {
-		setselectedRequest(record);
+		setSelectedRequest(record);
 		setIsModalOpen(true);
 	};
 
 	const handleModalClose = () => {
 		setIsModalOpen(false);
-		setselectedRequest(null);
+		setSelectedRequest(null);
 	};
 
 	const handleUpdateClick = (record) => {
-		setselectedRequest(record);
+		setSelectedRequest(record);
 		setIsModalUpdateOpen(true);
 	};
 
 	const handleModalUpdateClose = () => {
 		setIsModalUpdateOpen(false);
-		setselectedRequest(null);
+		setSelectedRequest(null);
 	};
 
-	const handleDateChange = (date, dateString) => {
-		setFilterDate(dateString);
+	const handleApprove = (body) => {
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBooking(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchRequests(currentPage);
+					handleModalUpdateClose();
+					message.info('Đã tạo hợp đồng');
+				} else {
+					message.info('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.info('Có lỗi trong quá trình cập nhật');
+			});
 	};
 
-	const filteredRequests = requests.filter((request) => {
-		const matchesCustomer = request.Customer.toLowerCase().includes(
-			filterCustomer.toLowerCase()
-		);
-		const matchesStatus = filterStatus ? request.status === filterStatus : true;
-		const matchesDate = filterDate ? request.dateSendRequest === filterDate : true;
-		return matchesCustomer && matchesStatus && matchesDate;
-	});
+	const handleRemove = (bookingID) => {
+		const body = {
+			booking_id: bookingID,
+			reason_for_reject: 'Mảnh đất không sẵn sàng cho thuê',
+			status: 'rejected',
+		};
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBooking(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchRequests(currentPage);
+					message.info('Đã từ chối');
+				} else {
+					message.info('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.info('Có lỗi trong quá trình cập nhật');
+			});
+	};
+
+	// Handle page change
+	const handlePageChange = (page) => {
+		setCurrentPage(page); // Update current page state
+	};
 
 	const columns = [
 		{
-			title: 'ID Yêu Cầu',
-			dataIndex: 'key',
-			key: 'key',
-			render: (text) => <a>{text}</a>,
-		},
-		{
 			title: 'Khách Hàng',
-			dataIndex: 'Customer',
-			key: 'Customer',
+			dataIndex: 'land_renter',
+			key: 'land_renter',
+			render: (landRenter) => <a style={{textAlign: 'center'}}>{landRenter.full_name}</a>,
 		},
 		{
-			title: 'ID Lô Đất',
-			dataIndex: 'landId',
-			key: 'landId',
+			title: 'Mảnh đất',
+			dataIndex: 'land',
+			key: 'land',
+			render: (land) => <div style={{textAlign: 'center'}}>{land.name}</div>,
 		},
 		{
-			title: 'Địa Chỉ',
-			dataIndex: 'address',
-			key: 'address',
+			title: 'Mục đích',
+			dataIndex: 'purpose_rental',
+			key: 'purpose_rental',
 		},
 		{
 			title: 'Ngày Gửi',
-			dataIndex: 'dateSendRequest',
-			key: 'dateSendRequest',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (text) => (
+				<div style={{textAlign: 'center'}}>{new Date(text).toLocaleDateString()}</div>
+			),
 		},
 		{
 			title: 'Thời Gian Thuê (tháng)',
-			dataIndex: 'timeToRent',
-			key: 'timeToRent',
+			dataIndex: 'total_month',
+			key: 'total_month',
 			render: (text) => <div style={{textAlign: 'center'}}>{text} tháng</div>,
+		},
+		{
+			title: 'Thời Gian Bắt Đầu',
+			dataIndex: 'time_start',
+			key: 'time_start',
+			render: (text) => (
+				<div style={{textAlign: 'center'}}>{new Date(text).toLocaleDateString()}</div>
+			),
 		},
 		{
 			title: 'Trạng Thái',
@@ -166,52 +155,26 @@ export const LandLeaseRequestPage = () => {
 			key: 'status',
 			render: (status) => (
 				<Tag
-					color={
-						status === 'Chờ xử lý' ? 'gold' : status === 'Chấp nhận' ? 'green' : 'red'
-					}
+					color={status === 'pending' ? 'gold' : status === 'rejected' ? 'red' : 'green'}
 				>
-					{status}
+					{status === 'pending'
+						? 'Đang xử lí'
+						: status === 'rejected'
+							? 'Từ chối'
+							: 'Chấp nhận'}
 				</Tag>
 			),
-		},
-		{
-			title: 'Tổng Giá',
-			dataIndex: 'totalPrice',
-			key: 'totalPrice',
-			render: (price) => `${formatNumber(price)} VND`,
 		},
 		{
 			title: 'Hành Động',
 			key: 'actions',
 			render: (_, record) => (
 				<Space size="middle">
-					<Popconfirm
-						title="Chấp nhận"
-						description="Bạn muốn chấp nhận yêu cầu này?"
-						onConfirm={(e) => {
-							e.stopPropagation();
-							handleRemove(record.key);
-						}}
-						onClick={(e) => e.stopPropagation()}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Chấp nhận"
-						cancelText="Huỷ"
-					>
-						<Button
-							icon={<CheckOutlined />}
-							color="primary"
-							variant="filled"
-							onClick={(e) => {
-								e.stopPropagation();
-								// handleUpdateClick(record);
-							}}
-						/>
-					</Popconfirm>
-
 					<Button
-						icon={<FileAddOutlined />}
 						color="primary"
 						variant="filled"
+						disabled={record.status !== 'pending'}
+						icon={<CheckOutlined />}
 						onClick={(e) => {
 							e.stopPropagation();
 							handleUpdateClick(record);
@@ -219,17 +182,20 @@ export const LandLeaseRequestPage = () => {
 					/>
 					<Popconfirm
 						title="Từ chối yêu cầu"
-						description="Bạn muốn từ chối yêu cầu này?"
 						onConfirm={(e) => {
 							e.stopPropagation();
-							handleRemove(record.key);
+							handleRemove(record.booking_id);
 						}}
 						onClick={(e) => e.stopPropagation()}
-						onCancel={(e) => e.stopPropagation()}
 						okText="Từ chối"
 						cancelText="Huỷ"
 					>
-						<Button icon={<DeleteOutlined />} color="danger" variant="filled" />
+						<Button
+							color="danger"
+							variant="filled"
+							disabled={record.status !== 'pending'}
+							icon={<DeleteOutlined />}
+						/>
 					</Popconfirm>
 				</Space>
 			),
@@ -239,48 +205,51 @@ export const LandLeaseRequestPage = () => {
 	return (
 		<div className={styles.headerContainer}>
 			<h1>Yêu Cầu Thuê Đất</h1>
-
 			<div className={styles.filterContainer}>
-				<span>Lọc theo thời gian thuê:</span>
-				<DatePicker
-					placeholder="Chọn Ngày"
-					onChange={handleDateChange}
-					style={{marginRight: 8}}
-				/>
 				<span>Lọc theo trạng thái:</span>
-
 				<Select
 					placeholder="Chọn Trạng Thái"
 					onChange={(value) => setFilterStatus(value)}
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
-					<Option value="Chờ xử lý">Chờ xử lý</Option>
-					<Option value="Chấp nhận">Chấp nhận</Option>
+					<Option value="pending">Chờ xử lý</Option>
+					<Option value="pending_contract">Chấp nhận</Option>
+					<Option value="rejected">Từ chối</Option>
 				</Select>
 			</div>
-
-			<Table
-				columns={columns}
-				dataSource={filteredRequests}
-				pagination={{pageSize: 5}}
-				rowKey="key"
-				className={styles.tableContainer}
-				onRow={(record) => ({
-					onClick: () => handleRowClick(record),
-				})}
-			/>
-
+			<div className={styles.tableContainer}>
+				<Table
+					rowKey="booking_id"
+					columns={columns}
+					dataSource={requests}
+					scroll={{x: 'max-content'}}
+					rowClassName={(record, index) =>
+						index % 2 === 0 ? styles.evenRow : styles.oddRow
+					}
+					loading={loading}
+					pagination={{
+						pageSize: pageSize,
+						current: currentPage,
+						total: pagination?.total_page * pageSize,
+						onChange: handlePageChange,
+					}}
+					onRow={(record) => ({
+						onClick: () => handleRowClick(record),
+					})}
+					className={styles.table}
+				/>
+			</div>
 			<LandLeaseRequestDetailModal
 				isModalOpen={isModalOpen}
 				handleModalClose={handleModalClose}
 				selectedRequest={selectedRequest}
 			/>
-
 			<LandLeaseRequestUpdateModal
 				isModalOpen={isModalUpdateOpen}
 				handleModalClose={handleModalUpdateClose}
 				selectedRequest={selectedRequest}
+				handleApprove={handleApprove}
 			/>
 		</div>
 	);

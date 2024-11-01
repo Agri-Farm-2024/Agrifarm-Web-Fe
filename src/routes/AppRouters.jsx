@@ -22,7 +22,6 @@ import {ManageMaterialPage} from '../pages/ManageMaterialPage/ManageMaterialPage
 import {ManagePlantPage} from '../pages/ManagePlantPage/ManagePlantPage';
 import {ManageServicesInusePage} from '../pages/ManageServicesInusePage/ManageServicesInusePage';
 import {ManageStandardProcessPage} from '../pages/ManageStandardProcessPage/ManageStandardProcessPage';
-import {ManagerDashBoardPage} from '../pages/ManagerDashBoardPage/ManagerDashBoardPage';
 import {ManageServicePackagePage} from '../pages/ManageServicePackagePage/ManageServicePackagePage';
 import {ManageLandPage} from '../pages/ManageLandPage/ManageLandPage';
 import {ManageTransactionPage} from '../pages/ManageTransactionPage/ManageTransactionPage';
@@ -32,6 +31,7 @@ import {ManageOrderPage} from '../pages/ManageOrderPage/ManageOrderPage';
 import {ManageViewLand} from '../pages/ManageViewLand/ManageViewLand';
 import ManageContractByManager from '../pages/ManageContractByManager/ManageContractByManager';
 import {ManagePlantSeasonPage} from '../pages/ManagePlantSeasonPage/ManagePlantSeasonPage';
+import ManagerDashBoardPages from '../pages/ManagerDashBoardPage/ManagerDashBoardPage';
 
 export const AppRouters = () => {
 	return (
@@ -184,7 +184,7 @@ export const AppRouters = () => {
 					path="/manager-dashboard"
 					element={
 						<PrivateRoute roles={['manager']}>
-							<ManagerDashBoardPage />
+							<ManagerDashBoardPages />
 						</PrivateRoute>
 					}
 				/>

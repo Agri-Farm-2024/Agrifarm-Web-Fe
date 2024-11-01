@@ -11,11 +11,10 @@
 
 .headerContainer .filterContainer {
     width: 70%;
-    display: flex;
     float: right;
-    justify-content: space-between;
+    display: flex;
+    justify-content: end;
     align-items: center;
-    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -49,6 +48,8 @@
 .modalContainer {
     width: 100%;
     padding-top: 1rem;
+    display: flex;
+
 }
 
 button {

@@ -19,9 +19,16 @@
 
 .tableContainer {
     width: 100%;
+    padding: 0 20px;
+}
+
+.tableContainer .table {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 7px;
+    margin-bottom: 2rem;
 }
+
+
 
 .headerContainer .filterContainer>span {
     margin-right: 0.5rem;
@@ -34,6 +41,7 @@
 .modalContainer {
     width: 100%;
     padding-top: 1rem;
+    display: flex;
 }
 
 .modalContainer .bookingItem {

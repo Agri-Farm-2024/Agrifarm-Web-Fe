@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {toast} from 'react-toastify';
 
-const API = 'http://localhost:3333';
+// const API = 'http://localhost:3333';
+const API = 'https://api.agrifarm.site';
+
 let accessToken =
 	localStorage.getItem('user') && JSON.parse(localStorage.getItem('user')).token.accessToken;
 

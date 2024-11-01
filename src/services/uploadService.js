@@ -1,11 +1,12 @@
 import axios from 'axios';
+const API = 'https://api.agrifarm.site';
 
 export const uploadFile = async (file) => {
 	const formData = new FormData();
-	formData.append('files', file, file.name);
+	formData.append('file', file, file.name);
 
 	try {
-		const response = await axios.post('http://localhost:3333/upload', formData, {
+		const response = await axios.post(`${API}/upload`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 				Accept: '*/*',
