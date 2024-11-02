@@ -4,6 +4,6 @@ services:
   web:
     build: .
     ports:
-      - "3002:3000"  # Map host's port 3001 to container's port 3000
+      - "3002:3000"  # Map host's port 3002 to container's port 3000
     environment:
       - NODE_ENV=production
