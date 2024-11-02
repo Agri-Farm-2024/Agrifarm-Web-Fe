@@ -77,6 +77,8 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 					if (response.payload.statusCode !== 201) {
 						if (response.payload.message === 'Plant name already exist') {
 							message.error(`Tên giống cây đã tồn tại trên trang trại`);
+						} else {
+							message.error(`Tạo giống cây thất bại!`);
 						}
 					}
 
@@ -94,6 +96,37 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
 	};
+
+	// const fetchLandTypeOptions = (pageIndex) => {
+	// 	const formData = {
+	// 		page_index: pageIndex,
+	// 		page_size: 10,
+	// 	};
+
+	// 	dispatch(getPlantList(formData))
+	// 		.then((response) => {
+	// 			console.log('response:', response);
+	// 			if (response.payload && response.payload.plants) {
+	// 				const newOptions = response.payload.plants.map((option, index) => ({
+	// 					key: index + option.name,
+	// 					label: option.name,
+	// 					value: option.plant_id || index + option.name,
+	// 				}));
+	// 				console.log('newOptions:', newOptions);
+	// 				setPlantTypeOptions(newOptions);
+
+	// 				//Check whether has more options to fetch
+	// 				if (response.payload.pagination.total_page == pageIndex) {
+	// 					setHasMorePlants(true);
+	// 				}
+	// 			} else {
+	// 				console.log('Fetch plant type failed', response);
+	// 			}
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log('Error', error);
+	// 		});
+	// };
 
 	useEffect(() => {
 		if (isModalOpen) {

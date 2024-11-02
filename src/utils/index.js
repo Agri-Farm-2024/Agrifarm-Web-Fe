@@ -17,6 +17,8 @@ export function formatDate(date) {
 
 export const getRole = (input) => {
 	switch (input) {
+		case 0:
+			return 'admin';
 		case 1:
 			return 'manager';
 		case 2:
