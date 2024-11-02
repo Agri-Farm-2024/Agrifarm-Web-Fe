@@ -23,7 +23,7 @@ jobs:
                   password: ${{ secrets.SERVER_PASSWORD }}
                   script: |
                       # Step 1: Navigate to the project folder
-                      cd ~/Agrifarm-Mobile-Fe
+                      cd ~/Agrifarm-Web-Fe
 
                       # Step 2: Pull latest changes from the Git repository
                       git pull
