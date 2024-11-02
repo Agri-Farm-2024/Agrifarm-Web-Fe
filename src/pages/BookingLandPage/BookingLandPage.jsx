@@ -1,35 +1,36 @@
-import {DatePicker, Input, InputNumber, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import {DatePicker, Input, InputNumber, message, Select, Table, Tag} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './BookingLandPage.module.css';
 import {formatNumber} from '../../utils';
 import {BookingLandDetailModal} from './BookingLandDetailModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
 
 const columns = [
 	{
-		title: 'ID hợp đồng',
-		dataIndex: 'bookingId',
-		key: 'bookingId',
-		render: (text) => <a>{text}</a>,
+		title: 'Mảnh đất',
+		dataIndex: 'land',
+		key: 'land',
+		render: (land) => <a>{land.name}</a>,
 	},
 	{
-		title: 'Tên người thuê',
-		dataIndex: 'landRenterName',
-		key: 'landRenterName',
+		title: 'Khách Hàng',
+		dataIndex: 'land_renter',
+		key: 'land_renter',
+		render: (landRenter) => <div>{landRenter.full_name}</div>,
+	},
+
+	{
+		title: 'Thời Gian Bắt Đầu',
+		dataIndex: 'time_start',
+		key: 'time_start',
+		render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
 	},
 	{
-		title: 'Tên mảnh đất',
-		dataIndex: 'landName',
-		key: 'landName',
-	},
-	{
-		title: 'Ngày bắt đầu',
-		dataIndex: 'dateStart',
-		key: 'dateStart',
-	},
-	{
-		title: 'Ngày kết thúc',
-		dataIndex: 'dateEnd',
-		key: 'dateEnd',
+		title: 'Thời Gian Kết Thúc',
+		dataIndex: 'time_end',
+		key: 'time_end',
+		render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
 	},
 	{
 		title: 'Trạng thái',
@@ -37,43 +38,54 @@ const columns = [
 		dataIndex: 'status',
 		render: (_, {status}) => (
 			<>
-				{status == 'Đang hiệu lực' && (
+				{status == 'comleted' && (
 					<Tag color="green" key={status}>
-						{status}
+						Đang hiệu lực
 					</Tag>
 				)}
-				{status == 'Sắp hết hạn' && (
-					<Tag color="red" key={status}>
-						{status}
-					</Tag>
-				)}
-				{status == 'Chấm dứt' && (
+				{status == 'expired' && (
 					<Tag color="default" key={status}>
-						{status}
+						Sắp hết hạn
 					</Tag>
 				)}
-				{status == 'Chờ phê duyệt' && (
+				{status == 'canceled' && (
+					<Tag color="red" key={status}>
+						Chấm dứt
+					</Tag>
+				)}
+				{status == 'pending_contract' && (
 					<Tag color="warning" key={status}>
-						{status}
+						Chờ phê duyệt
 					</Tag>
 				)}
-				{status == 'Chờ thanh toán' && (
+				{status == 'pending_payment' && (
 					<Tag color="magenta" key={status}>
-						{status}
+						Chờ thanh toán
 					</Tag>
 				)}
-				{status == 'Chờ ký tên' && (
+				{status == 'pending_sign' && (
 					<Tag color="cyan" key={status}>
-						{status}
+						Chờ ký tên
+					</Tag>
+				)}
+				{status == 'rejected' && (
+					<Tag color="red" key={status}>
+						Hủy yêu cầu
 					</Tag>
 				)}
 			</>
 		),
 	},
 	{
-		title: 'Tổng chi phí',
-		dataIndex: 'totalPrice',
-		key: 'totalPrice',
+		title: 'Chi phí mỗi tháng',
+		dataIndex: 'price_per_month',
+		key: 'price_per_month',
+		render: (text) => <>{formatNumber(text)} VND</>,
+	},
+	{
+		title: 'Chi phí cọc',
+		dataIndex: 'price_per_month',
+		key: 'price_per_month',
 		render: (text) => <>{formatNumber(text)} VND</>,
 	},
 ];
@@ -154,11 +166,35 @@ const data = [
 ];
 
 const BookingLandPage = () => {
+	const [filterStatus, setFilterStatus] = useState('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedBooking, setSelectedBooking] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
-	const [totalPage, setTotalPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+
+	const dispatch = useDispatch();
+	const requests = useSelector((state) => state.landSlice.listOfBooking.metadata.bookings);
+	const pagination = useSelector((state) => state.landSlice.listOfBooking.metadata.pagination);
+	const loading = useSelector((state) => state.landSlice.loading);
+
+	useEffect(() => {
+		fetchRequests(); // Pass the current page to fetchRequests
+	}, [filterStatus, currentPage]);
+
+	const fetchRequests = async () => {
+		try {
+			await dispatch(
+				getListOfBooking({
+					page_size: pageSize,
+					page_index: currentPage,
+					status: filterStatus,
+					type: 'booking',
+				})
+			);
+		} catch (error) {
+			message.error('Error fetching data');
+		}
+	};
 
 	const handleRowClick = (record) => {
 		setSelectedBooking(record);
@@ -170,51 +206,74 @@ const BookingLandPage = () => {
 		setSelectedBooking(null);
 	};
 
+	// Handle page change
+	const handlePageChange = (page) => {
+		setCurrentPage(page); // Update current page state
+	};
+
+	const handleUpdateBooking = (body) => {
+		console.log(body);
+
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBooking(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchRequests();
+					handleModalClose();
+					message.success('Đã cập nhật');
+				} else {
+					message.error('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
 				<p>Quản lý thuê đất</p>
 				<div className={styles.filterContainer}>
 					<div className={styles.fiterItem}>
-						<span>Lọc theo thời gian thuê (tháng):</span>
-						<InputNumber
+						<span>Lọc theo trạng thái:</span>
+						<Select
 							className={styles.filterInput}
-							placeholder="Nhập số tháng thuê"
-						/>
-					</div>
-					<div className={styles.fiterItem}>
-						<span>Lọc theo ngày thuê:</span>
-						<DatePicker
-							className={styles.filterInput}
-							placeholder="DD-MM-YYYY"
-							onChange={(date, dateString) => {
-								console.log(date, dateString);
-							}}
-							format={'DD-MM-YYYY'}
-						/>
+							placeholder="Chọn trạng thái"
+							onChange={(value) => setFilterStatus(value)}
+						>
+							<Option value="">Tất cả</Option>
+							<Option value="completed">Đang hiệu lực</Option>
+							<Option value="pending_contract">Chờ phê duyệt</Option>
+							<Option value="pending_payment">Chờ thanh toán</Option>
+							<Option value="pending_sign">Chờ ký tên</Option>
+							<Option value="canceled">Hủy hợp đồng</Option>
+							<Option value="rejected">Từ chối</Option>
+							<Option value="expired">Hết hạn</Option>
+						</Select>
 					</div>
 				</div>
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="bookingId"
-					dataSource={data}
-					scroll={{x: 'max-content'}}
+					rowKey="booking_id"
 					columns={columns}
+					dataSource={requests}
+					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
 						onClick: () => handleRowClick(record),
 					})}
 					rowClassName={(record, index) =>
 						index % 2 === 0 ? styles.evenRow : styles.oddRow
 					}
+					loading={loading}
 					pagination={{
-						pageSize,
+						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
-						onChange: (page, size) => {
-							setCurrentPage(page);
-							setPageSize(size);
-						},
+						total: pagination?.total_page * pageSize,
+						onChange: handlePageChange,
 					}}
 					className={styles.table}
 				/>
@@ -223,6 +282,7 @@ const BookingLandPage = () => {
 					isModalOpen={isModalOpen}
 					handleModalClose={handleModalClose}
 					selectedBooking={selectedBooking}
+					handleUpdate={handleUpdateBooking}
 				/>
 			</div>
 		</div>

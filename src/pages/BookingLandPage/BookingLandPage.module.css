@@ -2,7 +2,8 @@
 	width: 100%;
 	padding: 0 20px;
 }
-.headerContainer > p {
+
+.headerContainer>p {
 	font-size: 1.5rem;
 	font-weight: bold;
 	color: #7fb640;
@@ -12,7 +13,7 @@
 	width: 70%;
 	display: flex;
 	float: right;
-	justify-content: space-between;
+	justify-content: end;
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 2rem;
@@ -25,7 +26,7 @@
 	justify-content: space-between;
 }
 
-.headerContainer .filterContainer .fiterItem > span {
+.headerContainer .filterContainer .fiterItem>span {
 	margin-right: 0.5rem;
 	width: 50%;
 	font-weight: bold;
@@ -48,6 +49,8 @@
 .modalContainer {
 	width: 100%;
 	padding-top: 1rem;
+	display: flex;
+
 }
 
 button {
