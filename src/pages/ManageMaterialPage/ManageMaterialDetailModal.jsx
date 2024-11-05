@@ -1,11 +1,13 @@
 import React from 'react';
 import styles from './ManageMaterialPage.module.css';
-import {Descriptions, Modal, Tag} from 'antd';
+import {Descriptions, Image, Modal, Tag} from 'antd';
 import {formatDate, formatNumber} from '../../utils';
+
+const API = 'https://api.agrifarm.site';
 
 export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, isModalOpen}) => {
 	console.log('Selected Material', selectedMaterial);
-	const detailItems = selectedMaterial && [
+	let detailItems = selectedMaterial && [
 		{
 			key: 'material_id',
 			label: 'ID vật tư',
@@ -17,13 +19,25 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			children: <p>{selectedMaterial.name}</p>,
 		},
 		{
+			key: 'image_material',
+			label: 'Ảnh',
+			children: (
+				<Image
+					src={`${API}${selectedMaterial.image_material}`}
+					alt="Material Image"
+					style={{width: 200, height: 100, borderRadius: 5}}
+					fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+				/>
+			),
+		},
+		{
 			key: 'type',
 			label: 'Loại vật tư',
 			children:
 				selectedMaterial.type == 'buy' ? (
-					<Tag color="geekblue">Bán</Tag>
+					<Tag color="magenta">Bán</Tag>
 				) : (
-					<Tag color="purple">Cho thuê</Tag>
+					<Tag color="volcano">Cho thuê</Tag>
 				),
 		},
 		{
@@ -55,22 +69,6 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 				</>
 			),
 		},
-		selectedMaterial.type == 'buy'
-			? {
-					key: 'price_per_piece',
-					label: 'Giá bán',
-					children: <p>{formatNumber(selectedMaterial.price_per_piece)} VND</p>,
-				}
-			: ({
-					key: 'price_of_rent',
-					label: 'Giá thuê',
-					children: <p>{formatNumber(selectedMaterial.price_of_rent)} VND</p>,
-				},
-				{
-					key: 'deposit_per_piece',
-					label: 'Giá cọc',
-					children: <p>{formatNumber(selectedMaterial.deposit_per_piece)} VND</p>,
-				}),
 		{
 			key: 'created_at',
 			label: 'Ngày tạo',
@@ -82,6 +80,32 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			children: <p>{formatDate(selectedMaterial.updated_at)}</p>,
 		},
 	];
+
+	if (selectedMaterial && selectedMaterial.type == 'rent') {
+		detailItems = [
+			...detailItems,
+			{
+				key: 'price_of_rent',
+				label: 'Giá thuê',
+				children: <p>{formatNumber(selectedMaterial.price_of_rent)} VND/tháng</p>,
+			},
+			{
+				key: 'deposit_per_piece',
+				label: 'Giá cọc',
+				children: <p>{formatNumber(selectedMaterial.deposit_per_piece)} VND</p>,
+			},
+		];
+	}
+	if (selectedMaterial && selectedMaterial.type == 'buy') {
+		detailItems = [
+			...detailItems,
+			{
+				key: 'price_per_piece',
+				label: 'Giá bán',
+				children: <p>{formatNumber(selectedMaterial.price_per_piece)} VND</p>,
+			},
+		];
+	}
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Thông tin vật tư</span>}

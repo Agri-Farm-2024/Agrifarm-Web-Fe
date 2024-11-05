@@ -1,4 +1,4 @@
-import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
+import {Button, DatePicker, Image, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
 import {formatNumber} from '../../utils';
@@ -115,13 +115,29 @@ const materialTypeOptions = [
 	},
 ];
 
+const API = 'https://api.agrifarm.site';
+
 export const ManageMaterialPage = () => {
 	const columns = [
+		// {
+		// 	title: 'ID vật tư',
+		// 	dataIndex: 'material_id',
+		// 	key: 'material_id',
+		// 	render: (text) => <a>{text}</a>,
+		// },
 		{
-			title: 'ID vật tư',
-			dataIndex: 'material_id',
-			key: 'material_id',
-			render: (text) => <a>{text}</a>,
+			title: 'Ảnh vật tư',
+			dataIndex: 'image_material',
+			key: 'image_material',
+			render: (img) => (
+				<Image
+					src={`${API}${img}`}
+					alt="Material Image"
+					style={{width: 200, height: 100, borderRadius: 5}}
+					preview={false}
+					fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+				/>
+			),
 		},
 		{
 			title: 'Tên vật tư',
@@ -135,9 +151,9 @@ export const ManageMaterialPage = () => {
 			render: (text) => (
 				<>
 					{text == 'buy' ? (
-						<Tag color="geekblue">Bán</Tag>
+						<Tag color="magenta">Bán</Tag>
 					) : (
-						<Tag color="purple">Cho thuê</Tag>
+						<Tag color="volcano">Cho thuê</Tag>
 					)}
 				</>
 			),
@@ -255,7 +271,10 @@ export const ManageMaterialPage = () => {
 		setSelectedMaterial(null);
 	};
 
-	const handleCreateModalClose = () => {
+	const handleCreateModalClose = (isCreateSuccess) => {
+		if (isCreateSuccess) {
+			fetchMaterialList(1);
+		}
 		setIsCreateModalOpen(false);
 		setSelectedMaterial(null);
 	};

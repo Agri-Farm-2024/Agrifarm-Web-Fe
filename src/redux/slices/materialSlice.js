@@ -5,8 +5,21 @@ export const getMaterial = createAsyncThunk(
 	'materialSlice/getMaterial',
 	async (params, {rejectWithValue}) => {
 		try {
-			const data = await api.get(`/materials/getAllMaterial`, params);
+			const data = await api.get(`/materials/getAllMaterial`, {params});
 			return data.data.metadata;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const createMaterial = createAsyncThunk(
+	'materialSlice/createMaterial',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const data = await api.post(`/materials/createMaterial`, formData);
+			return data.data;
 		} catch (error) {
 			console.log('error', error);
 			return rejectWithValue(error.response.data);
@@ -32,6 +45,16 @@ export const materialSlice = createSlice({
 				state.material = action.payload;
 			})
 			.addCase(getMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(createMaterial.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(createMaterial.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(createMaterial.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});
