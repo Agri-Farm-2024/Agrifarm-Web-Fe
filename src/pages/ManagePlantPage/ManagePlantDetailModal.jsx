@@ -10,6 +10,11 @@ export const ManagePlantDetailModal = ({selectedPlant, handleModalClose, isModal
 			children: <p>{selectedPlant.name}</p>,
 		},
 		{
+			key: 'land_type_id',
+			label: 'Loại đất phù hợp',
+			children: <p>{selectedPlant.land_type && selectedPlant.land_type.name}</p>,
+		},
+		{
 			key: 'status',
 			label: 'Trạng thái',
 			children: (
@@ -26,13 +31,13 @@ export const ManagePlantDetailModal = ({selectedPlant, handleModalClose, isModal
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
-			width={600}
+			width={800}
 			centered
 		>
 			{selectedPlant && (
 				<Descriptions
 					style={{marginTop: 20}}
-					labelStyle={{width: '10rem', fontWeight: 'bold'}}
+					labelStyle={{width: '15rem', fontWeight: 'bold'}}
 					column={1}
 					bordered
 					items={detailItems}

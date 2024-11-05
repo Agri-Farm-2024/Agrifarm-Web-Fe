@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
-import {Descriptions, Modal} from 'antd';
+import {Descriptions, Modal, Tag} from 'antd';
 import {formatDate, formatNumber} from '../../utils';
 
 export const ManagePlantSeasonDetailModal = ({
@@ -20,9 +20,24 @@ export const ManagePlantSeasonDetailModal = ({
 			children: <p>{selectedPlantSeason?.plant?.name}</p>,
 		},
 		{
+			key: 'type',
+			label: 'Loại mùa vụ',
+			children: (
+				<>
+					{selectedPlantSeason.type == 'in_season' && <Tag color="green">Mùa thuận</Tag>}
+					{selectedPlantSeason.type == 'out_season' && <Tag color="red">Mùa nghịch</Tag>}
+				</>
+			),
+		},
+		{
 			key: 'month_start',
 			label: 'Tháng bắt đầu',
 			children: <p>{selectedPlantSeason?.month_start}</p>,
+		},
+		{
+			key: 'total_month',
+			label: 'Thời gian trồng của mùa vụ',
+			children: <p>{selectedPlantSeason?.month_start} tháng</p>,
 		},
 		{
 			key: 'price_purchase_per_kg',
@@ -52,12 +67,12 @@ export const ManagePlantSeasonDetailModal = ({
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
 			centered
-			width={600}
+			width={800}
 		>
 			{selectedPlantSeason && (
 				<Descriptions
 					style={{marginTop: 20}}
-					labelStyle={{width: '10rem', fontWeight: 'bold'}}
+					labelStyle={{width: '15rem', fontWeight: 'bold'}}
 					column={1}
 					bordered
 					items={detailItems}
