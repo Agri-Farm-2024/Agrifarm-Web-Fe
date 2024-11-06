@@ -14,6 +14,19 @@ export const createPlant = createAsyncThunk(
 	}
 );
 
+export const deletePlant = createAsyncThunk(
+	'plantSlice/deletePlant',
+	async (plantInfo, {rejectWithValue}) => {
+		try {
+			const response = await api.delete(`/plants/deletePlant/${plantInfo.plantId}`);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const createCrop = createAsyncThunk(
 	'plantSlice/createCrop',
 	async (seasonInfo, {rejectWithValue}) => {
@@ -27,12 +40,14 @@ export const createCrop = createAsyncThunk(
 	}
 );
 
-export const updateStatusPlant = createAsyncThunk(
-	'plantSlice/updateStatusPlant',
+export const updatePlant = createAsyncThunk(
+	'plantSlice/updatePlant',
 	async (formData, {rejectWithValue}) => {
 		try {
-			const response = await api.patch(`/plants/${formData.plantId}`, {
-				status: formData.status,
+			const response = await api.patch(`/plants/updateplant/${formData.plantId}`, {
+				land_type_id: formData.land_type_id,
+				name: formData.name,
+				status: 'active',
 			});
 			return response.data;
 		} catch (error) {
@@ -48,6 +63,7 @@ export const updatePlantSeason = createAsyncThunk(
 		try {
 			const updateData = {
 				month_start: formData.month_start,
+				total_month: formData.total_month,
 				price_process: formData.price_process,
 				price_purchase_per_kg: formData.price_purchase_per_kg,
 				type: formData.type,
@@ -113,6 +129,17 @@ const plantSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload || 'Plant creation failed';
 			})
+			.addCase(deletePlant.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(deletePlant.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(deletePlant.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Plant delete failed';
+			})
 			.addCase(createCrop.pending, (state) => {
 				state.loading = true;
 				state.error = null;
@@ -136,14 +163,14 @@ const plantSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload;
 			})
-			.addCase(updateStatusPlant.pending, (state) => {
+			.addCase(updatePlant.pending, (state) => {
 				state.loading = true;
 				state.error = null;
 			})
-			.addCase(updateStatusPlant.fulfilled, (state, action) => {
+			.addCase(updatePlant.fulfilled, (state, action) => {
 				state.loading = false;
 			})
-			.addCase(updateStatusPlant.rejected, (state, action) => {
+			.addCase(updatePlant.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

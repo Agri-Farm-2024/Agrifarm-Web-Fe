@@ -11,7 +11,7 @@ const seasonTypeOptions = [
 		label: 'Mùa thuận',
 	},
 	{
-		value: 'off_season',
+		value: 'out_season',
 		label: 'Mùa nghịch',
 	},
 ];
@@ -44,6 +44,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 		console.log('Success:', values);
 		const formData = {
 			month_start: values.monthStart,
+			total_month: values.totalMonth,
 			price_process: values.priceProcess,
 			price_purchase_per_kg: values.pricePurchasePerKg,
 			type: values.seasonType,
@@ -54,11 +55,30 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 			.then((response) => {
 				console.log('response', response);
 				if (response.payload && response.payload.statusCode) {
+					//Catch Error message
 					if (response.payload.statusCode !== 201) {
 						if (response.payload.message === 'Plant season already exist') {
 							message.error(`Mùa vụ đã tồn tại`);
+						} else if (
+							response.payload.message ===
+							'Only one in-season is allowed per plant variety'
+						) {
+							message.error(`Mùa thuận của loại cây này đã tồn tại`);
+						} else if (
+							response.payload.message ===
+							'Only two out-seasons are allowed per plant variety'
+						) {
+							message.error(`Cây này đã tồn tại 2 mùa nghịch`);
+						} else if (
+							response.payload.message ===
+							'Plant season already exists with the same plant_id, month_start, and type'
+						) {
+							message.error(
+								`Cây này đã tồn tại mùa vụ tại tháng ${values.monthStart}`
+							);
+						} else {
+							message.error('Tạo mùa vụ thất bại');
 						}
-						message.error('Tạo mùa vụ thất bại');
 					}
 
 					if (response.payload.statusCode === 201) {
@@ -96,7 +116,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 
 					//Check whether has more options to fetch
 					if (response.payload.pagination.total_page == pageIndex) {
-						setHasMorePlants(true);
+						setHasMorePlants(false);
 					}
 				} else {
 					console.log('Fetch plant type failed', response);
@@ -182,6 +202,28 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 					]}
 				>
 					<InputNumber placeholder="Tháng bắt đầu" className={styles.inputField} />
+				</Form.Item>
+
+				<Form.Item
+					label="Thời gian trồng của mùa vụ"
+					name="totalMonth"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+						{
+							type: 'number',
+							min: 1,
+							message: 'Tháng không hợp lệ!',
+						},
+						{
+							type: 'integer',
+							message: 'Tháng không hợp lệ!',
+						},
+					]}
+				>
+					<InputNumber placeholder="Tổng số tháng" className={styles.inputField} />
 				</Form.Item>
 
 				<Form.Item
