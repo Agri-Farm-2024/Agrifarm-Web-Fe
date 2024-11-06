@@ -1,4 +1,4 @@
-import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip, message} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
 import {ManagePlantSeasonDetailModal} from './ManagePlantSeasonDetailModal';
@@ -7,7 +7,7 @@ import {ManagePlantSeasonUpdateModal} from './ManagePlantSeasonUpdateModal';
 import {formatNumber} from '../../utils';
 import {ManagePlantSeasonCreateModal} from './ManagePlantSeasonCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
-import {getPlantSeasonList} from '../../redux/slices/plantSlice';
+import {deletePlantSeason, getPlantSeasonList} from '../../redux/slices/plantSlice';
 import {isLoadingPlant, plantSeasonListSelector} from '../../redux/selectors';
 
 const data = [
@@ -132,13 +132,32 @@ export const ManagePlantSeasonPage = () => {
 			render: (_, {type}) => (
 				<>
 					{type == 'in_season' && (
-						<Tag color="green" key={type}>
+						<Tag color="blue" key={type}>
 							Mùa thuận
 						</Tag>
 					)}
 					{type == 'out_season' && (
-						<Tag color="red" key={type}>
+						<Tag color="orange" key={type}>
 							Mùa nghịch
+						</Tag>
+					)}
+				</>
+			),
+		},
+		{
+			title: 'Trạng thái',
+			key: 'status',
+			dataIndex: 'status',
+			render: (_, {status}) => (
+				<>
+					{status == 'active' && (
+						<Tag color="green" key={status}>
+							Đang áp dụng
+						</Tag>
+					)}
+					{status == 'deleted' && (
+						<Tag color="red" key={status}>
+							Ngừng áp dụng
 						</Tag>
 					)}
 				</>
@@ -159,18 +178,25 @@ export const ManagePlantSeasonPage = () => {
 						color="primary"
 						variant="filled"
 						icon={<EditOutlined />}
+						disabled={record.status === 'deleted'}
 					></Button>
 
 					<Popconfirm
 						onClick={(e) => e.stopPropagation()}
 						title="Xoá dụng mùa vụ này"
 						description="Bạn muốn xoá dụng mùa vụ này?"
-						onConfirm={handleStopPlantSeason}
+						onConfirm={(e) => handleStopPlantSeason(e, record.plant_season_id)}
 						onCancel={(e) => e.stopPropagation()}
 						okText="Xoá dụng"
 						cancelText="Huỷ"
+						disabled={record.status === 'deleted'}
 					>
-						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+						<Button
+							disabled={record.status === 'deleted'}
+							color="danger"
+							variant="filled"
+							icon={<DeleteOutlined />}
+						></Button>
 					</Popconfirm>
 				</Space>
 			),
@@ -212,9 +238,26 @@ export const ManagePlantSeasonPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleStopPlantSeason = (e) => {
+	const handleStopPlantSeason = (e, plantSeasonId) => {
 		e.stopPropagation();
-		console.log('handleStopPlantSeason');
+		console.log('handleStopPlantSeason', plantSeasonId);
+		const formData = {
+			plantSeasonId: plantSeasonId,
+		};
+		dispatch(deletePlantSeason(formData))
+			.then((response) => {
+				console.log('remove response: ' + JSON.stringify(response));
+				if (response.payload && response.payload.statusCode == 200) {
+					message.success('Xoá mùa vụ thành công!');
+					fetchPlantSeasonList(currentPage);
+				} else {
+					message.error('Xoá mùa vụ thất bại!');
+				}
+			})
+			.catch((error) => {
+				message.error('Xoá mùa vụ thất bại!');
+				console.log('remove error: ' + error);
+			});
 	};
 
 	const handleModalClose = () => {

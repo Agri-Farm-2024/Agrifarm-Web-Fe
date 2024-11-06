@@ -53,7 +53,7 @@ export const ManagePlantSeasonUpdateModal = ({
 			plant_season_id: selectedPlantSeason.plant_season_id,
 			...values,
 		};
-		console.log('FOrm:', formData);
+		console.log('Form:', formData);
 		dispatch(updatePlantSeason(formData))
 			.then((response) => {
 				console.log('response', response);
@@ -76,7 +76,13 @@ export const ManagePlantSeasonUpdateModal = ({
 							'Plant season already exists with the same plant_id, month_start, and type'
 						) {
 							message.error(
-								`Cây này đã tồn tại mùa vụ tại tháng ${values.monthStart}`
+								`Cây này đã tồn tại mùa vụ tại tháng ${values.month_start}`
+							);
+						} else if (
+							response.payload.message === 'A season already exists at month_start.'
+						) {
+							message.error(
+								`Cây này đã tồn tại mùa vụ tại tháng ${values.month_start}`
 							);
 						} else {
 							message.error('Cập nhật mùa vụ thất bại');
