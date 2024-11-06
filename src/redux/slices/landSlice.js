@@ -15,6 +15,53 @@ export const createLand = createAsyncThunk(
 	}
 );
 
+
+export const updateLand = createAsyncThunk(
+	'landSlice/updateLand',
+	async (
+		{name, title, description, acreage_land, price_booking_per_month, staff_id, land_id},
+		{rejectWithValue}
+	) => {
+		console.log({
+			name,
+			title,
+			description,
+			acreage_land,
+			price_booking_per_month,
+			staff_id,
+			land_id,
+		});
+
+		try {
+			const response = await api.put(`/lands/${land_id}`, landInfor);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const getListOfLand = createAsyncThunk(
+	'landSlice/getListOfLand',
+	async ({page_size, page_index, status}, {rejectWithValue}) => {
+		console.log({page_size, page_index, status});
+
+		const urlAPI =
+			status === 'all'
+				? `/lands/getListByStaff?status=&page_size=${page_size}&page_index=${page_index}`
+				: `/lands/getListByStaff?status=${status}&page_size=${page_size}&page_index=${page_index}`;
+		try {
+			const response = await api.get(urlAPI);
+			console.log(response.data.metadata);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const getLandType = createAsyncThunk('landSlice/getLandType', async () => {
 	try {
 		const response = await api.get('/lands/landType');
@@ -99,6 +146,7 @@ const landSlice = createSlice({
 	name: 'landSlice',
 	initialState: {
 		land: {},
+		lands: [],
 		landType: {},
 		listOfBooking: [],
 		request: {},
@@ -124,6 +172,31 @@ const landSlice = createSlice({
 			.addCase(createLand.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Land creation failed';
+			})
+			.addCase(updateLand.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateLand.fulfilled, (state, action) => {
+				state.loading = false;
+				state.land = action.payload;
+			})
+			.addCase(updateLand.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Land updation failed';
+			})
+
+			.addCase(getListOfLand.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getListOfLand.fulfilled, (state, action) => {
+				state.loading = false;
+				state.lands = action.payload.metadata;
+			})
+			.addCase(getListOfLand.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Land getListOfLand failed';
 			})
 
 			.addCase(getListOfRequestViewLand.pending, (state) => {
