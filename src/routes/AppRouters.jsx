@@ -35,14 +35,21 @@ import ManagerDashBoardPages from '../pages/ManagerDashBoardPage/ManagerDashBoar
 import {ManageAccountPage} from '../pages/ManageAccountPage/ManageAccountPage';
 
 export const AppRouters = () => {
+	const userLocal = JSON.parse(localStorage.getItem('user'));
+	const user = userLocal?.user;
 	return (
 		<DefaultLayout>
 			<Routes>
-				<Route path="/" element={<Navigate to="/dashboard" />} />
+				<Route
+					path="/"
+					element={
+						<Navigate to={user?.role === 1 ? 'manager-dashboard' : '/dashboard'} />
+					}
+				/>
 				<Route
 					path="/dashboard"
 					element={
-						<PrivateRoute roles={['staff', 'manager']}>
+						<PrivateRoute roles={['staff']}>
 							<DashboardPage />
 						</PrivateRoute>
 					}
