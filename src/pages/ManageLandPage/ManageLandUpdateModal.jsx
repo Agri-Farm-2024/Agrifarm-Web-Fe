@@ -1,16 +1,22 @@
 import React, {useState, useEffect} from 'react';
 import styles from './ManageLandPage.module.css';
-import {Image, Modal, Input, Select, Upload, Button, message} from 'antd';
+import {Image, Modal, Input, Select, Upload, Button, message, Tag} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 import TextEditor from './TextEditor';
+import {convertImageURL} from '../../utils';
+import {uploadFile} from '../../services/uploadService';
 
-export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOpen}) => {
+export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOpen, staffList}) => {
 	const [landData, setLandData] = useState(selectedLand);
 	const [errors, setErrors] = useState({});
+	const [imageDeleted, setImageDeleted] = useState([]);
+
+	console.log(landData?.staff_id);
 
 	useEffect(() => {
 		setLandData(selectedLand);
 		setErrors({});
+		setImageDeleted([]);
 	}, [selectedLand]);
 
 	const handleChange = (e) => {
@@ -27,10 +33,7 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 	const handleEditorChange = (content) => {
 		setLandData((prevData) => ({
 			...prevData,
-			description: {
-				...prevData.description,
-				desc: content,
-			},
+			description: content,
 		}));
 
 		console.log(content);
@@ -55,31 +58,72 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 		setErrors(rest);
 	};
 
-	const handleRemoveImage = (index) => {
-		const updatedImages = landData.images.filter((_, imgIndex) => imgIndex !== index);
-		setLandData({...landData, images: updatedImages});
+	const handleRemoveImage = (image) => {
+		setImageDeleted([...(Array.isArray(imageDeleted) ? imageDeleted : []), image]);
+
+		const updatedImages = landData.url.filter((img) => img !== image);
+		setLandData({...landData, url: updatedImages});
 	};
 
 	const handleUpload = ({file}) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			const newImage = reader.result;
-			setLandData({...landData, images: [...landData.images, newImage]});
-		};
-		reader.readAsDataURL(file);
+		uploadFile(file)
+			.then((response) => {
+				console.log('File uploaded successfully:', response);
+				setLandData({
+					...landData,
+					url: [
+						...landData.url,
+						{
+							land_url_id: null,
+							string_url: response.metadata.folder_path,
+							type: 'image',
+						},
+					],
+				});
+			})
+			.catch((error) => {
+				console.error('Error uploading file:', error);
+			});
+
+		// const reader = new FileReader();
+		// reader.onload = () => {
+		// 	const newImage = reader.result;
+		// 	setLandData({...landData, url: [...landData.images, newImage]});
+		// };
+		// reader.readAsDataURL(file);
+	};
+
+	const handleVideoUpload = ({file}) => {
+		const maxSizeInMB = 2; // Set max size to 2MB
+		const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert to bytes
+
+		if (file.size > maxSizeInBytes) {
+			message.error(`Video không được vượt quá ${maxSizeInMB}MB. Hãy tải video khác!`);
+			return;
+		}
+
+		uploadFile(file)
+			.then((response) => {
+				console.log('File uploaded successfully:', response);
+				setLandData({
+					...landData,
+					url: [
+						...landData.url,
+						{
+							land_url_id: null,
+							string_url: response.metadata.folder_path,
+							type: 'video',
+						},
+					],
+				});
+			})
+			.catch((error) => {
+				console.error('Error uploading file:', error);
+			});
 	};
 
 	const validateInputs = () => {
-		const requiredFields = [
-			'nameLand',
-			'area',
-			'position',
-			'landOfStatus',
-			'status',
-			'assignStaff',
-			'description.title',
-			'description.desc',
-		];
+		const requiredFields = ['name', 'acreage_land', 'status', 'title', 'description'];
 		const newErrors = {};
 		requiredFields.forEach((field) => {
 			const [key, subKey] = field.split('.');
@@ -93,13 +137,30 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 
 	const handleSubmit = () => {
 		if (validateInputs()) {
-			const hideLoading = message.loading('Đang xử lý...', 0); // 0 means it will persist until manually closed
-			console.log(landData);
-			setTimeout(() => {
-				hideLoading();
-				message.success('Cập nhật thành công.');
-				handleModalClose();
-			}, 1000);
+			const existImage = landData.url.find((image) => image.type === 'image');
+			const existVideo = landData.url.find((video) => video.type === 'video');
+
+			if (!existImage) {
+				message.error('Hãy tải hình ảnh lên');
+				return;
+			}
+
+			if (!existVideo) {
+				message.error('Hãy tải video lên');
+				return;
+			}
+
+			console.log('imageDeleted: ' + imageDeleted);
+
+			console.log('landData: ' + JSON.stringify(landData));
+
+			// const hideLoading = message.loading('Đang xử lý...', 0); // 0 means it will persist until manually closed
+			// console.log(landData);
+			// setTimeout(() => {
+			// 	hideLoading();
+			// 	message.success('Cập nhật thành công.');
+			// 	handleModalClose();
+			// }, 1000);
 		} else {
 			message.error('Hãy điền đầy đủ các trường');
 		}
@@ -122,63 +183,34 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 					<div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>ID mảnh đất:</p>
-							<p className={styles.content}>{landData.landID}</p>
+							<p className={styles.content}>{landData.land_id}</p>
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Tên mảnh đất:</p>
 							<Input
-								name="nameLand"
-								value={landData.nameLand}
+								name="name"
+								value={landData.name}
 								onChange={handleChange}
 								style={{width: '50%'}}
 							/>
-							{errors['nameLand'] && (
-								<p className={styles.error}>{errors['nameLand']}</p>
-							)}
+							{errors['name'] && <p className={styles.error}>{errors['name']}</p>}
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Diện tích:</p>
 							<Input
-								name="area"
-								value={landData.area}
+								name="acreage_land"
+								value={landData.acreage_land}
 								onChange={handleChange}
 								style={{width: '50%'}}
 							/>
-							{errors['area'] && <p className={styles.error}>{errors['area']}</p>}
-						</div>
-						<div className={styles.bookingItem}>
-							<p className={styles.title}>Vị trí:</p>
-							<Input
-								name="position"
-								value={landData.position}
-								onChange={handleChange}
-								style={{width: '50%'}}
-							/>
-							{errors['position'] && (
-								<p className={styles.error}>{errors['position']}</p>
+							{errors['acreage_land'] && (
+								<p className={styles.error}>{errors['acreage_land']}</p>
 							)}
 						</div>
-						<div className={styles.bookingItem}>
-							<p className={styles.title}>Tình trạng đất:</p>
-							<Select
-								value={landData.landOfStatus}
-								onChange={(value) => handleSelectChange('landOfStatus', value)}
-								style={{width: '50%'}}
-							>
-								<Select.Option value="Tốt">Tốt</Select.Option>
-								<Select.Option value="Đang cải tạo">Đang cải tạo</Select.Option>
-								<Select.Option value="Cần cải tạo">Cần cải tạo</Select.Option>
-								<Select.Option value="Không thể canh tác">
-									Không thể canh tác
-								</Select.Option>
-							</Select>
-							{errors['landOfStatus'] && (
-								<p className={styles.error}>{errors['landOfStatus']}</p>
-							)}
-						</div>
+
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Trạng thái:</p>
-							<Select
+							{/* <Select
 								value={landData.status}
 								onChange={(value) => handleSelectChange('status', value)}
 								style={{width: '50%'}}
@@ -190,21 +222,40 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 									Tạm ngừng sử dụng
 								</Select.Option>
 							</Select>
-							{errors['status'] && <p className={styles.error}>{errors['status']}</p>}
+							{errors['status'] && <p className={styles.error}>{errors['status']}</p>} */}
+							<Tag
+								title="Đang hỗ trợ"
+								color={
+									landData.status == 'free'
+										? 'green'
+										: landData.status == 'booked'
+											? 'red'
+											: 'blue'
+								}
+							>
+								{landData.status == 'free'
+									? 'Đang trống'
+									: landData.status == 'booked'
+										? 'Đang sử dụng'
+										: 'Đang sửa chữa'}
+							</Tag>
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Nhân viên phụ trách:</p>
 							<Select
-								value={landData.assignStaff}
-								onChange={(value) => handleSelectChange('assignStaff', value)}
+								value={landData.staff_id}
+								onChange={(value) => handleSelectChange('staff_id', value)}
 								style={{width: '50%'}}
 							>
-								<Select.Option value="Huynh Chi Bao">Huynh Chi Bao</Select.Option>
-								<Select.Option value="Pham Dang Ninh">Pham Dang Ninh</Select.Option>
-								<Select.Option value="Pham Ba Phuoc">Pham Ba Phuoc</Select.Option>
+								{staffList.map((staff, index) => (
+									<Select.Option key={index} value={staff.user_id}>
+										{staff.full_name}
+									</Select.Option>
+								))}
 							</Select>
-							{errors['assignStaff'] && (
-								<p className={styles.error}>{errors['assignStaff']}</p>
+
+							{errors['staff_id'] && (
+								<p className={styles.error}>{errors['staff_id']}</p>
 							)}
 						</div>
 						<div
@@ -213,26 +264,33 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 						>
 							<p className={styles.title}>Hình ảnh:</p>
 							<div style={{display: 'flex', flexWrap: 'wrap'}}>
-								{landData.images.map((image, index) => (
-									<div
-										key={index}
-										style={{width: 200, margin: 20, position: 'relative'}}
-									>
-										<Image
-											src={image}
-											alt="Land Image"
-											style={{width: '100%', height: 200}}
-										/>
-										<Button
-											type="primary"
-											danger
-											style={{position: 'absolute', top: 10, right: 10}}
-											onClick={() => handleRemoveImage(index)}
+								{landData.url
+									.filter((url) => url.type === 'image')
+									.map((image, index) => (
+										<div
+											key={index}
+											style={{width: 300, margin: 20, position: 'relative'}}
 										>
-											Xóa
-										</Button>
-									</div>
-								))}
+											<Image
+												src={convertImageURL(image.string_url)}
+												alt="Land Image"
+												style={{
+													width: '100%',
+													height: 200,
+
+													objectFit: 'cover',
+												}}
+											/>
+											<Button
+												type="primary"
+												danger
+												style={{position: 'absolute', top: 10, right: 10}}
+												onClick={() => handleRemoveImage(image)}
+											>
+												Xóa
+											</Button>
+										</div>
+									))}
 							</div>
 							<Upload
 								beforeUpload={() => false} // Prevent automatic upload
@@ -244,6 +302,51 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 								</Button>
 							</Upload>
 						</div>
+
+						<div
+							className={styles.bookingItem}
+							style={{flexDirection: 'column', alignItems: 'flex-start'}}
+						>
+							<p className={styles.title}>Video:</p>
+							<div style={{display: 'flex', flexWrap: 'wrap'}}>
+								{landData.url
+									.filter((url) => url.type === 'video')
+									.map((video, index) => (
+										<div
+											style={{
+												marginBottom: '10px',
+												display: 'flex',
+												alignItems: 'center',
+												position: 'relative',
+											}}
+											key={index}
+										>
+											<video
+												src={convertImageURL(video.string_url)}
+												controls
+												style={{width: '300px', margin: 20, height: 200}}
+											/>
+											<Button
+												type="primary"
+												danger
+												style={{position: 'absolute', top: 10, right: 10}}
+												onClick={() => handleRemoveImage(video)}
+											>
+												Xóa
+											</Button>
+										</div>
+									))}
+							</div>
+							<Upload
+								beforeUpload={() => false} // Prevent automatic upload
+								showUploadList={false}
+								onChange={handleVideoUpload}
+							>
+								<Button type="primary" style={{margin: 20}} icon={<PlusOutlined />}>
+									Tải video lên
+								</Button>
+							</Upload>
+						</div>
 						{/* upload video */}
 						<div></div>
 					</div>
@@ -252,66 +355,35 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 							<p className={styles.title}>Tiêu đề:</p>
 							<Input
 								name="title"
-								value={landData.description.title}
+								value={landData.title}
 								onChange={(e) => {
 									const updatedTitle = e.target.value;
 									setLandData({
 										...landData,
-										description: {
-											...landData.description,
-											title: updatedTitle,
-										},
+										title: updatedTitle,
 									});
 									if (updatedTitle.trim() === '') {
 										setErrors({
 											...errors,
-											'description.title': 'Trường này không được để trống',
+											title: 'Trường này không được để trống',
 										});
 									} else {
-										const {['description.title']: removedError, ...rest} =
-											errors;
+										const {['title']: removedError, ...rest} = errors;
 										setErrors(rest);
 									}
 								}}
 								style={{width: '50%'}}
 							/>
-							{errors['description.title'] && (
-								<p className={styles.error}>{errors['description.title']}</p>
-							)}
+							{errors['title'] && <p className={styles.error}>{errors['title']}</p>}
 						</div>
 						<div>
 							<p style={{fontSize: '1em', fontWeight: 'bold'}}>Mô tả:</p>
-							{/* <Input.TextArea
-								name="desc"
-								value={landData.description.desc}
-								onChange={(e) => {
-									const updatedDesc = e.target.value;
-									setLandData({
-										...landData,
-										description: {
-											...landData.description,
-											desc: updatedDesc,
-										},
-									});
-									if (updatedDesc.trim() === '') {
-										setErrors({
-											...errors,
-											'description.desc': 'Trường này không được để trống',
-										});
-									} else {
-										const {['description.desc']: removedError, ...rest} =
-											errors;
-										setErrors(rest);
-									}
-								}}
-								style={{width: '60%'}}
-							/> */}
 							<TextEditor
-								initialValue={landData.description.desc} // Pass initial value from Formik
+								initialValue={landData.description} // Pass initial value from Formik
 								onChange={handleEditorChange}
 							/>
-							{errors['description.desc'] && (
-								<p className={styles.error}>{errors['description.desc']}</p>
+							{errors['description'] && (
+								<p className={styles.error}>{errors['description']}</p>
 							)}
 						</div>
 					</div>

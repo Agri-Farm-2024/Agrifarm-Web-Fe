@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+const api = 'https://api.agrifarm.site';
 
 //Add functions to reuse here
 export function formatNumber(number) {
@@ -27,3 +28,9 @@ export const getRole = (input) => {
 			return null;
 	}
 };
+
+export function convertImageURL(relativePath) {
+	console.log(relativePath);
+	const formattedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+	return `${api}${formattedPath}`;
+}
