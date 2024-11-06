@@ -31,7 +31,7 @@ export const assignForTask = createAsyncThunk(
 	}
 );
 
-export const requestSlice = createSlice({
+const requestSlice = createSlice({
 	name: 'requestSlice',
 	initialState: {
 		requestDetails: {},
@@ -77,4 +77,4 @@ export const requestSlice = createSlice({
 
 export const {setRequest} = requestSlice.actions;
 
-export default requestSlice.reducer;
+export default requestSlice;

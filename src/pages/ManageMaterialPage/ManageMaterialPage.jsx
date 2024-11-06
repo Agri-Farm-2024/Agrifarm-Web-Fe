@@ -1,11 +1,14 @@
-import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import {Button, DatePicker, Image, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
 import {formatNumber} from '../../utils';
 import {ManageMaterialDetailModal} from './ManageMaterialDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageMaterialUpdateModal} from './ManageMaterialUpdateModal';
 import {ManageMaterialCreateModal} from './ManageMaterialCreateModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getMaterial} from '../../redux/slices/materialSlice';
+import {isLoadingMaterial, materialListSelector} from '../../redux/selectors';
 
 const data = [
 	{
@@ -112,33 +115,67 @@ const materialTypeOptions = [
 	},
 ];
 
+const API = 'https://api.agrifarm.site';
+
 export const ManageMaterialPage = () => {
 	const columns = [
+		// {
+		// 	title: 'ID vật tư',
+		// 	dataIndex: 'material_id',
+		// 	key: 'material_id',
+		// 	render: (text) => <a>{text}</a>,
+		// },
 		{
-			title: 'ID vật tư',
-			dataIndex: 'materialId',
-			key: 'materialId',
-			render: (text) => <a>{text}</a>,
+			title: 'Ảnh vật tư',
+			dataIndex: 'image_material',
+			key: 'image_material',
+			render: (img) => (
+				<Image
+					src={`${API}${img}`}
+					alt="Material Image"
+					style={{width: 200, height: 100, borderRadius: 5}}
+					preview={false}
+					fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+				/>
+			),
 		},
 		{
 			title: 'Tên vật tư',
-			dataIndex: 'materialName',
-			key: 'materialName',
+			dataIndex: 'name',
+			key: 'name',
 		},
 		{
 			title: 'Loại vật tư',
-			dataIndex: 'materialType',
-			key: 'materialType',
+			dataIndex: 'type',
+			key: 'type',
+			render: (text) => (
+				<>
+					{text == 'buy' ? (
+						<Tag color="magenta">Bán</Tag>
+					) : (
+						<Tag color="volcano">Cho thuê</Tag>
+					)}
+				</>
+			),
 		},
 		{
 			title: 'Đơn vị tính',
-			dataIndex: 'unitMeasure',
-			key: 'unitMeasure',
+			dataIndex: 'unit',
+			key: 'unit',
+			render: (_, {unit}) => (
+				<>
+					{unit == 'package' && <Tag color="purple">Túi</Tag>}
+					{unit == 'bag' && <Tag color="geekblue">Bao</Tag>}
+					{unit == 'piece' && <Tag color="orange">Cái</Tag>}
+					{unit == 'bottle' && <Tag color="cyan">Chai</Tag>}
+					{unit == 'square_meter' && <Tag color="magenta">m2</Tag>}
+				</>
+			),
 		},
 		{
 			title: 'Số lượng',
-			dataIndex: 'quantity',
-			key: 'quantity',
+			dataIndex: 'total_quantity',
+			key: 'total_quantity',
 		},
 		{
 			title: 'Trạng thái',
@@ -146,21 +183,9 @@ export const ManageMaterialPage = () => {
 			dataIndex: 'status',
 			render: (_, {status}) => (
 				<>
-					{status == 'Có sẵn' && (
-						<Tag color="green" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Hết hàng' && (
-						<Tag color="red" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Sắp hết' && (
-						<Tag color="gold" key={status}>
-							{status}
-						</Tag>
-					)}
+					{status == 'available' && <Tag color="green">Có sẵn</Tag>}
+					{status == 'out_of_stock' && <Tag color="red">Hết hàng</Tag>}
+					{status == 'low' && <Tag color="gold">Sắp hết</Tag>}
 				</>
 			),
 		},
@@ -204,6 +229,28 @@ export const ManageMaterialPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
 
+	const dispatch = useDispatch();
+
+	const materialList = useSelector(materialListSelector);
+	const loading = useSelector(isLoadingMaterial);
+
+	useEffect(() => {
+		fetchMaterialList(1);
+	}, []);
+
+	const fetchMaterialList = (pageNumber) => {
+		try {
+			setCurrentPage(pageNumber);
+			const params = {
+				page_size: pageSize,
+				page_index: pageNumber,
+			};
+			dispatch(getMaterial(params));
+		} catch (error) {
+			console.log('Error fetching material list: ' + error);
+		}
+	};
+
 	const handleRowClick = (record) => {
 		setSelectedMaterial(record);
 		setIsModalOpen(true);
@@ -224,7 +271,10 @@ export const ManageMaterialPage = () => {
 		setSelectedMaterial(null);
 	};
 
-	const handleCreateModalClose = () => {
+	const handleCreateModalClose = (isCreateSuccess) => {
+		if (isCreateSuccess) {
+			fetchMaterialList(1);
+		}
 		setIsCreateModalOpen(false);
 		setSelectedMaterial(null);
 	};
@@ -234,7 +284,7 @@ export const ManageMaterialPage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý vật tư</p>
 				<div className={styles.filterContainer}>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo tên vật tư:</span>
 						<Input className={styles.filterInput} />
 					</div>
@@ -259,7 +309,7 @@ export const ManageMaterialPage = () => {
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
 						></Select>
-					</div>
+					</div> */}
 					<Button
 						type="primary"
 						onClick={() => {
@@ -272,8 +322,9 @@ export const ManageMaterialPage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="materialId"
-					dataSource={data}
+					loading={loading}
+					rowKey="material_id"
+					dataSource={(materialList && materialList.materials) || []}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
@@ -285,9 +336,11 @@ export const ManageMaterialPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: materialList.pagination
+							? materialList?.pagination.total_page * pageSize //total items
+							: 1,
 						onChange: (page) => {
-							setCurrentPage(page);
+							fetchMaterialList(page);
 						},
 					}}
 					className={styles.table}

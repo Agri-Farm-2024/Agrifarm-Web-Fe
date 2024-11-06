@@ -7,71 +7,8 @@ import {DeleteOutlined, EditOutlined, RetweetOutlined} from '@ant-design/icons';
 import {ManagePlantUpdateModal} from './ManagePlantUpdateModal';
 import {ManagePlantCreateModal} from './ManagePlantCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
-import {getPlantList, updateStatusPlant} from '../../redux/slices/plantSlice';
+import {deletePlant, getPlantList} from '../../redux/slices/plantSlice';
 import {isLoadingPlant, plantListSelector} from '../../redux/selectors';
-
-const data = [
-	{
-		plantId: 'GC001',
-		plantName: 'Dưa lưới',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Đang hỗ trợ',
-		process: 'Quy trình trồng dưa lưới',
-		purchasedPrice: 200000,
-	},
-	{
-		plantId: 'GC002',
-		plantName: 'Dưa hấu',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Ngừng hỗ trợ',
-		process: 'Quy trình trồng dưa hấu',
-		purchasedPrice: 200000,
-	},
-	{
-		plantId: 'GC003',
-		plantName: 'Dưa leo',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Đang hỗ trợ',
-		process: 'Quy trình trồng dưa leo',
-		purchasedPrice: 200000,
-	},
-	{
-		plantId: 'GC004',
-		plantName: 'Dưa lưới',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Đang hỗ trợ',
-		process: 'Quy trình trồng dưa lưới',
-		purchasedPrice: 200000,
-	},
-	{
-		plantId: 'GC005',
-		plantName: 'Dưa lưới',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Tạm ngừng',
-		process: 'Quy trình trồng dưa lưới',
-		purchasedPrice: 200000,
-	},
-	{
-		plantId: 'GC006',
-		plantName: 'Dưa lưới',
-		plantType: 'Rau ăn quả',
-		growthTime: 120,
-		averageYield: 100,
-		status: 'Ngừng hỗ trợ',
-		process: 'Quy trình trồng dưa lưới',
-		purchasedPrice: 200000,
-	},
-];
 
 const statusOptions = [
 	{
@@ -121,6 +58,18 @@ export const ManagePlantPage = () => {
 			key: 'name',
 		},
 		{
+			title: 'Loại đất phù hợp',
+			dataIndex: 'land_type_id',
+			key: 'land_type_id',
+			render: (_, record) => (
+				<>
+					{record.land_type_id && record.land_type && record.land_type.name && (
+						<p>{record.land_type.name}</p>
+					)}
+				</>
+			),
+		},
+		{
 			title: 'Trạng thái',
 			key: 'status',
 			dataIndex: 'status',
@@ -144,40 +93,34 @@ export const ManagePlantPage = () => {
 			key: 'action',
 			render: (_, record) => (
 				<Space size="middle">
-					{record.status == 'active' && (
-						<Popconfirm
-							onClick={(e) => e.stopPropagation()}
-							title="Xoá giống cây"
-							description="Bạn muốn xoá giống cây này?"
-							onConfirm={(e) => handleUpdateStatusPlant(e, record.plant_id, true)}
-							onCancel={(e) => e.stopPropagation()}
-							okText="Xoá"
-							cancelText="Huỷ"
-						>
-							<Button
-								color="danger"
-								variant="filled"
-								icon={<DeleteOutlined />}
-							></Button>
-						</Popconfirm>
-					)}
-					{record.status == 'inactive' && (
-						<Popconfirm
-							onClick={(e) => e.stopPropagation()}
-							title="Khôi phục giống cây"
-							description="Bạn muốn khôi phục giống cây này?"
-							onConfirm={(e) => handleUpdateStatusPlant(e, record.plant_id, false)}
-							onCancel={(e) => e.stopPropagation()}
-							okText="Khôi phục"
-							cancelText="Huỷ"
-						>
-							<Button
-								color="primary"
-								variant="filled"
-								icon={<RetweetOutlined />}
-							></Button>
-						</Popconfirm>
-					)}
+					<Button
+						onClick={(e) => {
+							e.stopPropagation();
+							console.log('CLick');
+							setSelectedPlant(record);
+							setIsUpdateModalOpen(true);
+						}}
+						color="primary"
+						variant="filled"
+						icon={<EditOutlined />}
+						disabled={record.status !== 'active'}
+					></Button>
+					<Popconfirm
+						onClick={(e) => e.stopPropagation()}
+						title="Xoá giống cây"
+						description="Bạn muốn xoá giống cây này?"
+						onConfirm={(e) => handleDeletePlant(e, record.plant_id)}
+						onCancel={(e) => e.stopPropagation()}
+						okText="Xoá"
+						cancelText="Huỷ"
+					>
+						<Button
+							disabled={record.status != 'active'}
+							color="danger"
+							variant="filled"
+							icon={<DeleteOutlined />}
+						></Button>
+					</Popconfirm>
 				</Space>
 			),
 		},
@@ -218,32 +161,24 @@ export const ManagePlantPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleUpdateStatusPlant = (e, plantId, isDelete) => {
+	const handleDeletePlant = (e, plantId, isDelete) => {
 		e.stopPropagation();
 		console.log('Remove Plant', plantId);
 		const formData = {
 			plantId: plantId,
-			status: isDelete ? 'inactive' : 'active',
 		};
-		dispatch(updateStatusPlant(formData))
+		dispatch(deletePlant(formData))
 			.then((response) => {
 				console.log('remove response: ' + JSON.stringify(response));
 				if (response.payload && response.payload.statusCode == 200) {
-					if (isDelete) {
-						message.success('Xoá giống cây thành công!');
-					} else {
-						message.success('Đã khôi phục giống cây!');
-					}
+					message.success('Xoá giống cây thành công!');
 					fetchPlantList(currentPage);
 				} else {
-					if (isDelete) {
-						message.error('Xoá giống cây thất bại!');
-					} else {
-						message.error('Khôi phục giống cây thất bại!');
-					}
+					message.error('Xoá giống cây thất bại!');
 				}
 			})
 			.catch((error) => {
+				message.error('Xoá giống cây thất bại!');
 				console.log('remove error: ' + error);
 			});
 	};
@@ -346,6 +281,11 @@ export const ManagePlantPage = () => {
 				<ManagePlantCreateModal
 					isModalOpen={isCreateModalOpen}
 					handleModalClose={handleCreateModalClose}
+				/>
+
+				<ManagePlantUpdateModal
+					isModalOpen={isUpdateModalOpen}
+					handleModalClose={handleUpdateModalClose}
 					selectedPlant={selectedPlant}
 				/>
 			</div>

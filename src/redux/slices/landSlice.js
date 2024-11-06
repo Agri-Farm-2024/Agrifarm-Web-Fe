@@ -15,6 +15,7 @@ export const createLand = createAsyncThunk(
 	}
 );
 
+
 export const updateLand = createAsyncThunk(
 	'landSlice/updateLand',
 	async (
@@ -60,6 +61,16 @@ export const getListOfLand = createAsyncThunk(
 		}
 	}
 );
+
+export const getLandType = createAsyncThunk('landSlice/getLandType', async () => {
+	try {
+		const response = await api.get('/lands/landType');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		return rejectWithValue(error.response.data);
+	}
+});
 
 export const getListOfRequestViewLand = createAsyncThunk(
 	'landSlice/getListOfRequestViewLand',
@@ -131,11 +142,12 @@ export const updateBooking = createAsyncThunk(
 	}
 );
 
-export const landSlice = createSlice({
+const landSlice = createSlice({
 	name: 'landSlice',
 	initialState: {
 		land: {},
 		lands: [],
+		landType: {},
 		listOfBooking: [],
 		request: {},
 		msg: '',
@@ -200,6 +212,19 @@ export const landSlice = createSlice({
 				state.error = action.payload || 'Get request fail';
 			})
 
+			.addCase(getLandType.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getLandType.fulfilled, (state, action) => {
+				state.loading = false;
+				state.landType = action.payload.metadata;
+			})
+			.addCase(getLandType.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Get landType fail';
+			})
+
 			.addCase(getListOfBooking.pending, (state) => {
 				state.loading = true;
 				state.error = null;
@@ -229,4 +254,4 @@ export const landSlice = createSlice({
 
 export const {setLand} = landSlice.actions;
 
-export default landSlice.reducer;
+export default landSlice;

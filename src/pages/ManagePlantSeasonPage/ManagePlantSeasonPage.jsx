@@ -109,6 +109,11 @@ export const ManagePlantSeasonPage = () => {
 			key: 'month_start',
 		},
 		{
+			title: 'Thời gian trồng của mùa vụ',
+			dataIndex: 'total_month',
+			key: 'total_month',
+		},
+		{
 			title: 'Đơn giá (VND/kg)',
 			dataIndex: 'price_purchase_per_kg',
 			key: 'price_purchase_per_kg',
@@ -128,12 +133,12 @@ export const ManagePlantSeasonPage = () => {
 				<>
 					{type == 'in_season' && (
 						<Tag color="green" key={type}>
-							{type}
+							Mùa thuận
 						</Tag>
 					)}
-					{type == 'off_season' && (
+					{type == 'out_season' && (
 						<Tag color="red" key={type}>
-							{type}
+							Mùa nghịch
 						</Tag>
 					)}
 				</>

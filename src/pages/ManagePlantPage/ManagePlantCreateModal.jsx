@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import {useDispatch, useSelector} from 'react-redux';
 import {createPlant} from '../../redux/slices/plantSlice';
 import {isLoadingPlant} from '../../redux/selectors';
+import {getLandType} from '../../redux/slices/landSlice';
 
 const statusOptions = [
 	{
@@ -60,6 +61,9 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 
 	const loading = useSelector(isLoadingPlant);
 
+	const [landTypeOptions, setLandTypeOptions] = useState(null);
+	const [loadingLandType, setLoadingLandType] = useState(false);
+
 	const dispatch = useDispatch();
 
 	const onFinish = (values) => {
@@ -67,7 +71,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 
 		const formData = {
 			name: values.plantName,
-			status: 'active',
+			land_type_id: values.landType,
 		};
 
 		dispatch(createPlant(formData))
@@ -76,7 +80,7 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 				if (response.payload && response.payload.statusCode) {
 					if (response.payload.statusCode !== 201) {
 						if (response.payload.message === 'Plant name already exist') {
-							message.error(`Tên giống cây đã tồn tại trên trang trại`);
+							message.error(`Giống cây đã tồn tại trên trang trại`);
 						} else {
 							message.error(`Tạo giống cây thất bại!`);
 						}
@@ -131,6 +135,23 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
+			setLoadingLandType(true);
+			dispatch(getLandType())
+				.then((response) => {
+					console.log('getLandType response:', response);
+					if (response.payload.statusCode === 200) {
+						const optionData = response.payload.metadata.map((landType) => ({
+							label: landType.name,
+							value: landType.land_type_id,
+						}));
+						setLandTypeOptions(optionData);
+						setLoadingLandType(false);
+					}
+				})
+				.catch((error) => {
+					console.log('getLandType error', error);
+					setLoadingLandType(false);
+				});
 		}
 	}, [isModalOpen]);
 
@@ -174,6 +195,24 @@ export const ManagePlantCreateModal = ({handleModalClose, isModalOpen}) => {
 					]}
 				>
 					<Input className={styles.inputField} />
+				</Form.Item>
+
+				<Form.Item
+					label="Loại đất"
+					name="landType"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+					]}
+				>
+					<Select
+						className={styles.inputField}
+						allowClear
+						placeholder="Chọn loại đất"
+						options={landTypeOptions}
+					></Select>
 				</Form.Item>
 			</Form>
 		</Modal>
