@@ -27,6 +27,21 @@ export const deletePlant = createAsyncThunk(
 	}
 );
 
+export const deletePlantSeason = createAsyncThunk(
+	'plantSlice/deletePlantSeason',
+	async (plantInfo, {rejectWithValue}) => {
+		try {
+			const response = await api.delete(
+				`/plants/deletePlantSeason/${plantInfo.plantSeasonId}`
+			);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const createCrop = createAsyncThunk(
 	'plantSlice/createCrop',
 	async (seasonInfo, {rejectWithValue}) => {
@@ -137,6 +152,17 @@ const plantSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(deletePlant.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Plant delete failed';
+			})
+			.addCase(deletePlantSeason.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(deletePlantSeason.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(deletePlantSeason.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Plant delete failed';
 			})

@@ -24,8 +24,10 @@ export const ManagePlantSeasonDetailModal = ({
 			label: 'Loại mùa vụ',
 			children: (
 				<>
-					{selectedPlantSeason.type == 'in_season' && <Tag color="green">Mùa thuận</Tag>}
-					{selectedPlantSeason.type == 'out_season' && <Tag color="red">Mùa nghịch</Tag>}
+					{selectedPlantSeason.type == 'in_season' && <Tag color="blue">Mùa thuận</Tag>}
+					{selectedPlantSeason.type == 'out_season' && (
+						<Tag color="orange">Mùa nghịch</Tag>
+					)}
 				</>
 			),
 		},
@@ -48,6 +50,20 @@ export const ManagePlantSeasonDetailModal = ({
 			key: 'price_process',
 			label: 'Giá quy trình theo mùa vụ',
 			children: <p>{formatNumber(selectedPlantSeason?.price_process)} VND</p>,
+		},
+		{
+			key: 'status',
+			label: 'Trạng thái',
+			children: (
+				<>
+					{selectedPlantSeason.status == 'active' && (
+						<Tag color="green">Đang áp dụng</Tag>
+					)}
+					{selectedPlantSeason.status == 'deleted' && (
+						<Tag color="red">Ngừng áp dụng</Tag>
+					)}
+				</>
+			),
 		},
 		{
 			key: 'created_at',

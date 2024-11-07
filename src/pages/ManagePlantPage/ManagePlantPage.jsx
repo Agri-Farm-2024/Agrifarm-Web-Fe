@@ -161,7 +161,7 @@ export const ManagePlantPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleDeletePlant = (e, plantId, isDelete) => {
+	const handleDeletePlant = (e, plantId) => {
 		e.stopPropagation();
 		console.log('Remove Plant', plantId);
 		const formData = {
