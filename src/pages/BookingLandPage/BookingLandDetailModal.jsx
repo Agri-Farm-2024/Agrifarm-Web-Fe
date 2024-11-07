@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from './BookingLandPage.module.css';
 import {Button, Image, message, Modal, Tag, Upload} from 'antd';
-import {formatNumber} from '../../utils';
+import {convertImageURL, formatNumber} from '../../utils';
 import {UploadOutlined} from '@ant-design/icons';
 import {uploadFile} from '../../services/uploadService';
 import {updateBooking} from '../../redux/slices/landSlice';
@@ -39,10 +39,10 @@ export const BookingLandDetailModal = ({
 				if (res.statusCode === 201) {
 					setImageAPI(res.metadata.folder_path);
 					message.success('Tải hợp đồng thành công');
+					setImageFile(res.metadata.folder_path);
 				}
 			});
 		}, 1000);
-		setImageFile(file);
 		console.log('Uploaded file:', file);
 	};
 
@@ -214,9 +214,11 @@ export const BookingLandDetailModal = ({
 							preview={{
 								visible: visibleContract,
 								scaleStep: 1,
-								src: imageFile
-									? URL.createObjectURL(imageFile)
-									: selectedBooking.contract_image,
+								src: selectedBooking.contract_image
+									? convertImageURL(selectedBooking.contract_image)
+									: imageFile
+										? convertImageURL(imageFile)
+										: 'image',
 								onVisibleChange: (value) => {
 									setVisibleContract(value);
 								},
