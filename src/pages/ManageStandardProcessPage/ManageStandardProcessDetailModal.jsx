@@ -1,13 +1,158 @@
 import React from 'react';
 import styles from './ManageStandardProcessPage.module.css';
-import {Modal} from 'antd';
-import {formatNumber} from '../../utils';
+import {Descriptions, Image, Modal, Tag} from 'antd';
+import {formatDate, formatNumber} from '../../utils';
 
+const API = 'https://api.agrifarm.site';
 export const ManageStandardProcessDetailModal = ({
 	selectedProcess,
 	handleModalClose,
 	isModalOpen,
 }) => {
+	function unitMaterialMapping(unit) {
+		const unitMapping = {
+			package: 'Túi',
+			bag: 'Bao',
+			piece: 'Cái',
+			bottle: 'Chai',
+			square_meter: 'm2',
+		};
+
+		return unitMapping[unit] || '';
+	}
+
+	const detailItems = selectedProcess && [
+		{
+			key: 'processId',
+			label: 'ID quy trình',
+			children: <p>{selectedProcess.process_technical_standard_id}</p>,
+		},
+		{
+			key: 'processName',
+			label: 'Tên quy trình',
+			children: <p>{selectedProcess.name}</p>,
+		},
+		{
+			key: 'plant',
+			label: 'Giống cây',
+			children: <p>{selectedProcess.plant_season?.plant?.name}</p>,
+		},
+		{
+			key: 'plantSeason',
+			label: 'Mùa vụ',
+			children: (
+				<p>{`Mùa vụ ${selectedProcess?.plant_season?.plant?.name} Tháng ${selectedProcess?.plant_season?.month_start}`}</p>
+			),
+		},
+		{
+			key: 'expertResponsible',
+			label: 'Người chịu trách nhiệm',
+			children: <p>{selectedProcess?.expert?.full_name}</p>,
+		},
+		{
+			key: 'status',
+			label: 'Trạng thái',
+			children: (
+				<>
+					{selectedProcess.status == 'accepted' && (
+						<Tag color="green">Có thể sử dụng</Tag>
+					)}
+					{selectedProcess.status == 'in_active' && (
+						<Tag color="default">Ngưng sử dụng</Tag>
+					)}
+					{selectedProcess.status == 'rejected' && (
+						<Tag color="red">Không đạt yêu cầu</Tag>
+					)}
+					{selectedProcess.status == 'pending' && <Tag color="gold">Chờ phê duyệt</Tag>}
+				</>
+			),
+		},
+		{
+			key: 'created_at',
+			label: 'Ngày tạo',
+			children: <p>{formatDate(selectedProcess?.created_at)}</p>,
+		},
+		{
+			key: 'updated_at',
+			label: 'Ngày cập nhật gần nhất',
+			children: <p>{formatDate(selectedProcess?.updated_at)}</p>,
+		},
+		{
+			key: 'plan_farming',
+			label: 'Kế hoạch canh tác',
+			children: (
+				<>
+					{selectedProcess.process_standard_stage &&
+						selectedProcess.process_standard_stage.map((plan, stageIndex) => (
+							<div key={`Plan stage ${stageIndex}`}>
+								<div style={{paddingLeft: 10, fontWeight: 'bold'}}>
+									<p className={styles.title} style={{width: '70%'}}>
+										{` Giai đoạn ${plan.stage_numberic_order}: ${plan.stage_title} - Ngày ${plan.time_start == plan.time_end ? plan.dayFrom : `${plan.time_start} đến ngày ${plan.time_end}`}`}
+									</p>
+								</div>
+								{plan.process_standard_stage_content &&
+									plan.process_standard_stage_content.length > 0 &&
+									plan.process_standard_stage_content.map((action, stepIndex) => (
+										<div
+											key={`Stage ${stageIndex}Step ${stepIndex}`}
+											style={{paddingLeft: 20}}
+											className={styles.bookingItem}
+										>
+											<p className={styles.title}>
+												{`Ngày ${action.time_start == action.time_end ? action.time_start : `${action.time_start} - ngày ${action.time_end}`}: ${action.title}`}
+											</p>
+											<p className={styles.content}>{action.content}</p>
+										</div>
+									))}
+								{plan.process_standard_stage_material &&
+									plan.process_standard_stage_material.length > 0 && (
+										<p
+											className={styles.title}
+											style={{paddingLeft: 20, fontWeight: 'bold'}}
+										>
+											Vật tư cần cho giai đoạn {plan.stage_numberic_order}
+										</p>
+									)}
+								{plan.process_standard_stage_material &&
+									plan.process_standard_stage_material.length > 0 &&
+									plan.process_standard_stage_material.map(
+										(material, materialIndex) => (
+											<ul
+												key={`Stage ${stageIndex} Material ${materialIndex}`}
+												style={{paddingLeft: 40}}
+												className={styles.bookingItem}
+											>
+												<li>
+													<div
+														style={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '20px',
+														}}
+													>
+														<Image
+															src={`${API}${material.material.image_material}`}
+															alt="Material Image"
+															style={{
+																width: 50,
+																height: 50,
+																borderRadius: 5,
+															}}
+															fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+														/>
+														<p>{`${material.material.name} - ${material.quantity} ${unitMaterialMapping(material.material.unit)}`}</p>
+													</div>
+												</li>
+											</ul>
+										)
+									)}
+							</div>
+						))}
+				</>
+			),
+		},
+	];
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Thông tin quy trình</span>}
@@ -18,107 +163,13 @@ export const ManageStandardProcessDetailModal = ({
 			width={1000}
 		>
 			{selectedProcess && (
-				<div className={styles.modalContainer}>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>ID quy trình:</p>
-						<p className={styles.content}>{selectedProcess.processId}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Tên quy trình:</p>
-						<p className={styles.content}>{selectedProcess.processName}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Giống cây:</p>
-						<p className={styles.content}>{selectedProcess.plantName}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Ngày tạo:</p>
-						<p className={styles.content}>{selectedProcess.createAt}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Ngày cập nhật gần nhất: </p>
-						<p className={styles.content}>{selectedProcess.updateAt}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Người chịu trách nhiệm:</p>
-						<p className={styles.content}>{selectedProcess.expertResponsible}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Số ngày dự tính:</p>
-						<p className={styles.content}>
-							{formatNumber(selectedProcess.expectedTime)} ngày
-						</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Trạng thái:</p>
-						<p className={styles.content}>{selectedProcess.status}</p>
-					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Các giai đoạn chính:</p>
-					</div>
-					<div className={styles.bookingItem} style={{paddingLeft: 10}}>
-						<p className={styles.title}>Chuẩn bị trước khi trồng:</p>
-					</div>
-					{selectedProcess.processContent &&
-						selectedProcess.processContent.preparePlanting.length > 0 &&
-						selectedProcess.processContent.preparePlanting.map((prepareItem, index) => (
-							<div style={{paddingLeft: 20}} className={styles.bookingItem}>
-								<p className={styles.title}>
-									{`${index + 1}. ${prepareItem.prepareTitle}`}
-								</p>
-								<p className={styles.content}>{prepareItem.prepareContent}</p>
-							</div>
-						))}
-
-					<div className={styles.bookingItem} style={{paddingLeft: 10}}>
-						<p className={styles.title}>Kế hoạch trồng trọt cụ thể:</p>
-					</div>
-					{selectedProcess.processContent &&
-						selectedProcess.processContent.plantingSchedule &&
-						selectedProcess.processContent.plantingSchedule.length > 0 &&
-						selectedProcess.processContent.plantingSchedule.map((plan, index) => (
-							<>
-								<div className={styles.bookingItem} style={{paddingLeft: 20}}>
-									<p className={styles.title} style={{width: '70%'}}>
-										{`Ngày ${plan.dayFrom == plan.dayTo ? plan.dayFrom : `${plan.dayFrom} đến ngày ${plan.dayTo}`} - Giai đoạn ${index + 1}: ${plan.stageTitle}`}
-									</p>
-								</div>
-								{plan.actions &&
-									plan.actions.length > 0 &&
-									plan.actions.map((action, index) => (
-										<div
-											style={{paddingLeft: 40}}
-											className={styles.bookingItem}
-										>
-											<p className={styles.title}>
-												{`Ngày ${action.dayFrom == action.dayTo ? action.dayFrom : `${action.dayFrom} - ngày ${action.dayTo}`}: ${action.actionTitle}`}
-											</p>
-											<p className={styles.content}>
-												{action.actionDescription}
-											</p>
-										</div>
-									))}
-								<p
-									className={styles.title}
-									style={{paddingLeft: 40, color: '#7fb640'}}
-								>
-									Vật tư cần cho giai đoạn
-								</p>
-								{plan.materials &&
-									plan.materials.length > 0 &&
-									plan.materials.map((material, index) => (
-										<ul
-											style={{paddingLeft: 40}}
-											className={styles.bookingItem}
-										>
-											<li className={styles.content}>
-												{`${material.materialName} - ${material.materialQuantity}`}
-											</li>
-										</ul>
-									))}
-							</>
-						))}
-				</div>
+				<Descriptions
+					style={{marginTop: 20}}
+					labelStyle={{width: '15rem', fontWeight: 'bold'}}
+					column={1}
+					bordered
+					items={detailItems}
+				/>
 			)}
 		</Modal>
 	);

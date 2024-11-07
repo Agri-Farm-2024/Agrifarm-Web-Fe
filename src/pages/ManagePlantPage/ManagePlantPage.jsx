@@ -50,7 +50,7 @@ export const ManagePlantPage = () => {
 			title: '#',
 			dataIndex: 'index',
 			key: 'index',
-			render: (text, record, index) => (currentPage - 1) * 10 + index + 1,
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
 		},
 		{
 			title: 'Tên giống cây',
