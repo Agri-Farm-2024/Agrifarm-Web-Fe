@@ -6,6 +6,7 @@ import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
 import {getRole} from '../../utils';
 import userSlice from '../../redux/slices/userSlice';
+import {Notification} from '../Notification/Notification';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
@@ -18,6 +19,7 @@ const TopNavbar = () => {
 	const [showSignOutPopup, setShowSignOutPopup] = useState(false);
 	const [showSignOutButton, setShowSignOutButton] = useState(false);
 	const signOutRef = useRef(null);
+	const notiRef = useRef(null);
 
 	useEffect(() => {
 		// Function to handle clicks outside the sign-out button
@@ -25,6 +27,7 @@ const TopNavbar = () => {
 			if (signOutRef.current && !signOutRef.current.contains(event.target)) {
 				setShowSignOutButton(false);
 				setShowSignOutPopup(false);
+				setShowNotification(false);
 			}
 		};
 
@@ -89,12 +92,12 @@ const TopNavbar = () => {
 	return (
 		<div className={styles.topNavbar}>
 			<div className={styles.rightSection}>
-				<div className={styles.notificationIconContainer} onClick={handleBellClick}>
-					<BellOutlined className={styles.notificationIcon} />
+				<div className={styles.notificationIconContainer}>
+					<BellOutlined onClick={handleBellClick} className={styles.notificationIcon} />
 
 					{showNotification && (
-						<div className={styles.notificationDropdown}>
-							{/* Notification items */}
+						<div ref={notiRef} className={styles.notificationDropdown}>
+							<Notification handleBellClick={handleBellClick} />
 						</div>
 					)}
 				</div>
