@@ -31,6 +31,19 @@ export const assignForTask = createAsyncThunk(
 	}
 );
 
+export const createStandardProcessRequest = createAsyncThunk(
+	'requestSlice/createStandardProcessRequest',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const data = await api.post(`/requests/createRequestProcessStandard`, formData);
+			return data.data;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const requestSlice = createSlice({
 	name: 'requestSlice',
 	initialState: {
@@ -71,6 +84,17 @@ const requestSlice = createSlice({
 			.addCase(assignForTask.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Failed to assign';
+			})
+			.addCase(createStandardProcessRequest.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(createStandardProcessRequest.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(createStandardProcessRequest.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Failed to create standard process request';
 			});
 	},
 });

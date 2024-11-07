@@ -343,7 +343,7 @@ export const ManageStandardProcessPage = () => {
 					selectedProcess={selectedProcess}
 				/>
 
-				{/* <ManageStandardProcessUpdateModal
+				<ManageStandardProcessUpdateModal
 					isModalOpen={isUpdateModalOpen}
 					handleModalClose={handleUpdateModalClose}
 					selectedProcess={selectedProcess}
@@ -352,7 +352,7 @@ export const ManageStandardProcessPage = () => {
 				<ManageStandardProcessCreateRequestModal
 					isModalOpen={isCreateModalOpen}
 					handleModalClose={handleCreateModalClose}
-				/> */}
+				/>
 			</div>
 		</div>
 	);
