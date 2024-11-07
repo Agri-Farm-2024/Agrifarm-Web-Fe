@@ -333,9 +333,10 @@ export const ManagePlantSeasonPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: plantSeasonList.pagination
-							? plantSeasonList?.pagination.total_page * pageSize //total items
-							: 1,
+						total:
+							plantSeasonList && plantSeasonList.pagination
+								? plantSeasonList?.pagination.total_page * pageSize //total items
+								: 1,
 						onChange: (page) => {
 							fetchPlantSeasonList(page);
 						},

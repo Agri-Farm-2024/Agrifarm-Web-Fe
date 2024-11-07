@@ -18,15 +18,15 @@ export const ManageLandPage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isModalUpdateOpen, setisModalUpdateOpen] = useState(false);
 	const [isModalAddOpen, setisModalAddOpen] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1); // New state for pagination
-	const [pageSize, setPageSize] = useState(10); // New state for pagination
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 	const [staffList, setStaffList] = useState([]);
 
 	const dispatch = useDispatch();
 
-	const lands = useSelector((state) => state.landSlice.lands.lands);
-	const pagination = useSelector((state) => state.landSlice.lands.pagination);
-	const loading = useSelector((state) => state.landSlice.loading);
+	const lands = useSelector((state) => state.landSlice?.lands?.lands);
+	const pagination = useSelector((state) => state.landSlice?.lands?.pagination);
+	const loading = useSelector((state) => state.landSlice?.loading);
 
 	useEffect(() => {
 		const params = {
@@ -189,10 +189,18 @@ export const ManageLandPage = () => {
 					}}
 					style={{width: '20%', marginRight: 8}}
 				>
-					<Option value="">Tất cả</Option>
-					<Option value="free">Có thể sử dụng</Option>
-					<Option value="booked">Đang sử dụng</Option>
-					<Option value="repairing">Đang cải tạo</Option>
+					<Option key="" value="">
+						Tất cả
+					</Option>
+					<Option key="free" value="free">
+						Có thể sử dụng
+					</Option>
+					<Option key="booked" value="booked">
+						Đang sử dụng
+					</Option>
+					<Option key="repairing" value="repairing">
+						Đang cải tạo
+					</Option>
 				</Select>
 
 				{/* <span>Lọc theo tình trạng đất:</span>
