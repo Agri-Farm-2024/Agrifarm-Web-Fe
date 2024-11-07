@@ -1,10 +1,14 @@
 import {Button, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {ManageStandardProcessDetailModal} from './ManageStandardProcessDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageStandardProcessUpdateModal} from './ManageStandardProcessUpdateModal';
 import {ManageStandardProcessCreateRequestModal} from './ManageStandardProcessCreateRequestModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {isLoadingProcess, standardProcessListSelector} from '../../redux/selectors';
+import {getStandardProcessList} from '../../redux/slices/processSlice';
+import {formatDate} from '../../utils';
 
 const data = [
 	{
@@ -135,35 +139,36 @@ const plantNameOptions = [
 export const ManageStandardProcessPage = () => {
 	const columns = [
 		{
-			title: 'ID quy trình',
-			dataIndex: 'processId',
-			key: 'processId',
-			render: (text) => <a>{text}</a>,
+			title: '#',
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
 		},
 		{
 			title: 'Tên quy trình',
-			dataIndex: 'processName',
-			key: 'processName',
+			dataIndex: 'name',
+			key: 'name',
 		},
 		{
 			title: 'Giống cây',
 			dataIndex: 'plantName',
 			key: 'plantName',
+			render: (_, record) => <p>{record?.plant_season?.plant?.name}</p>,
+		},
+
+		{
+			title: 'Mùa vụ',
+			dataIndex: 'season',
+			key: 'season',
+			render: (_, record) => (
+				<p>{`Mùa vụ ${record?.plant_season?.plant?.name} Tháng ${record?.plant_season?.month_start}`}</p>
+			),
 		},
 		{
 			title: 'Người chịu trách nhiệm',
 			dataIndex: 'expertResponsible',
 			key: 'expertResponsible',
-		},
-		{
-			title: 'Ngày tạo',
-			dataIndex: 'createAt',
-			key: 'createAt',
-		},
-		{
-			title: 'Ngày cập nhật gần nhất',
-			dataIndex: 'updateAt',
-			key: 'updateAt',
+			render: (_, record) => <p>{record?.expert?.full_name}</p>,
 		},
 		{
 			title: 'Trạng thái',
@@ -171,21 +176,10 @@ export const ManageStandardProcessPage = () => {
 			dataIndex: 'status',
 			render: (_, {status}) => (
 				<>
-					{status == 'Có thể sử dụng' && (
-						<Tag color="green" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Ngưng sử dụng' && (
-						<Tag color="red" key={status}>
-							{status}
-						</Tag>
-					)}
-					{status == 'Chờ phê duyệt' && (
-						<Tag color="gold" key={status}>
-							{status}
-						</Tag>
-					)}
+					{status == 'accepted' && <Tag color="green">Có thể sử dụng</Tag>}
+					{status == 'in_active' && <Tag color="default">Ngưng sử dụng</Tag>}
+					{status == 'rejected' && <Tag color="red">Không đạt yêu cầu</Tag>}
+					{status == 'pending' && <Tag color="gold">Chờ phê duyệt</Tag>}
 				</>
 			),
 		},
@@ -229,6 +223,28 @@ export const ManageStandardProcessPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
 
+	const dispatch = useDispatch();
+
+	const standardProcess = useSelector(standardProcessListSelector);
+	const loading = useSelector(isLoadingProcess);
+
+	const fetchStandardProcess = (pageIndex) => {
+		try {
+			const params = {
+				page_index: pageIndex,
+				page_size: pageSize,
+			};
+			dispatch(getStandardProcessList(params));
+			setCurrentPage(pageIndex);
+		} catch (error) {
+			console.log('Error fetch standard process', error);
+		}
+	};
+
+	useEffect(() => {
+		fetchStandardProcess(1);
+	}, []);
+
 	const handleRowClick = (record) => {
 		setSelectedProcess(record);
 		setIsModalOpen(true);
@@ -259,7 +275,7 @@ export const ManageStandardProcessPage = () => {
 			<div className={styles.headerContainer}>
 				<p>Quản lý quy trình canh tác chuẩn</p>
 				<div className={styles.filterContainer}>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo tên quy trình:</span>
 						<Input className={styles.filterInput} />
 					</div>
@@ -284,7 +300,7 @@ export const ManageStandardProcessPage = () => {
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
 						></Select>
-					</div>
+					</div> */}
 					<Button
 						type="primary"
 						onClick={() => {
@@ -298,9 +314,10 @@ export const ManageStandardProcessPage = () => {
 			<div className={styles.tableContainer}>
 				<Table
 					rowKey="processId"
-					dataSource={data}
+					dataSource={standardProcess.process_technical_standard || []}
 					columns={columns}
 					scroll={{x: 'max-content'}}
+					loading={loading}
 					onRow={(record) => ({
 						onClick: () => handleRowClick(record),
 					})}
@@ -310,9 +327,11 @@ export const ManageStandardProcessPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: standardProcess.pagination
+							? standardProcess?.pagination.total_page * pageSize //total items
+							: 1,
 						onChange: (page) => {
-							setCurrentPage(page);
+							fetchStandardProcess(page);
 						},
 					}}
 					className={styles.table}
@@ -324,7 +343,7 @@ export const ManageStandardProcessPage = () => {
 					selectedProcess={selectedProcess}
 				/>
 
-				<ManageStandardProcessUpdateModal
+				{/* <ManageStandardProcessUpdateModal
 					isModalOpen={isUpdateModalOpen}
 					handleModalClose={handleUpdateModalClose}
 					selectedProcess={selectedProcess}
@@ -333,7 +352,7 @@ export const ManageStandardProcessPage = () => {
 				<ManageStandardProcessCreateRequestModal
 					isModalOpen={isCreateModalOpen}
 					handleModalClose={handleCreateModalClose}
-				/>
+				/> */}
 			</div>
 		</div>
 	);

@@ -16,3 +16,7 @@ export const servicePackageListSelector = (state) => state.serviceSlice.service;
 //material
 export const isLoadingMaterial = (state) => state.materialSlice.loading;
 export const materialListSelector = (state) => state.materialSlice.material;
+
+//process
+export const isLoadingProcess = (state) => state.processSlice.loading;
+export const standardProcessListSelector = (state) => state.processSlice.standardProcess;
