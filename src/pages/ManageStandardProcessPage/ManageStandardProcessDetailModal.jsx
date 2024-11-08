@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {Descriptions, Image, Modal, Tag} from 'antd';
 import {formatDate, formatNumber} from '../../utils';
+import {imageExporter} from '../../assets/images';
 
 const API = 'https://api.agrifarm.site';
 export const ManageStandardProcessDetailModal = ({
@@ -131,14 +132,18 @@ export const ManageStandardProcessDetailModal = ({
 														}}
 													>
 														<Image
-															src={`${API}${material.material.image_material}`}
+															src={
+																material.material.image_material
+																	? `${API}${material.material.image_material}`
+																	: imageExporter.placeHolderImg
+															}
 															alt="Material Image"
 															style={{
 																width: 50,
 																height: 50,
 																borderRadius: 5,
 															}}
-															fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+															fallback={imageExporter.placeHolderImg}
 														/>
 														<p>{`${material.material.name} - ${material.quantity} ${unitMaterialMapping(material.material.unit)}`}</p>
 													</div>

@@ -1,14 +1,16 @@
-import {Button, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
+import {Button, Input, Popconfirm, Select, Space, Table, Tag, message} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {ManageStandardProcessDetailModal} from './ManageStandardProcessDetailModal';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageStandardProcessUpdateModal} from './ManageStandardProcessUpdateModal';
 import {ManageStandardProcessCreateRequestModal} from './ManageStandardProcessCreateRequestModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {isLoadingProcess, standardProcessListSelector} from '../../redux/selectors';
-import {getStandardProcessList} from '../../redux/slices/processSlice';
+import {confirmProcess, getStandardProcessList} from '../../redux/slices/processSlice';
 import {formatDate} from '../../utils';
+import {RejectStandardProcessModal} from './RejectStandardProcessModal';
+import {toast} from 'react-toastify';
 
 const data = [
 	{
@@ -187,37 +189,82 @@ export const ManageStandardProcessPage = () => {
 			title: 'Hành động',
 			key: 'action',
 			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log('CLick');
-							setSelectedProcess(record);
-							setIsUpdateModalOpen(true);
-						}}
-						color="primary"
-						variant="filled"
-						icon={<EditOutlined />}
-					></Button>
+				<>
+					{record.status != 'pending' && (
+						<Space size="middle">
+							<Button
+								onClick={(e) => {
+									e.stopPropagation();
+									console.log('CLick');
+									setSelectedProcess(record);
+									setIsUpdateModalOpen(true);
+								}}
+								color="primary"
+								variant="filled"
+								icon={<EditOutlined />}
+								disabled={record.status != 'accepted'}
+							></Button>
 
-					<Popconfirm
-						onClick={(e) => e.stopPropagation()}
-						title="Xoá quy trình"
-						description="Bạn muốn xoá quy trình này?"
-						onConfirm={handleRemovePlant}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Xoá"
-						cancelText="Huỷ"
-					>
-						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
-				</Space>
+							<Popconfirm
+								onClick={(e) => e.stopPropagation()}
+								title="Xoá quy trình"
+								description="Bạn muốn xoá quy trình này?"
+								onConfirm={handleRemovePlant}
+								onCancel={(e) => e.stopPropagation()}
+								okText="Xoá"
+								cancelText="Huỷ"
+							>
+								<Button
+									color="danger"
+									variant="filled"
+									icon={<DeleteOutlined />}
+									disabled={record.status != 'accepted'}
+								></Button>
+							</Popconfirm>
+						</Space>
+					)}
+					{record.status == 'pending' && (
+						<Space size="middle">
+							<Popconfirm
+								onClick={(e) => e.stopPropagation()}
+								title="Duyệt quy trình chuẩn"
+								description="Chấp nhận quy trình này?"
+								onConfirm={(e) => handleConfirmProcess(e, true, record)}
+								onCancel={(e) => e.stopPropagation()}
+								okText="Duyệt"
+								cancelText="Huỷ"
+							>
+								<Button
+									color="primary"
+									variant="filled"
+									icon={<CheckOutlined />}
+								></Button>
+							</Popconfirm>
+							<Popconfirm
+								onClick={(e) => e.stopPropagation()}
+								title="Từ chối quy trình"
+								description="Bạn muốn từ chối quy trình này?"
+								onConfirm={(e) => handleConfirmProcess(e, false, record)}
+								onCancel={(e) => e.stopPropagation()}
+								okText="Từ chối"
+								cancelText="Huỷ"
+							>
+								<Button
+									color="danger"
+									variant="filled"
+									icon={<CloseOutlined />}
+								></Button>
+							</Popconfirm>
+						</Space>
+					)}
+				</>
 			),
 		},
 	];
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 	const [selectedProcess, setSelectedProcess] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
@@ -227,6 +274,42 @@ export const ManageStandardProcessPage = () => {
 
 	const standardProcess = useSelector(standardProcessListSelector);
 	const loading = useSelector(isLoadingProcess);
+
+	const handleConfirmProcess = (e, isConfirm, process) => {
+		e.stopPropagation();
+		if (isConfirm) {
+			try {
+				const formData = {
+					rejectReason: null,
+					processId: process.process_technical_standard_id,
+				};
+				toast.loading('Đang đăng nhập...', {autoClose: false});
+				dispatch(confirmProcess(formData)).then((response) => {
+					console.log('Approve process reponse: ' + response);
+					toast.dismiss(); // Remove the loading message
+					if (response.payload && response.payload.statusCode) {
+						//Catch Error message
+						if (response.payload.statusCode !== 200) {
+							message.error('Chấp nhận quy trình thất bại');
+							console.log('Approve process failed!');
+						}
+
+						if (response.payload.statusCode === 200) {
+							message.success('Chấp nhận quy trình thành công');
+							fetchStandardProcess(1);
+						}
+					}
+				});
+			} catch (error) {
+				console.log('Error confirm process', error);
+				toast.dismiss(); // Remove the loading message
+				message.error('Chấp nhận quy trình thất bại');
+			}
+		} else {
+			setSelectedProcess(process);
+			setIsRejectModalOpen(true);
+		}
+	};
 
 	const fetchStandardProcess = (pageIndex) => {
 		try {
@@ -268,6 +351,14 @@ export const ManageStandardProcessPage = () => {
 	const handleCreateModalClose = () => {
 		setIsCreateModalOpen(false);
 		setSelectedProcess(null);
+	};
+
+	const handleRejectModalClose = (isRejectSuccess) => {
+		if (isRejectSuccess) {
+			fetchStandardProcess(1);
+		}
+		setSelectedProcess(null);
+		setIsRejectModalOpen(false);
 	};
 
 	return (
@@ -352,6 +443,12 @@ export const ManageStandardProcessPage = () => {
 				<ManageStandardProcessCreateRequestModal
 					isModalOpen={isCreateModalOpen}
 					handleModalClose={handleCreateModalClose}
+				/>
+
+				<RejectStandardProcessModal
+					isModalOpen={isRejectModalOpen}
+					handleModalClose={handleRejectModalClose}
+					selectedProcess={selectedProcess}
 				/>
 			</div>
 		</div>

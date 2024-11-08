@@ -43,7 +43,17 @@ export const AppRouters = () => {
 				<Route
 					path="/"
 					element={
-						<Navigate to={user?.role === 1 ? 'manager-dashboard' : '/dashboard'} />
+						<Navigate
+							to={
+								user?.role === 1
+									? 'manager-dashboard'
+									: user?.role === 2
+										? '/dashboard'
+										: user?.role == 0
+											? '/manage-account'
+											: '/login'
+							}
+						/>
 					}
 				/>
 				<Route
