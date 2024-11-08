@@ -93,40 +93,26 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Trạng Thái:</p>
 							<p className={styles.content}>
-								{selectedBooking.status == 'comleted' && (
-									<Tag color="green" key={status}>
-										Đang hiệu lực
-									</Tag>
+								{selectedBooking.status == 'completed' && (
+									<Tag color="green">Đang hiệu lực</Tag>
 								)}
 								{selectedBooking.status == 'expired' && (
-									<Tag color="default" key={status}>
-										Sắp hết hạn
-									</Tag>
+									<Tag color="default">Sắp hết hạn</Tag>
 								)}
 								{selectedBooking.status == 'canceled' && (
-									<Tag color="red" key={status}>
-										Chấm dứt
-									</Tag>
+									<Tag color="red">Chấm dứt</Tag>
 								)}
 								{selectedBooking.status == 'pending_contract' && (
-									<Tag color="warning" key={status}>
-										Chờ phê duyệt
-									</Tag>
+									<Tag color="warning">Chờ phê duyệt</Tag>
 								)}
 								{selectedBooking.status == 'pending_payment' && (
-									<Tag color="magenta" key={status}>
-										Chờ thanh toán
-									</Tag>
+									<Tag color="magenta">Chờ thanh toán</Tag>
 								)}
 								{selectedBooking.status == 'pending_sign' && (
-									<Tag color="cyan" key={status}>
-										Chờ ký tên
-									</Tag>
+									<Tag color="cyan">Chờ ký tên</Tag>
 								)}
 								{selectedBooking.status == 'rejected' && (
-									<Tag color="red" key={status}>
-										Hủy yêu cầu
-									</Tag>
+									<Tag color="red">Hủy yêu cầu</Tag>
 								)}
 							</p>
 						</div>

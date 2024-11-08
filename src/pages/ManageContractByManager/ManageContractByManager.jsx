@@ -101,8 +101,8 @@ const ManageContractByManager = () => {
 	const [pageSize, setPageSize] = useState(5);
 
 	const dispatch = useDispatch();
-	const requests = useSelector((state) => state.landSlice.listOfBooking.metadata?.bookings);
-	const pagination = useSelector((state) => state.landSlice.listOfBooking.metadata?.pagination);
+	const requests = useSelector((state) => state.landSlice.listOfBooking?.metadata?.bookings);
+	const pagination = useSelector((state) => state.landSlice.listOfBooking?.metadata?.pagination);
 	const loading = useSelector((state) => state.landSlice.loading);
 
 	useEffect(() => {
@@ -216,7 +216,7 @@ const ManageContractByManager = () => {
 			dataIndex: 'status',
 			render: (_, {status}) => (
 				<>
-					{status == 'comleted' && (
+					{status == 'completed' && (
 						<Tag color="green" key={status}>
 							Đang hiệu lực
 						</Tag>

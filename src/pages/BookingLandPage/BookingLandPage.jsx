@@ -38,7 +38,7 @@ const columns = [
 		dataIndex: 'status',
 		render: (_, {status}) => (
 			<>
-				{status == 'comleted' && (
+				{status == 'completed' && (
 					<Tag color="green" key={status}>
 						Đang hiệu lực
 					</Tag>
