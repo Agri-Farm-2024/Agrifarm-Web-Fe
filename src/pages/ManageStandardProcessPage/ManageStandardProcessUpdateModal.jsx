@@ -75,16 +75,16 @@ export const ManageStandardProcessUpdateModal = ({
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
-			form.setFieldValue('processId', selectedProcess.processId);
-			form.setFieldValue('processName', selectedProcess.processName);
-			form.setFieldValue('plantName', selectedProcess.plantName);
-			form.setFieldValue('createAt', dayjs(selectedProcess.createAt, 'DD-MM-YYYY'));
-			form.setFieldValue('updateAt', dayjs(selectedProcess.updateAt, 'DD-MM-YYYY'));
-			form.setFieldValue('expertResponsible', selectedProcess.expertResponsible);
-			form.setFieldValue('status', selectedProcess.status);
-			form.setFieldValue('expectedTime', selectedProcess.expectedTime);
-			form.setFieldValue('preparePlanting', selectedProcess.processContent.preparePlanting);
-			form.setFieldValue('plantingSchedule', selectedProcess.processContent.plantingSchedule);
+			// form.setFieldValue('processId', selectedProcess.processId);
+			// form.setFieldValue('processName', selectedProcess.processName);
+			// form.setFieldValue('plantName', selectedProcess.plantName);
+			// form.setFieldValue('createAt', dayjs(selectedProcess.createAt, 'DD-MM-YYYY'));
+			// form.setFieldValue('updateAt', dayjs(selectedProcess.updateAt, 'DD-MM-YYYY'));
+			// form.setFieldValue('expertResponsible', selectedProcess.expertResponsible);
+			// form.setFieldValue('status', selectedProcess.status);
+			// form.setFieldValue('expectedTime', selectedProcess.expectedTime);
+			// form.setFieldValue('preparePlanting', selectedProcess.processContent.preparePlanting);
+			// form.setFieldValue('plantingSchedule', selectedProcess.processContent.plantingSchedule);
 		}
 	}, [isModalOpen]);
 	return (
