@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './ManageMaterialPage.module.css';
 import {Descriptions, Image, Modal, Tag} from 'antd';
 import {formatDate, formatNumber} from '../../utils';
+import {imageExporter} from '../../assets/images';
 
 const API = 'https://api.agrifarm.site';
 
@@ -23,10 +24,14 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			label: 'Ảnh',
 			children: (
 				<Image
-					src={`${API}${selectedMaterial.image_material}`}
+					src={
+						selectedMaterial.image_material
+							? `${API}${selectedMaterial.image_material}`
+							: imageExporter.placeHolderImg
+					}
 					alt="Material Image"
 					style={{width: 200, height: 100, borderRadius: 5}}
-					fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+					fallback={imageExporter.placeHolderImg}
 				/>
 			),
 		},

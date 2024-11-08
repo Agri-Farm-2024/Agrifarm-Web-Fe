@@ -9,6 +9,7 @@ import {ManageMaterialCreateModal} from './ManageMaterialCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getMaterial} from '../../redux/slices/materialSlice';
 import {isLoadingMaterial, materialListSelector} from '../../redux/selectors';
+import {imageExporter} from '../../assets/images';
 
 const data = [
 	{
@@ -131,11 +132,11 @@ export const ManageMaterialPage = () => {
 			key: 'image_material',
 			render: (img) => (
 				<Image
-					src={`${API}${img}`}
+					src={img ? `${API}${img}` : imageExporter.placeHolderImg}
 					alt="Material Image"
 					style={{width: 200, height: 100, borderRadius: 5}}
 					preview={false}
-					fallback="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+					fallback={imageExporter.placeHolderImg}
 				/>
 			),
 		},

@@ -58,7 +58,7 @@ const userSlice = createSlice({
 			phone: null,
 			avatar_url: '',
 			status: '',
-			role: 0,
+			role: null,
 		},
 		userList: {},
 		listOfStaff: [],
