@@ -33,6 +33,7 @@ import ManageContractByManager from '../pages/ManageContractByManager/ManageCont
 import {ManagePlantSeasonPage} from '../pages/ManagePlantSeasonPage/ManagePlantSeasonPage';
 import ManagerDashBoardPages from '../pages/ManagerDashBoardPage/ManagerDashBoardPage';
 import {ManageAccountPage} from '../pages/ManageAccountPage/ManageAccountPage';
+import {ManageLandTypePage} from '../pages/ManageLandTypePage/ManageLandTypePage';
 
 export const AppRouters = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
@@ -276,6 +277,14 @@ export const AppRouters = () => {
 					element={
 						<PrivateRoute roles={['manager']}>
 							<ManagePlantSeasonPage />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/manage-land-type"
+					element={
+						<PrivateRoute roles={['manager']}>
+							<ManageLandTypePage />
 						</PrivateRoute>
 					}
 				/>
