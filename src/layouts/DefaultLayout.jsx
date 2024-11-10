@@ -27,6 +27,7 @@ import {
 	FundViewOutlined,
 	SunOutlined,
 	GoldOutlined,
+	LayoutOutlined,
 } from '@ant-design/icons';
 import {imageExporter} from '../assets/images';
 import TopNavbar from '../components/TopNavBar/TopNavBar';
@@ -80,6 +81,7 @@ export const DefaultLayout = ({children}) => {
 		'/manage-contract-manager',
 		'/manage-plant-season',
 		'/manage-account',
+		'/manage-land-type',
 	];
 
 	const staffMenuItems = [
@@ -127,6 +129,7 @@ export const DefaultLayout = ({children}) => {
 			getItem('Danh sách mảnh đất', '/manage-land', <AppstoreOutlined />),
 			getItem('Yêu cầu xem đất', '/manage-view-land', <FundViewOutlined />),
 			getItem('Danh sách hợp đồng', '/manage-contract-manager', <FileDoneOutlined />),
+			getItem('Quản lý loại đất', '/manage-land-type', <LayoutOutlined />),
 		]),
 
 		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),

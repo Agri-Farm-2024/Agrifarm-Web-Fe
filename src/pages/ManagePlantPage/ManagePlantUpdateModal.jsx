@@ -1,58 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
-import {Form, Input, InputNumber, Modal, Select, message} from 'antd';
+import {Form, Input, Modal, Select, message} from 'antd';
 import {useDispatch} from 'react-redux';
 import {getLandType} from '../../redux/slices/landSlice';
 import {updatePlant} from '../../redux/slices/plantSlice';
-
-const statusOptions = [
-	{
-		value: 'Đang hỗ trợ',
-		label: 'Đang hỗ trợ',
-	},
-	{
-		value: 'Tạm ngưng',
-		label: 'Tạm ngưng',
-	},
-	{
-		value: 'Ngừng hỗ trợ',
-		label: 'Ngừng hỗ trợ',
-	},
-];
-
-const processOptions = [
-	{
-		value: 'Quy trình trồng dưa lưới tháng 3',
-		label: 'Quy trình trồng dưa lưới tháng 3',
-	},
-	{
-		value: 'Quy trình trồng dưa lưới tháng 6',
-		label: 'Quy trình trồng dưa lưới tháng 6',
-	},
-	{
-		value: 'Quy trình trồng dưa lưới tháng 9',
-		label: 'Quy trình trồng dưa lưới tháng 9',
-	},
-];
-
-const plantTypeOptions = [
-	{
-		value: 'Rau ăn quả',
-		label: 'Rau ăn quả',
-	},
-	{
-		value: 'Rau ăn củ',
-		label: 'Rau ăn củ',
-	},
-	{
-		value: 'Rau ăn lá',
-		label: 'Rau ăn lá',
-	},
-	{
-		value: 'Cây ăn quả',
-		label: 'Cây ăn quả',
-	},
-];
 
 export const ManagePlantUpdateModal = ({selectedPlant, handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();

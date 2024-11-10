@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import styles from './ManageLandTypePage.module.css';
 import {Form, Input, Modal, message} from 'antd';
 import {useDispatch} from 'react-redux';
-import {createLandType} from '../../redux/slices/landSlice';
+import {updateLandType} from '../../redux/slices/landSlice';
 
-export const ManageLandTypeCreateModal = ({handleModalClose, isModalOpen}) => {
+export const ManageLandTypeUpdateModal = ({selectedLandType, handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
 
 	const [loadingLandType, setLoadingLandType] = useState(false);
@@ -12,37 +12,38 @@ export const ManageLandTypeCreateModal = ({handleModalClose, isModalOpen}) => {
 	const dispatch = useDispatch();
 
 	const onFinish = (values) => {
-		console.log('Create land type submit:', values);
-
 		const formData = {
+			landTypeId: selectedLandType.land_type_id,
 			landTypeName: values.landTypeName,
 			landTypeDescription: values.landTypeDescription,
 		};
+		console.log('Form data:', formData);
 
 		setLoadingLandType(true);
-		dispatch(createLandType(formData))
+
+		dispatch(updateLandType(formData))
 			.then((response) => {
-				console.log('response', response);
+				console.log('Update land type response', response);
 				setLoadingLandType(false);
 				if (response.payload && response.payload.statusCode) {
-					if (response.payload.statusCode !== 201) {
-						if (response.payload?.message === 'Land type already exist') {
-							message.error(`Loại đất đã tồn tại!`);
+					if (response.payload.statusCode !== 200) {
+						if (response.payload.message === 'Land type name already exist') {
+							message.error(`Loại đất đã tồn tại`);
 						} else {
-							message.error(`Tạo loại đất thất bại!`);
+							message.error(`Cập nhật loại đất thất bại!`);
 						}
 					}
 
-					if (response.payload.statusCode === 201) {
-						message.success('Tạo loại đất thành công.');
+					if (response.payload.statusCode === 200) {
+						message.success('Cập nhật loại đất thành công.');
 						handleModalClose(true);
 					}
 				}
 			})
 			.catch((err) => {
 				setLoadingLandType(false);
-				message.error('Tạo loại đất thất bại');
-				console.log('Tạo loại đất thất bại', err);
+				message.error('Cập nhật loại đất thất bại');
+				console.log('Cập nhật loại đất thất bại', err);
 			});
 	};
 	const onFinishFailed = (errorInfo) => {
@@ -52,26 +53,27 @@ export const ManageLandTypeCreateModal = ({handleModalClose, isModalOpen}) => {
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
+			form.setFieldValue('landTypeName', selectedLandType.name);
+			form.setFieldValue('landTypeDescription', selectedLandType.description);
 		}
 	}, [isModalOpen]);
-
 	return (
 		<Modal
-			title={<span style={{fontSize: '1.5rem'}}>Tạo loại đất</span>}
+			title={<span style={{fontSize: '1.5rem'}}>Cập nhật giống cây</span>}
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}
 			okButtonProps={{loading: loadingLandType}}
-			okText="Tạo"
+			okText="Cập nhật"
 			cancelText="Đóng"
 			centered
 			width={800}
 			maskClosable={false}
 		>
-			{
+			{selectedLandType && (
 				<Form
 					form={form}
-					name="CreateLandType"
+					name="UpdateLandType"
 					labelCol={{
 						span: 8,
 					}}
@@ -114,7 +116,7 @@ export const ManageLandTypeCreateModal = ({handleModalClose, isModalOpen}) => {
 						/>
 					</Form.Item>
 				</Form>
-			}
+			)}
 		</Modal>
 	);
 };

@@ -24,7 +24,6 @@ export const ManagePlantDetailModal = ({selectedPlant, handleModalClose, isModal
 			),
 		},
 	];
-	console.log('Selcted Detail', selectedPlant);
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Thông tin giống cây</span>}

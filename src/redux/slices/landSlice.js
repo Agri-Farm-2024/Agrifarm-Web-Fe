@@ -15,6 +15,21 @@ export const createLand = createAsyncThunk(
 	}
 );
 
+export const createLandType = createAsyncThunk(
+	'landSlice/createLandType',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const response = await api.post('/lands/createLandType', {
+				name: formData.landTypeName,
+				description: formData.landTypeDescription,
+			});
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
 
 export const updateLand = createAsyncThunk(
 	'landSlice/updateLand',
@@ -34,6 +49,22 @@ export const updateLand = createAsyncThunk(
 
 		try {
 			const response = await api.put(`/lands/${land_id}`, landInfor);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const updateLandType = createAsyncThunk(
+	'landSlice/updateLandType',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const response = await api.put(`/lands/updateLandType/${formData.landTypeId}`, {
+				name: formData.landTypeName,
+				description: formData.landTypeDescription,
+			});
 			return response.data;
 		} catch (error) {
 			console.error(error);
@@ -147,7 +178,7 @@ const landSlice = createSlice({
 	initialState: {
 		land: {},
 		lands: [],
-		landType: {},
+		landType: [],
 		listOfBooking: [],
 		request: {},
 		msg: '',
@@ -172,6 +203,17 @@ const landSlice = createSlice({
 			.addCase(createLand.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Land creation failed';
+			})
+			.addCase(createLandType.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(createLandType.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(createLandType.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Land type creation failed';
 			})
 			.addCase(updateLand.pending, (state) => {
 				state.loading = true;
@@ -248,6 +290,17 @@ const landSlice = createSlice({
 			.addCase(updateBooking.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Get listOfBooking fail';
+			})
+			.addCase(updateLandType.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateLandType.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateLandType.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Update land type fail';
 			});
 	},
 });

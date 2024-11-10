@@ -3,6 +3,8 @@ export const getUserSelector = (state) => state.userSlice.user;
 
 // land
 export const getListOfRequestViewLandSlice = (state) => state.landSlice.requets;
+export const getLandTypeListSelector = (state) => state.landSlice.landType;
+export const isLoadingLandSelector = (state) => state.landSlice.loading;
 
 //plant
 export const isLoadingPlant = (state) => state.plantSlice.loading;

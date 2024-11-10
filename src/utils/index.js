@@ -8,12 +8,24 @@ export function formatNumber(number) {
 	}
 	return number;
 }
+
 //Format timestamp to "DD/MM/YYYY"
 export function formatDate(date) {
 	if (date) {
 		return dayjs(date).format('DD/MM/YYYY');
 	}
 	return date;
+}
+
+//Shorten text formater
+export function shortenText(description, limit) {
+	// Check if the description is already within the limit
+	if (!description || description?.length <= limit) {
+		return description;
+	}
+
+	// Cut the text to the limit and add "..."
+	return description.slice(0, limit) + '...';
 }
 
 export const getRole = (input) => {
