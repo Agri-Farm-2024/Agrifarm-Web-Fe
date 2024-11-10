@@ -46,12 +46,18 @@ export const BookingLandDetailModal = ({
 		console.log('Uploaded file:', file);
 	};
 
+	const handleClose = () => {
+		handleModalClose();
+		setImageAPI(null);
+		setImageFile(null);
+	};
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết hợp đồng</span>}
 			open={isModalOpen}
 			onOk={handleUpdateBooking}
-			onCancel={handleModalClose}
+			onCancel={handleClose}
 			style={{top: 100}}
 			width={'max-content'}
 			okText="Cập nhật hợp đồng"
