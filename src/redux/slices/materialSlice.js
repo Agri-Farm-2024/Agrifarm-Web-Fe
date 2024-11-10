@@ -27,6 +27,41 @@ export const createMaterial = createAsyncThunk(
 	}
 );
 
+export const updateMaterial = createAsyncThunk(
+	'materialSlice/updateMaterial',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const newFormData =
+				formData.type === 'buy'
+					? {
+							name: formData.name,
+							total_quantity: formData.total_quantity,
+							description: formData.description,
+							unit: formData.unit,
+							price_per_piece: formData.price_per_piece,
+							image_material: formData.image_material,
+						}
+					: {
+							name: formData.name,
+							total_quantity: formData.total_quantity,
+							description: formData.description,
+							unit: formData.unit,
+							price_of_rent: formData.price_of_rent,
+							deposit_per_piece: formData.deposit_per_piece,
+							image_material: formData.image_material,
+						};
+			const data = await api.put(
+				`/materials/updateMaterial/${formData.materialId}`,
+				newFormData
+			);
+			return data.data;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const materialSlice = createSlice({
 	name: 'materialSlice',
 	initialState: {
@@ -55,6 +90,16 @@ export const materialSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(createMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(updateMaterial.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(updateMaterial.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateMaterial.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});

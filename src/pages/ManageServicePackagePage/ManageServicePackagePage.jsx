@@ -272,31 +272,27 @@ export const ManageServicePackagePage = () => {
 				</div>
 			</div>
 			<div className={styles.tableContainer}>
-				{serviceList && (
-					<Table
-						rowKey="servicePackageId"
-						dataSource={serviceList || ['']}
-						columns={columns}
-						scroll={{x: 'max-content'}}
-						onRow={(record) => ({
-							onClick: () => handleRowClick(record),
-						})}
-						rowClassName={(record, index) =>
-							index % 2 === 0 ? styles.evenRow : styles.oddRow
-						}
-						pagination={{
-							pageSize: pageSize,
-							current: currentPage,
-							total: (serviceList && serviceList.length) || 1,
-							onChange: (page) => {
-								setCurrentPage(page);
-							},
-						}}
-						className={styles.table}
-					/>
-				)}
-
-				{!serviceList && <Empty />}
+				<Table
+					rowKey="servicePackageId"
+					dataSource={serviceList || []}
+					columns={columns}
+					scroll={{x: 'max-content'}}
+					onRow={(record) => ({
+						onClick: () => handleRowClick(record),
+					})}
+					rowClassName={(record, index) =>
+						index % 2 === 0 ? styles.evenRow : styles.oddRow
+					}
+					pagination={{
+						pageSize: pageSize,
+						current: currentPage,
+						total: (serviceList && serviceList.length) || 1,
+						onChange: (page) => {
+							setCurrentPage(page);
+						},
+					}}
+					className={styles.table}
+				/>
 
 				<ManageServicePackageDetailModal
 					isModalOpen={isModalOpen}

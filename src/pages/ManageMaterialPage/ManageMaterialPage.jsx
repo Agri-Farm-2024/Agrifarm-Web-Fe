@@ -1,7 +1,7 @@
 import {Button, DatePicker, Image, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
-import {formatNumber} from '../../utils';
+import {convertImageURL, formatNumber} from '../../utils';
 import {ManageMaterialDetailModal} from './ManageMaterialDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageMaterialUpdateModal} from './ManageMaterialUpdateModal';
@@ -116,8 +116,6 @@ const materialTypeOptions = [
 	},
 ];
 
-const API = 'https://api.agrifarm.site';
-
 export const ManageMaterialPage = () => {
 	const columns = [
 		// {
@@ -132,7 +130,7 @@ export const ManageMaterialPage = () => {
 			key: 'image_material',
 			render: (img) => (
 				<Image
-					src={img ? `${API}${img}` : imageExporter.placeHolderImg}
+					src={img ? `${convertImageURL(img)}` : imageExporter.placeHolderImg}
 					alt="Material Image"
 					style={{width: 200, height: 100, borderRadius: 5}}
 					preview={false}
@@ -207,7 +205,7 @@ export const ManageMaterialPage = () => {
 						icon={<EditOutlined />}
 					></Button>
 
-					<Popconfirm
+					{/* <Popconfirm
 						onClick={(e) => e.stopPropagation()}
 						title="Xoá vật tư"
 						description="Bạn muốn xoá vật tư này?"
@@ -217,7 +215,7 @@ export const ManageMaterialPage = () => {
 						cancelText="Huỷ"
 					>
 						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
+					</Popconfirm> */}
 				</Space>
 			),
 		},
@@ -267,7 +265,10 @@ export const ManageMaterialPage = () => {
 		setSelectedMaterial(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSuccess) => {
+		if (isUpdateSuccess) {
+			fetchMaterialList(1);
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedMaterial(null);
 	};
