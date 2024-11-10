@@ -48,7 +48,7 @@ const LoginPage = () => {
 
 		dispatch(handleLogin(values))
 			.then((response) => {
-				toast.dismiss(); // Remove the loading message
+				toast.dismiss();
 				const user = response.payload.metadata.user;
 				if (user) {
 					toast.success('Đăng nhập thành công!');
@@ -67,6 +67,8 @@ const LoginPage = () => {
 
 					if (response.payload.statusCode === 400) {
 						if (response.payload.message == 'Invalid password') {
+							toast.error('Email hoặc mật khẩu không đúng!');
+						} else if (response.payload.message == 'Email is not exist') {
 							toast.error('Email hoặc mật khẩu không đúng!');
 						} else {
 							toast.info('Tài khoản chưa được kích hoạt !!');

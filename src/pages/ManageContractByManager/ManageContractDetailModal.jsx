@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from './ManageContractByManager.module.css';
 import {Button, Image, message, Modal, Tag, Upload} from 'antd';
-import {formatNumber} from '../../utils';
+import {convertImageURL, formatNumber} from '../../utils';
 import {UploadOutlined} from '@ant-design/icons';
 
 export const ManageContractDetailModal = ({selectedBooking, handleModalClose, isModalOpen}) => {
@@ -147,9 +147,9 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 										preview={{
 											visible: visibleContract,
 											scaleStep: 1,
-											src: imageFile
-												? URL.createObjectURL(imageFile)
-												: selectedBooking.contract_image,
+											src: selectedBooking?.contract_image
+												? convertImageURL(selectedBooking.contract_image)
+												: 'error',
 											onVisibleChange: (value) => {
 												setVisibleContract(value);
 											},

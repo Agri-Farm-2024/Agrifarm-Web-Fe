@@ -102,7 +102,7 @@ export const Notification = ({handleBellClick}) => {
 				pauseOnHover: true,
 				draggable: true,
 				icon: <BellOutlined />,
-				progressStyle: {background: '#7fb640'},
+				progress: undefined,
 			}
 		);
 	};

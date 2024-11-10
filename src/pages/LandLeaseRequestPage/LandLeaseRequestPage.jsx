@@ -209,7 +209,10 @@ export const LandLeaseRequestPage = () => {
 				<span>Lọc theo trạng thái:</span>
 				<Select
 					placeholder="Chọn Trạng Thái"
-					onChange={(value) => setFilterStatus(value)}
+					onChange={(value) => {
+						setCurrentPage(1);
+						setFilterStatus(value);
+					}}
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>

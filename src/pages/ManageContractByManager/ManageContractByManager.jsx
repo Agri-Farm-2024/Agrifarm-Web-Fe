@@ -320,7 +320,10 @@ const ManageContractByManager = () => {
 						<Select
 							className={styles.filterInput}
 							placeholder="Chọn trạng thái"
-							onChange={(value) => setFilterStatus(value)}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setFilterStatus(value);
+							}}
 						>
 							<Option value="">Tất cả</Option>
 							<Option value="completed">Đang hiệu lực</Option>
