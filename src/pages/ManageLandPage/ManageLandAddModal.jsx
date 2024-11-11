@@ -217,47 +217,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 				videos: videos,
 			};
 			console.log(landInfor);
-			const hideLoading = message.loading('Đang xử lí...', 0);
-			setLoading(true);
-
-			dispatch(createLand(landInfor))
-				.then((res) => {
-					console.log(res);
-					setLoading(false);
-					hideLoading();
-					if (res.payload.statusCode !== 201) {
-						if (res.payload.message === 'Land name already exist') {
-							message.error(`Tên mảnh đất đã tồn tại trên trang trại`);
-						}
-						if (res.payload.message === 'numeric field overflow') {
-							message.error(`Diện tích vượt quá quy định`);
-						}
-					}
-
-					if (res.payload.statusCode === 201) {
-						message.success('Tạo mảnh đất thành công.');
-						handleModalClose();
-						// Reset landData
-						setLandData({
-							nameLand: '',
-							area: '',
-							pricePermonth: '',
-							description: {
-								title: '',
-								desc: '',
-							},
-							images: [],
-							videos: [],
-							// landOfStatus: undefined,
-							// status: undefined,
-							// assignStaff: undefined,
-						});
-					}
-				})
-				.catch((err) => {
-					hideLoading();
-					message.error('Unexpected error:', err);
-				});
+			
 		} else {
 			message.error('Hãy điền đủ trường nhé');
 		}
