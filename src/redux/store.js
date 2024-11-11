@@ -12,7 +12,7 @@ import processSlice from './slices/processSlice';
 const rootPersistConfig = {
 	key: 'root',
 	storage,
-	safelist: ['userSlice'], // Add slices which you want persisted
+	whitelist: ['userSlice'], // Add slices which you want persisted
 };
 
 const rootReducer = combineReducers({
@@ -23,8 +23,6 @@ const rootReducer = combineReducers({
 	requestSlice: requestSlice.reducer,
 	materialSlice: materialSlice.reducer,
 	processSlice: processSlice.reducer,
-
-	//add more slices here
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
