@@ -8,7 +8,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<AppRouters />
-			<ToastContainer limit={3} />
+			<ToastContainer limit={5} hideProgressBar />
 		</BrowserRouter>
 	);
 }
