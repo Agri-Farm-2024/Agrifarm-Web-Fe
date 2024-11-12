@@ -17,6 +17,7 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			label: 'Tên vật tư',
 			children: <p>{selectedMaterial.name}</p>,
 		},
+
 		{
 			key: 'image_material',
 			label: 'Ảnh',
@@ -28,10 +29,20 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 							: imageExporter.placeHolderImg
 					}
 					alt="Material Image"
-					style={{width: 200, height: 100, borderRadius: 5}}
+					style={{
+						width: 150,
+						borderRadius: 5,
+						objectFit: 'contain',
+						objectPosition: 'center',
+					}}
 					fallback={imageExporter.placeHolderImg}
 				/>
 			),
+		},
+		{
+			key: 'description',
+			label: 'Mô tả',
+			children: <p>{selectedMaterial.description}</p>,
 		},
 		{
 			key: 'type',

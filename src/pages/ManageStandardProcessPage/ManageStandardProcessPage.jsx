@@ -329,6 +329,7 @@ export const ManageStandardProcessPage = () => {
 	}, []);
 
 	const handleRowClick = (record) => {
+		console.log('setSelectedProcess', record);
 		setSelectedProcess(record);
 		setIsModalOpen(true);
 	};
@@ -343,7 +344,10 @@ export const ManageStandardProcessPage = () => {
 		setSelectedProcess(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSuccess) => {
+		if (isUpdateSuccess) {
+			fetchStandardProcess(1);
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedProcess(null);
 	};

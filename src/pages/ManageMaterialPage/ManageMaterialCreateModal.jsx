@@ -183,7 +183,12 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 							<Image
 								src={materialImg.previewUrl}
 								alt="Material Image"
-								style={{width: 300, height: 200, borderRadius: 5}}
+								style={{
+									width: 200,
+									objectFit: 'contain',
+									objectPosition: 'center',
+									borderRadius: 5,
+								}}
 							/>
 						)}
 						<Upload

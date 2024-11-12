@@ -11,69 +11,6 @@ import {getMaterial} from '../../redux/slices/materialSlice';
 import {isLoadingMaterial, materialListSelector} from '../../redux/selectors';
 import {imageExporter} from '../../assets/images';
 
-const data = [
-	{
-		materialId: 'VT001',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT002',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT003',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT004',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Hết hàng',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT005',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Sắp hết',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT006',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-];
-
 const statusOptions = [
 	{
 		value: 'Có sẵn',
@@ -132,7 +69,12 @@ export const ManageMaterialPage = () => {
 				<Image
 					src={img ? `${convertImageURL(img)}` : imageExporter.placeHolderImg}
 					alt="Material Image"
-					style={{width: 200, height: 100, borderRadius: 5}}
+					style={{
+						width: 100,
+						borderRadius: 5,
+						objectFit: 'contain',
+						objectPosition: 'center',
+					}}
 					preview={false}
 					fallback={imageExporter.placeHolderImg}
 				/>
