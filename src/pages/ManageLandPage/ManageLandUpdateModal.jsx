@@ -5,11 +5,21 @@ import {PlusOutlined} from '@ant-design/icons';
 import TextEditor from './TextEditor';
 import {convertImageURL} from '../../utils';
 import {uploadFile} from '../../services/uploadService';
+import {updateLand} from '../../redux/slices/landSlice';
+import {useDispatch} from 'react-redux';
 
-export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOpen, staffList}) => {
+export const ManageLandUpdateModal = ({
+	selectedLand,
+	handleModalClose,
+	isModalOpen,
+	staffList,
+	handleModalCloseAndUpdate,
+}) => {
 	const [landData, setLandData] = useState(selectedLand);
 	const [errors, setErrors] = useState({});
 	const [imageDeleted, setImageDeleted] = useState([]);
+
+	const dispatch = useDispatch();
 
 	console.log(landData?.staff_id);
 
@@ -150,16 +160,50 @@ export const ManageLandUpdateModal = ({selectedLand, handleModalClose, isModalOp
 				return;
 			}
 
-			console.log('imageDeleted: ' + imageDeleted);
+			const landInfor = {
+				name: landData.name,
+				title: landData.title,
+				description: landData.description,
+				acreage_land: Number(landData.acreage_land),
+				price_booking_per_month: Number(landData.price_booking_per_month),
+				staff_id: landData.staff_id,
+				land_id: landData.land_id,
+				url: landData.url,
+				url_deleted: imageDeleted,
+			};
 
-			console.log('landData: ' + JSON.stringify(landData));
+			console.log(landInfor);
+
+			const hideLoading = message.loading('Đang xử lí...', 0);
+
+			dispatch(updateLand(landInfor))
+				.then((res) => {
+					console.log(res);
+					hideLoading();
+					if (res.payload.statusCode !== 200) {
+						if (res.payload.message === 'Land name already exist') {
+							message.error(`Tên mảnh đất đã tồn tại trên trang trại`);
+						}
+						if (res.payload.message === 'numeric field overflow') {
+							message.error(`Diện tích vượt quá quy định`);
+						}
+					}
+
+					if (res.payload.statusCode === 200) {
+						message.success('Cập nhật mảnh đất thành công.');
+						handleModalCloseAndUpdate();
+					}
+				})
+				.catch((err) => {
+					hideLoading();
+					message.error('Unexpected error:', err);
+				});
 
 			// const hideLoading = message.loading('Đang xử lý...', 0); // 0 means it will persist until manually closed
 			// console.log(landData);
 			// setTimeout(() => {
 			// 	hideLoading();
 			// 	message.success('Cập nhật thành công.');
-			// 	handleModalClose();
 			// }, 1000);
 		} else {
 			message.error('Hãy điền đầy đủ các trường');
