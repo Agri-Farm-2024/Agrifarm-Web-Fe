@@ -34,10 +34,7 @@ export const createLandType = createAsyncThunk(
 export const updateLand = createAsyncThunk(
 	'landSlice/updateLand',
 	async (
-		{name, title, description, acreage_land, price_booking_per_month, staff_id, land_id},
-		{rejectWithValue}
-	) => {
-		console.log({
+		{
 			name,
 			title,
 			description,
@@ -45,7 +42,23 @@ export const updateLand = createAsyncThunk(
 			price_booking_per_month,
 			staff_id,
 			land_id,
-		});
+			url,
+			url_deleted,
+		},
+		{rejectWithValue}
+	) => {
+		const landInfor = {
+			name,
+			title,
+			description,
+			acreage_land,
+			price_booking_per_month,
+			staff_id,
+			url,
+			url_deleted,
+		};
+
+		console.log(landInfor);
 
 		try {
 			const response = await api.put(`/lands/${land_id}`, landInfor);
@@ -221,7 +234,7 @@ const landSlice = createSlice({
 			})
 			.addCase(updateLand.fulfilled, (state, action) => {
 				state.loading = false;
-				state.land = action.payload;
+				state.msg = 'success';
 			})
 			.addCase(updateLand.rejected, (state, action) => {
 				state.loading = false;

@@ -29,6 +29,10 @@ export const ManageLandPage = () => {
 	const loading = useSelector((state) => state.landSlice?.loading);
 
 	useEffect(() => {
+		fetchData();
+	}, [filterStatus, currentPage]);
+
+	const fetchData = () => {
 		const params = {
 			page_size: pageSize,
 			page_index: currentPage,
@@ -38,7 +42,7 @@ export const ManageLandPage = () => {
 			if (res.payload.statusCode === 200) {
 			}
 		});
-	}, [filterStatus, currentPage]);
+	};
 
 	useEffect(() => {
 		dispatch(getListOfStaff())
@@ -75,6 +79,11 @@ export const ManageLandPage = () => {
 	const handleModalUpdateClose = () => {
 		setisModalUpdateOpen(false);
 		setselectedLand(null);
+	};
+
+	const handleModalCloseAndUpdate = () => {
+		handleModalUpdateClose();
+		fetchData();
 	};
 
 	const columns = [
@@ -257,6 +266,7 @@ export const ManageLandPage = () => {
 			<ManageLandUpdateModal
 				isModalOpen={isModalUpdateOpen}
 				handleModalClose={handleModalUpdateClose}
+				handleModalCloseAndUpdate={handleModalCloseAndUpdate}
 				selectedLand={selectedLand}
 				staffList={staffList}
 			/>
