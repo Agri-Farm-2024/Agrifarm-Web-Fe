@@ -1,7 +1,7 @@
 import {Button, DatePicker, Image, Input, Popconfirm, Select, Space, Table, Tag} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
-import {formatNumber} from '../../utils';
+import {convertImageURL, formatNumber} from '../../utils';
 import {ManageMaterialDetailModal} from './ManageMaterialDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageMaterialUpdateModal} from './ManageMaterialUpdateModal';
@@ -10,69 +10,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getMaterial} from '../../redux/slices/materialSlice';
 import {isLoadingMaterial, materialListSelector} from '../../redux/selectors';
 import {imageExporter} from '../../assets/images';
-
-const data = [
-	{
-		materialId: 'VT001',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT002',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT003',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT004',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Hết hàng',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT005',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Sắp hết',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-	{
-		materialId: 'VT006',
-		materialName: 'Hạt giống dưa lưới Taki',
-		materialType: 'Hạt giống',
-		materialMeasure: 'Túi',
-		quantity: 100,
-		status: 'Có sẵn',
-		materialDescription:
-			'Mô tả: Hạt giống dưa lưới cao sản, giống lai F1, tỷ lệ nảy mầm cao (trên 90%). Thời gian thu hoạch khoảng 80-90 ngày. Thích hợp cho canh tác theo tiêu chuẩn VietGAP. Đóng gói 100 hạt/túi. Công dụng: Dùng để gieo trồng dưa lưới trong điều kiện khí hậu nhiệt đới.',
-	},
-];
 
 const statusOptions = [
 	{
@@ -116,8 +53,6 @@ const materialTypeOptions = [
 	},
 ];
 
-const API = 'https://api.agrifarm.site';
-
 export const ManageMaterialPage = () => {
 	const columns = [
 		// {
@@ -132,9 +67,14 @@ export const ManageMaterialPage = () => {
 			key: 'image_material',
 			render: (img) => (
 				<Image
-					src={img ? `${API}${img}` : imageExporter.placeHolderImg}
+					src={img ? `${convertImageURL(img)}` : imageExporter.placeHolderImg}
 					alt="Material Image"
-					style={{width: 200, height: 100, borderRadius: 5}}
+					style={{
+						width: 100,
+						borderRadius: 5,
+						objectFit: 'contain',
+						objectPosition: 'center',
+					}}
 					preview={false}
 					fallback={imageExporter.placeHolderImg}
 				/>
@@ -207,7 +147,7 @@ export const ManageMaterialPage = () => {
 						icon={<EditOutlined />}
 					></Button>
 
-					<Popconfirm
+					{/* <Popconfirm
 						onClick={(e) => e.stopPropagation()}
 						title="Xoá vật tư"
 						description="Bạn muốn xoá vật tư này?"
@@ -217,7 +157,7 @@ export const ManageMaterialPage = () => {
 						cancelText="Huỷ"
 					>
 						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
+					</Popconfirm> */}
 				</Space>
 			),
 		},
@@ -267,7 +207,10 @@ export const ManageMaterialPage = () => {
 		setSelectedMaterial(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSuccess) => {
+		if (isUpdateSuccess) {
+			fetchMaterialList(1);
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedMaterial(null);
 	};

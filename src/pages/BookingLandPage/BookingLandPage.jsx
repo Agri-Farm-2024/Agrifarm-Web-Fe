@@ -173,8 +173,10 @@ const BookingLandPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 
 	const dispatch = useDispatch();
-	const requests = useSelector((state) => state.landSlice.listOfBooking.metadata.bookings);
-	const pagination = useSelector((state) => state.landSlice.listOfBooking.metadata.pagination);
+	const requests = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.bookings);
+	const pagination = useSelector(
+		(state) => state?.landSlice?.listOfBooking?.metadata?.pagination
+	);
 	const loading = useSelector((state) => state.landSlice.loading);
 
 	useEffect(() => {

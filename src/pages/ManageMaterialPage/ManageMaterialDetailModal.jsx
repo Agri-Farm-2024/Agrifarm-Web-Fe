@@ -1,10 +1,8 @@
 import React from 'react';
 import styles from './ManageMaterialPage.module.css';
 import {Descriptions, Image, Modal, Tag} from 'antd';
-import {formatDate, formatNumber} from '../../utils';
+import {convertImageURL, formatDate, formatNumber} from '../../utils';
 import {imageExporter} from '../../assets/images';
-
-const API = 'https://api.agrifarm.site';
 
 export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, isModalOpen}) => {
 	console.log('Selected Material', selectedMaterial);
@@ -19,6 +17,7 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			label: 'Tên vật tư',
 			children: <p>{selectedMaterial.name}</p>,
 		},
+
 		{
 			key: 'image_material',
 			label: 'Ảnh',
@@ -26,14 +25,24 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 				<Image
 					src={
 						selectedMaterial.image_material
-							? `${API}${selectedMaterial.image_material}`
+							? `${convertImageURL(selectedMaterial.image_material)}`
 							: imageExporter.placeHolderImg
 					}
 					alt="Material Image"
-					style={{width: 200, height: 100, borderRadius: 5}}
+					style={{
+						width: 150,
+						borderRadius: 5,
+						objectFit: 'contain',
+						objectPosition: 'center',
+					}}
 					fallback={imageExporter.placeHolderImg}
 				/>
 			),
+		},
+		{
+			key: 'description',
+			label: 'Mô tả',
+			children: <p>{selectedMaterial.description}</p>,
 		},
 		{
 			key: 'type',

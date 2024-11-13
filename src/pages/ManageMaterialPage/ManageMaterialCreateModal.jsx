@@ -66,57 +66,61 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 	const [loading, setLoading] = useState(false);
 
 	const onFinish = (values) => {
-		console.log('Success:', values);
-		setLoading(true);
-		const hideLoading = message.loading('Đang xử lí...', 0);
-		try {
-			uploadFile(materialImg.file).then((uploadImgResponse) => {
-				console.log('Response uploaded:', uploadImgResponse);
-				let formData = {
-					name: values.materialName,
-					total_quantity: values.quantity,
-					description: values.materialDescription,
-					unit: values.unit,
-					image_material: uploadImgResponse.metadata.folder_path,
-					type: values.materialType,
-				};
-
-				//Add more field follow by material type
-				if (values.materialType == 'buy') {
-					formData = {
-						...formData,
-						price_per_piece: 100,
+		console.log('Create material submit:', values);
+		if (!materialImg || !materialImg?.file) {
+			message.error('Chưa có ảnh cho vật tư!');
+		} else {
+			setLoading(true);
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			try {
+				uploadFile(materialImg.file).then((uploadImgResponse) => {
+					console.log('Response uploaded:', uploadImgResponse);
+					let formData = {
+						name: values.materialName,
+						total_quantity: values.quantity,
+						description: values.materialDescription,
+						unit: values.unit,
+						image_material: uploadImgResponse.metadata.folder_path,
+						type: values.materialType,
 					};
-				} else {
-					formData = {
-						...formData,
-						deposit_per_piece: 100,
-						price_of_rent: 100,
-					};
-				}
 
-				dispatch(createMaterial(formData)).then((response) => {
-					console.log('response create material', response);
-					setLoading(false);
-					hideLoading();
+					//Add more field follow by material type
+					if (values.materialType == 'buy') {
+						formData = {
+							...formData,
+							price_per_piece: values.buyPrice,
+						};
+					} else {
+						formData = {
+							...formData,
+							deposit_per_piece: values.depositPrice,
+							price_of_rent: values.rentPrice,
+						};
+					}
 
-					if (response.payload.statusCode !== 201) {
-						if (res.payload.message === 'Material name already exist') {
-							message.error(`Tên vật tư đã tồn tại trên trang trại`);
+					dispatch(createMaterial(formData)).then((response) => {
+						console.log('response create material', response);
+						setLoading(false);
+						hideLoading();
+
+						if (response.payload.statusCode !== 201) {
+							if (response.payload.message === 'Material name already exist') {
+								message.error(`Tên vật tư đã tồn tại trên trang trại`);
+							}
 						}
-					}
 
-					if (response.payload.statusCode === 201) {
-						message.success('Tạo vật tư thành công.');
-						handleModalClose(true);
-					}
+						if (response.payload.statusCode === 201) {
+							message.success('Tạo vật tư thành công.');
+							handleModalClose(true);
+						}
+					});
 				});
-			});
-		} catch (error) {
-			setLoading(false);
-			hideLoading();
-			message.error('Tạo vật tư thất bại!');
-			console.log('Unexpected error:', error);
+			} catch (error) {
+				setLoading(false);
+				hideLoading();
+				message.error('Tạo vật tư thất bại!');
+				console.log('Unexpected error:', error);
+			}
 		}
 	};
 	const onFinishFailed = (errorInfo) => {
@@ -127,7 +131,6 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 		// Create a preview URL for the image
 		const previewUrl = URL.createObjectURL(file);
 
-		// Update landData to include the new image object
 		setMaterialImg({file, previewUrl});
 	};
 
@@ -153,11 +156,11 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 				form={form}
 				name="CreateMaterial"
 				labelCol={{
-					span: 5,
+					span: 6,
 				}}
 				labelAlign="left"
 				wrapperCol={{
-					span: 19,
+					span: 18,
 				}}
 				size="large"
 				className={styles.formContainer}
@@ -180,7 +183,12 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 							<Image
 								src={materialImg.previewUrl}
 								alt="Material Image"
-								style={{width: 300, height: 200, borderRadius: 5}}
+								style={{
+									width: 200,
+									objectFit: 'contain',
+									objectPosition: 'center',
+									borderRadius: 5,
+								}}
 							/>
 						)}
 						<Upload
@@ -190,7 +198,11 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 							showUploadList={false}
 							onChange={handleUpload}
 						>
-							<Button type="primary" style={{marginLeft: 20}} icon={<PlusOutlined />}>
+							<Button
+								type="primary"
+								style={{marginLeft: !materialImg ? 0 : 20}}
+								icon={<PlusOutlined />}
+							>
 								Tải ảnh lên
 							</Button>
 						</Upload>

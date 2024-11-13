@@ -1,89 +1,179 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageMaterialPage.module.css';
-import {Form, Input, InputNumber, Modal, Select} from 'antd';
+import {Button, Form, Image, Input, InputNumber, Modal, Select, Upload, message} from 'antd';
 import dayjs from 'dayjs';
-
-const statusOptions = [
-	{
-		value: 'Có sẵn',
-		label: 'Có sẵn',
-	},
-	{
-		value: 'Sắp hết',
-		label: 'Sắp hết',
-	},
-	{
-		value: 'Hết hàng',
-		label: 'Hết hàng',
-	},
-];
-
-const materialTypeOptions = [
-	{
-		value: 'Hạt giống',
-		label: 'Hạt giống',
-	},
-	{
-		value: 'Thuốc BVTV',
-		label: 'Thuốc BVTV',
-	},
-	{
-		value: 'Phân bón',
-		label: 'Phân bón',
-	},
-	{
-		value: 'Vật tư',
-		label: 'Vật tư',
-	},
-	{
-		value: 'Thiết bị',
-		label: 'Thiết bị',
-	},
-];
+import {PlusOutlined} from '@ant-design/icons';
+import {convertImageURL} from '../../utils';
+import {uploadFile} from '../../services/uploadService';
+import {useDispatch} from 'react-redux';
+import {updateMaterial} from '../../redux/slices/materialSlice';
 
 const materialMeasureOptions = [
 	{
-		value: 'Túi',
+		value: 'package',
 		label: 'Túi',
 	},
 	{
-		value: 'Bao',
+		value: 'bag',
 		label: 'Bao',
 	},
 	{
-		value: 'Chai',
+		value: 'bottle',
 		label: 'Chai',
 	},
 	{
-		value: 'Cái',
+		value: 'piece',
 		label: 'Cái',
 	},
 	{
-		value: 'Cuộn',
-		label: 'Cuộn',
+		value: 'square_meter',
+		label: 'Mét vuông',
 	},
 ];
 
 export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
 
+	const dispatch = useDispatch();
+
+	const [materialImg, setMaterialImg] = useState(null);
+	const [loading, setLoading] = useState(false);
+
 	const onFinish = (values) => {
-		console.log('Success:', values);
+		console.log('Update material submit:', values);
+		if (
+			(!materialImg || !materialImg?.file) &&
+			(!selectedMaterial.image_material || selectedMaterial.image_material == '')
+		) {
+			message.error('Chưa có ảnh cho vật tư!');
+		} else {
+			setLoading(true);
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			try {
+				if (materialImg) {
+					//Update material with new material image
+					uploadFile(materialImg.file).then((uploadImgResponse) => {
+						console.log('Response uploaded:', uploadImgResponse);
+						let formData = {
+							materialId: selectedMaterial.material_id,
+							name: values.materialName,
+							total_quantity: values.quantity,
+							description: values.materialDescription,
+							unit: values.unit,
+							image_material: uploadImgResponse.metadata.folder_path,
+							type: selectedMaterial.type,
+						};
+
+						//Add more field follow by material type
+						if (selectedMaterial.type == 'buy') {
+							formData = {
+								...formData,
+								price_per_piece: 100,
+							};
+						} else {
+							formData = {
+								...formData,
+								deposit_per_piece: 100,
+								price_of_rent: 100,
+							};
+						}
+
+						dispatch(updateMaterial(formData)).then((response) => {
+							console.log('response create material', response);
+							setLoading(false);
+							hideLoading();
+
+							if (response.payload.statusCode !== 200) {
+								if (response.payload.message === 'Material name already exist') {
+									message.error(`Tên vật tư đã tồn tại trên trang trại`);
+								}
+							}
+
+							if (response.payload.statusCode === 200) {
+								message.success('Cập nhật vật tư thành công.');
+								handleModalClose(true);
+							}
+						});
+					});
+				} else {
+					//Update material with old material image
+					let formData = {
+						materialId: selectedMaterial.material_id,
+						name: values.materialName,
+						total_quantity: values.quantity,
+						description: values.materialDescription,
+						unit: values.unit,
+						image_material: selectedMaterial.image_material,
+						type: selectedMaterial.type,
+					};
+
+					//Add more field follow by material type
+					if (selectedMaterial.type == 'buy') {
+						formData = {
+							...formData,
+							price_per_piece: values.buyPrice,
+						};
+					} else {
+						formData = {
+							...formData,
+							deposit_per_piece: values.depositPrice,
+							price_of_rent: values.rentPrice,
+						};
+					}
+
+					dispatch(updateMaterial(formData)).then((response) => {
+						console.log('response create material', response);
+						setLoading(false);
+						hideLoading();
+
+						if (response.payload.statusCode !== 200) {
+							if (response.payload.message === 'Material name already exist') {
+								message.error(`Tên vật tư đã tồn tại trên trang trại`);
+							}
+						}
+
+						if (response.payload.statusCode === 200) {
+							message.success('Cập nhật vật tư thành công.');
+							handleModalClose(true);
+						}
+					});
+				}
+			} catch (error) {
+				setLoading(false);
+				hideLoading();
+				message.error('Cập nhật vật tư thất bại!');
+				console.log('Unexpected error:', error);
+			}
+		}
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
 	};
 
+	const handleUpload = async ({file}) => {
+		if (file && file instanceof Blob) {
+			//Create a review url
+			const previewUrl = URL.createObjectURL(file);
+			setMaterialImg({file, previewUrl});
+		}
+	};
+
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
-			form.setFieldValue('materialId', selectedMaterial.materialId);
-			form.setFieldValue('materialName', selectedMaterial.materialName);
-			form.setFieldValue('materialType', selectedMaterial.materialType);
-			form.setFieldValue('materialMeasure', selectedMaterial.materialMeasure);
-			form.setFieldValue('quantity', selectedMaterial.quantity);
+			setMaterialImg(null);
+			form.setFieldValue('materialName', selectedMaterial.name);
+			form.setFieldValue('unit', selectedMaterial.unit);
+			form.setFieldValue('quantity', selectedMaterial.total_quantity);
 			form.setFieldValue('status', selectedMaterial.status);
-			form.setFieldValue('materialDescription', selectedMaterial.materialDescription);
+			form.setFieldValue('materialDescription', selectedMaterial.description);
+
+			if (selectedMaterial.type == 'buy') {
+				form.setFieldValue('buyPrice', selectedMaterial.price_per_piece);
+			} else {
+				form.setFieldValue('rentPrice', selectedMaterial.price_of_rent);
+				form.setFieldValue('depositPrice', selectedMaterial.deposit_per_piece);
+			}
 		}
 	}, [isModalOpen]);
 	return (
@@ -102,11 +192,11 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 					form={form}
 					name="UpdateMaterial"
 					labelCol={{
-						span: 5,
+						span: 6,
 					}}
 					labelAlign="left"
 					wrapperCol={{
-						span: 19,
+						span: 18,
 					}}
 					size="large"
 					className={styles.formContainer}
@@ -115,17 +205,63 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 					autoComplete="off"
 				>
 					<Form.Item
-						label="ID vật tư"
-						name="materialId"
+						label="Ảnh vật tư"
+						name="materialImg"
 						rules={[
 							{
-								required: true,
+								required: false,
 								message: 'Vui lòng không bỏ trống!',
 							},
 						]}
 					>
-						<Input disabled className={styles.inputField} />
+						<>
+							{!materialImg &&
+								selectedMaterial.image_material &&
+								selectedMaterial.image_material != '' && (
+									<Image
+										src={convertImageURL(selectedMaterial.image_material)}
+										alt="Material Image"
+										style={{width: 300, height: 200, borderRadius: 5}}
+									/>
+								)}
+
+							{materialImg && materialImg?.previewUrl && (
+								<Image
+									src={
+										materialImg?.previewUrl ||
+										convertImageURL(selectedMaterial.image_material)
+									}
+									alt="Material Image"
+									style={{width: 300, height: 200, borderRadius: 5}}
+								/>
+							)}
+							<Upload
+								accept="image/*"
+								name="file"
+								beforeUpload={() => false} // Prevent automatic upload
+								showUploadList={false}
+								onChange={handleUpload}
+							>
+								<Button
+									type="primary"
+									style={{
+										marginLeft:
+											!materialImg &&
+											!(
+												selectedMaterial.image_material &&
+												selectedMaterial.image_material != ''
+											)
+												? 0
+												: 20,
+									}}
+									icon={<PlusOutlined />}
+								>
+									Tải ảnh lên
+								</Button>
+							</Upload>
+						</>
 					</Form.Item>
+
 					<Form.Item
 						label="Tên vật tư"
 						name="materialName"
@@ -140,26 +276,8 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 					</Form.Item>
 
 					<Form.Item
-						label="Loại vật tư"
-						name="materialType"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn loại vật tư"
-							options={materialTypeOptions}
-						></Select>
-					</Form.Item>
-
-					<Form.Item
 						label="Đơn vị tính"
-						name="materialMeasure"
+						name="unit"
 						rules={[
 							{
 								required: true,
@@ -201,23 +319,62 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 						/>
 					</Form.Item>
 
-					<Form.Item
-						label="Trạng thái"
-						name="status"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn trạng thái"
-							options={statusOptions}
-						></Select>
-					</Form.Item>
+					{selectedMaterial.type === 'buy' && (
+						<Form.Item
+							label="Giá bán (VND)"
+							name="buyPrice"
+							rules={[
+								{required: true, message: 'Vui lòng không bỏ trống!'},
+								{type: 'number', min: 0, message: 'Giá bán không hợp lệ!'},
+							]}
+						>
+							<InputNumber
+								formatter={(value) =>
+									`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+								}
+								parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+								className={styles.inputField}
+							/>
+						</Form.Item>
+					)}
+
+					{selectedMaterial.type === 'rent' && (
+						<>
+							<Form.Item
+								label="Giá cho thuê (VND/tháng)"
+								name="rentPrice"
+								rules={[
+									{required: true, message: 'Vui lòng không bỏ trống!'},
+									{type: 'number', min: 0, message: 'Giá thuê không hợp lệ!'},
+								]}
+							>
+								<InputNumber
+									formatter={(value) =>
+										`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+									}
+									parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+									className={styles.inputField}
+								/>
+							</Form.Item>
+
+							<Form.Item
+								label="Giá cọc (VND)"
+								name="depositPrice"
+								rules={[
+									{required: true, message: 'Vui lòng không bỏ trống!'},
+									{type: 'number', min: 0, message: 'Giá cọc không hợp lệ!'},
+								]}
+							>
+								<InputNumber
+									formatter={(value) =>
+										`${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+									}
+									parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+									className={styles.inputField}
+								/>
+							</Form.Item>
+						</>
+					)}
 
 					<Form.Item
 						label="Mô tả"

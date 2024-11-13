@@ -30,6 +30,26 @@ export const confirmProcess = createAsyncThunk(
 	}
 );
 
+export const updateStandardProcess = createAsyncThunk(
+	'processSlice/updateStandardProcess',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const {name, stage, process_technical_standard_id} = formData;
+			const data = await api.put(
+				`/processes/updateProcessStandard/${process_technical_standard_id}`,
+				{
+					name,
+					stage,
+				}
+			);
+			return data.data;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const processSlice = createSlice({
 	name: 'processSlice',
 	initialState: {
@@ -58,6 +78,16 @@ export const processSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(confirmProcess.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(updateStandardProcess.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(updateStandardProcess.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateStandardProcess.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});

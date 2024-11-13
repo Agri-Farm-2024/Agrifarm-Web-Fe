@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
-import {Button, DatePicker, Form, Input, InputNumber, Modal, Select, Space} from 'antd';
+import {Button, DatePicker, Form, Input, InputNumber, Modal, Select, Space, message} from 'antd';
 import dayjs from 'dayjs';
 import {DeleteOutlined} from '@ant-design/icons';
 import {ProcessPlanComponent} from './ProcessPlanComponent';
+import {useDispatch} from 'react-redux';
+import {getMaterial} from '../../redux/slices/materialSlice';
+import {updateStandardProcess} from '../../redux/slices/processSlice';
 
 const statusOptions = [
 	{
@@ -65,26 +68,130 @@ export const ManageStandardProcessUpdateModal = ({
 }) => {
 	const [form] = Form.useForm();
 
+	const [materialPageNumber, setMaterialPageNumber] = useState(1);
+	const [materialOptions, setMaterialOptions] = useState([]);
+	const [hasMoreMaterials, setHasMoreMaterials] = useState(true);
+	const [materialLoading, setMaterialLoading] = useState(false);
+	const [processLoading, setProcessLoading] = useState(false);
+
+	const dispatch = useDispatch();
+
 	const onFinish = (values) => {
-		console.log('Success:', values);
+		try {
+			form.validateFields();
+			console.log('Update standard process submit:', values);
+
+			const scheduleData = values.plantingSchedule.map((schedule, index) => ({
+				process_technical_standard_stage_id:
+					schedule?.process_technical_standard_stage_id || null,
+				stage_title: schedule.stage_title,
+				stage_numberic_order: schedule?.stage_numberic_order || null,
+				time_start: schedule.time_start,
+				time_end: schedule.time_end,
+				content: schedule.process_standard_stage_content.map((stageItem, index) => ({
+					process_technical_standard_stage_content_id:
+						stageItem?.process_technical_standard_stage_content_id || null,
+					title: stageItem.title,
+					content_numberic_order: stageItem?.content_numberic_order || null,
+					content: stageItem.content,
+					time_start: stageItem.time_start,
+					time_end: stageItem.time_end,
+					is_deleted: stageItem?.is_deleted || null,
+				})),
+				material: schedule.process_standard_stage_material.map((materialItem, index) => ({
+					process_technical_standard_stage_material_id:
+						materialItem?.process_technical_standard_stage_material_id || null,
+					material_id: materialItem.material_id,
+					quantity: materialItem.quantity,
+					is_deleted: materialItem?.is_deleted || null,
+				})),
+			}));
+
+			const formData = {
+				process_technical_standard_id: selectedProcess.process_technical_standard_id,
+				name: values.processName,
+				stage: scheduleData,
+			};
+
+			console.log('Update process formData: ' + JSON.stringify(formData));
+			setProcessLoading(true);
+			dispatch(updateStandardProcess(formData)).then((response) => {
+				console.log('Reponse update standard process: ' + JSON.stringify(response));
+				setProcessLoading(false);
+				if (response.payload.statusCode != 200) {
+					message.error('Cập nhật quy trình thất bại!');
+				}
+
+				if (response.payload.statusCode == 200) {
+					message.success('Cập nhật quy trình thành công!');
+					handleModalClose(true);
+				}
+			});
+		} catch (error) {
+			setProcessLoading(false);
+			console.log('Error updating standard process', error);
+		}
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
 	};
 
+	const fetchMaterialOptions = (pageIndex) => {
+		const formData = {
+			page_index: pageIndex,
+			page_size: 20,
+		};
+		setMaterialLoading(true);
+		dispatch(getMaterial(formData))
+			.then((response) => {
+				console.log('response:', response);
+				setMaterialLoading(false);
+				if (response.payload && response.payload.materials) {
+					const newOptions = response.payload.materials.map((option, index) => ({
+						key: index + option.name,
+						label: option.name,
+						value: option.material_id,
+					}));
+					console.log('newOptions:', newOptions);
+					setMaterialOptions(newOptions);
+
+					//Check whether has more options to fetch
+					if (response.payload.pagination.total_page == pageIndex) {
+						setHasMoreMaterials(false);
+					}
+				} else {
+					setMaterialLoading(false);
+					console.log('Fetch material failed', response);
+				}
+			})
+			.catch((error) => {
+				setMaterialLoading(false);
+				console.log('Error', error);
+			});
+	};
+
+	const handleScroll = (e) => {
+		const {target} = e;
+		if (
+			target.scrollTop + target.offsetHeight === target.scrollHeight &&
+			hasMoreMaterials &&
+			!materialLoading
+		) {
+			// Load more options when scrolled to the bottom and more data is available
+			const newPageIndex = materialPageNumber + 1;
+			setMaterialPageNumber(newPageIndex);
+			fetchMaterialOptions(newPageIndex);
+		}
+	};
+
 	useEffect(() => {
 		if (isModalOpen) {
 			form.resetFields();
-			// form.setFieldValue('processId', selectedProcess.processId);
-			// form.setFieldValue('processName', selectedProcess.processName);
-			// form.setFieldValue('plantName', selectedProcess.plantName);
-			// form.setFieldValue('createAt', dayjs(selectedProcess.createAt, 'DD-MM-YYYY'));
-			// form.setFieldValue('updateAt', dayjs(selectedProcess.updateAt, 'DD-MM-YYYY'));
-			// form.setFieldValue('expertResponsible', selectedProcess.expertResponsible);
-			// form.setFieldValue('status', selectedProcess.status);
-			// form.setFieldValue('expectedTime', selectedProcess.expectedTime);
-			// form.setFieldValue('preparePlanting', selectedProcess.processContent.preparePlanting);
-			// form.setFieldValue('plantingSchedule', selectedProcess.processContent.plantingSchedule);
+			setMaterialOptions(1);
+			fetchMaterialOptions(1);
+
+			form.setFieldValue('processName', selectedProcess.name);
+			form.setFieldValue('plantingSchedule', selectedProcess.process_standard_stage);
 		}
 	}, [isModalOpen]);
 	return (
@@ -93,6 +200,7 @@ export const ManageStandardProcessUpdateModal = ({
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}
+			okButtonProps={{loading: processLoading}}
 			okText="Cập nhật"
 			cancelText="Đóng"
 			centered
@@ -116,18 +224,6 @@ export const ManageStandardProcessUpdateModal = ({
 					autoComplete="off"
 				>
 					<Form.Item
-						label="ID quy trình"
-						name="processId"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Input disabled className={styles.inputField} />
-					</Form.Item>
-					<Form.Item
 						label="Tên quy trình"
 						name="processName"
 						rules={[
@@ -139,202 +235,13 @@ export const ManageStandardProcessUpdateModal = ({
 					>
 						<Input className={styles.inputField} />
 					</Form.Item>
-					<Form.Item
-						label="Giống cây"
-						name="plantName"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn giống cây"
-							options={plantNameOptions}
-						></Select>
-					</Form.Item>
-					<Form.Item
-						label="Ngày tạo"
-						name="createAt"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<DatePicker
-							placeholder="DD-MM-YYYY"
-							format={'DD-MM-YYYY'}
-							className={styles.inputField}
-						/>
-					</Form.Item>
-					<Form.Item
-						label="Ngày cập nhật gần nhất"
-						name="updateAt"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<DatePicker
-							placeholder="DD-MM-YYYY"
-							format={'DD-MM-YYYY'}
-							className={styles.inputField}
-						/>
-					</Form.Item>
-					<Form.Item
-						label="Người chịu trách nhiệm"
-						name="expertResponsible"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn nhân viên"
-							options={expertOptions}
-						></Select>
-					</Form.Item>
-					<Form.Item
-						label="Số ngày dự tính"
-						name="expectedTime"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-							{
-								type: 'integer',
-								message: 'Số ngày không hợp lệ!',
-							},
-							{
-								type: 'number',
-								min: 0,
-								message: 'Số ngày không hợp lệ!',
-							},
-						]}
-					>
-						<InputNumber
-							disabled
-							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-							parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-							className={styles.inputField}
-						/>
-					</Form.Item>
-					<Form.Item
-						label="Trạng thái"
-						name="status"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn trạng thái"
-							options={statusOptions}
-						></Select>
-					</Form.Item>
-					<p>Chuẩn bị trước khi trồng</p>
-					<Form.List
-						name="preparePlanting"
-						rules={[
-							{
-								required: true,
-								message: 'Phải có ít nhất 1 chuẩn bị!',
-							},
-						]}
-					>
-						{(fields, {add, remove}, {errors}) => (
-							<>
-								{fields.map((field, index) => (
-									<div
-										key={index}
-										style={{
-											width: '100%',
-											display: 'flex',
-											alignItems: 'flex-start',
-											gap: 10,
-											marginBottom: 10,
-										}}
-									>
-										<Form.Item
-											name={[field.name, 'prepareTitle']}
-											wrapperCol={8}
-											labelCol={4}
-											required={false}
-											key={`${index} Prepare prepareTitle ${field.key}`}
-											rules={[
-												{
-													required: true,
-													message: 'Vui lòng không bỏ trống!',
-												},
-											]}
-											style={{flex: 0.5}}
-											label={`${index + 1}`}
-										>
-											<Input
-												className={styles.inputField}
-												placeholder="Tên hành động"
-											/>
-										</Form.Item>
-										<Form.Item
-											required={false}
-											name={[field.name, 'prepareContent']}
-											labelCol={0}
-											wrapperCol={24}
-											key={`${index} Prepare prepareContent ${field.key}`}
-											rules={[
-												{
-													required: true,
-													message: 'Vui lòng không bỏ trống!',
-												},
-											]}
-											style={{flex: 1}}
-										>
-											<Input.TextArea
-												autoSize={{minRows: 4, maxRows: 8}}
-												placeholder="Mô tả"
-												className={styles.inputField}
-											/>
-										</Form.Item>
-										{fields.length > 1 ? (
-											<DeleteOutlined
-												onClick={() => remove(field.name)}
-												style={{
-													marginLeft: '5px',
-													fontSize: 20,
-													color: '#D91515',
-												}}
-											/>
-										) : null}
-									</div>
-								))}
-
-								<Form.Item>
-									<Button type="primary" onClick={() => add()}>
-										Thêm bước chuẩn bị
-									</Button>
-									<Form.ErrorList errors={errors} />
-								</Form.Item>
-							</>
-						)}
-					</Form.List>
 					<p>Kế hoạch canh tác</p>
-					<ProcessPlanComponent form={form} />
+					<ProcessPlanComponent
+						materialOptions={materialOptions}
+						handleScroll={handleScroll}
+						selectedProcess={selectedProcess}
+						form={form}
+					/>
 				</Form>
 			)}
 		</Modal>
