@@ -19,9 +19,9 @@ export const LandLeaseRequestPage = () => {
 	const [pageSize, setPageSize] = useState(5); // New state for pagination
 
 	const dispatch = useDispatch();
-	const requests = useSelector((state) => state.landSlice.listOfBooking?.metadata?.bookings);
-	const pagination = useSelector((state) => state.landSlice.listOfBooking?.metadata?.pagination);
-	const loading = useSelector((state) => state.landSlice.loading);
+	const requests = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.bookings);
+	const pagination = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.pagination);
+	const loading = useSelector((state) => state.landSlice?.loading);
 
 	useEffect(() => {
 		fetchRequests(currentPage); // Pass the current page to fetchRequests

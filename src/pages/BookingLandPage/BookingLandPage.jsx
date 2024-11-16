@@ -174,10 +174,8 @@ const BookingLandPage = () => {
 
 	const dispatch = useDispatch();
 	const requests = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.bookings);
-	const pagination = useSelector(
-		(state) => state?.landSlice?.listOfBooking?.metadata?.pagination
-	);
-	const loading = useSelector((state) => state.landSlice.loading);
+	const pagination = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.pagination);
+	const loading = useSelector((state) => state.landSlice?.loading);
 
 	useEffect(() => {
 		fetchRequests(); // Pass the current page to fetchRequests

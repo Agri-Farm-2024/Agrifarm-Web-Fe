@@ -1,14 +1,33 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import styles from './ManageContractByManager.module.css';
 import {Button, Image, message, Modal, Tag, Upload} from 'antd';
+import {useReactToPrint} from 'react-to-print';
 import {convertImageURL, formatNumber} from '../../utils';
 import {UploadOutlined} from '@ant-design/icons';
+import PrintContract from './PrintContract/PrintContract';
 
 export const ManageContractDetailModal = ({selectedBooking, handleModalClose, isModalOpen}) => {
 	const [visibleContract, setVisibleContract] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
+	const contentRef = useRef(null);
+
+	const handlePrint = useReactToPrint({
+		contentRef,
+		documentTitle: `Hợp_đồng_${selectedBooking?.booking_id}`,
+	});
 
 	console.log(selectedBooking);
+
+	const contract = {
+		createAt: selectedBooking?.created_at,
+		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân',
+		landrenter: selectedBooking?.land_renter?.full_name,
+		totalMonth: selectedBooking?.total_month,
+		purpose: selectedBooking?.purpose_rental,
+		area: selectedBooking?.land?.acreage_land,
+		position: selectedBooking?.land?.name,
+		pricePerMonth: selectedBooking?.land?.price_booking_per_month,
+	};
 
 	return (
 		<Modal
@@ -16,7 +35,6 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
-			style={{top: 20}}
 			width={'max-content'}
 			cancelText="Hủy"
 		>
@@ -24,8 +42,15 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 				<div className={styles.modalContainer}>
 					<div>
 						<div className={styles.bookingItem}>
-							<p className={styles.title}>ID Yêu Cầu:</p>
-							<p className={styles.content}>{selectedBooking.booking_id}</p>
+							<p className={styles.title}>Hợp đồng:</p>
+							<div className={styles.content}>
+								<Button type="primary" onClick={handlePrint}>
+									In hợp đồng
+								</Button>
+								<div style={{display: 'none'}}>
+									<PrintContract contract={contract} ref={contentRef} />
+								</div>
+							</div>
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Người Thuê Đất:</p>
