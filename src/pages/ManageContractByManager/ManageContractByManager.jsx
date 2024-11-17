@@ -98,7 +98,7 @@ const ManageContractByManager = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedBooking, setSelectedBooking] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
+	const [pageSize, setPageSize] = useState(10);
 
 	const dispatch = useDispatch();
 	const requests = useSelector((state) => state.landSlice.listOfBooking?.metadata?.bookings);

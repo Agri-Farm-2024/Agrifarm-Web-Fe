@@ -17,6 +17,15 @@ export function formatDate(date) {
 	return date;
 }
 
+// 2024-11-07T11:21:22.263Z  => Ngày 7 tháng 11 năm 2024
+export function formatDateToVN(isoDateString) {
+	const date = new Date(isoDateString);
+	const day = date.getDate();
+	const month = date.getMonth() + 1;
+	const year = date.getFullYear();
+	return `Ngày ${day} tháng ${month} năm ${year}`;
+}
+
 //Shorten text formater
 export function shortenText(description, limit) {
 	// Check if the description is already within the limit

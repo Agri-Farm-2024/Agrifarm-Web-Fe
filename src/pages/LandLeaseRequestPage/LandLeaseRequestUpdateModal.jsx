@@ -14,7 +14,7 @@ export const LandLeaseRequestUpdateModal = ({
 	const handleUpdateRequest = () => {
 		const body = {
 			booking_id: selectedRequest.booking_id,
-			is_schedule: notOnSite,
+			// is_schedule: notOnSite,  
 			status: 'pending_contract',
 		};
 		handleApprove(body);
