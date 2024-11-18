@@ -3,30 +3,27 @@ import styles from './ManageAccountPage.module.css';
 import {Descriptions, Modal, Tag} from 'antd';
 
 export const ManageAccountDetailModal = ({selectedAccount, handleModalClose, isModalOpen}) => {
+	console.log(selectedAccount);
 	const detailItems = selectedAccount && [
 		{
 			key: 'accountId',
 			label: 'ID tài khoản',
-			children: <p>{selectedAccount.accountId}</p>,
+			children: <p>{selectedAccount.user_id}</p>,
 		},
 		{
 			key: 'accountName',
 			label: 'Họ và tên',
-			children: <p>{selectedAccount.accountName}</p>,
+			children: <p>{selectedAccount.full_name}</p>,
 		},
 		{
 			key: 'role',
 			label: 'Trạng thái',
 			children: (
 				<>
-					{selectedAccount.role == 'landRenter' && (
-						<Tag color="geekblue">Nguời thuê đất</Tag>
-					)}
-					{selectedAccount.role == 'manager' && <Tag color="magenta">Quản lý</Tag>}
-					{selectedAccount.role == 'staff' && <Tag color="gold">Nhân viên</Tag>}
-					{selectedAccount.role == 'expert' && (
-						<Tag color="cyan">Chuyên gia nông nghiệp</Tag>
-					)}
+					{selectedAccount.role == 4 && <Tag color="geekblue">Nguời thuê đất</Tag>}
+					{selectedAccount.role == 1 && <Tag color="magenta">Quản lý</Tag>}
+					{selectedAccount.role == 2 && <Tag color="gold">Nhân viên</Tag>}
+					{selectedAccount.role == 3 && <Tag color="cyan">Chuyên gia nông nghiệp</Tag>}
 				</>
 			),
 		},
@@ -38,7 +35,7 @@ export const ManageAccountDetailModal = ({selectedAccount, handleModalClose, isM
 		{
 			key: 'phone',
 			label: 'Số điện thoại',
-			children: <p>{selectedAccount.phone}</p>,
+			children: <p>{selectedAccount.phone ? selectedAccount.phone : 'Chưa có'}</p>,
 		},
 		{
 			key: 'dob',
@@ -47,8 +44,8 @@ export const ManageAccountDetailModal = ({selectedAccount, handleModalClose, isM
 		},
 		{
 			key: 'address',
-			label: 'Địa chỉ',
-			children: <p>{selectedAccount.address}</p>,
+			label: 'Ngày tạo',
+			children: <p>{selectedAccount.created_at}</p>,
 		},
 
 		{
@@ -56,14 +53,9 @@ export const ManageAccountDetailModal = ({selectedAccount, handleModalClose, isM
 			label: 'Trạng thái',
 			children: (
 				<Tag color={selectedAccount.status == 'active' ? 'green' : 'red'}>
-					{selectedAccount.status == 'active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+					{selectedAccount.status == 'active' ? 'Đang hoạt động' : 'Chưa hoạt động'}
 				</Tag>
 			),
-		},
-		{
-			key: 'createAt',
-			label: 'Ngày tạo',
-			children: <p>{selectedAccount.createAt}</p>,
 		},
 	];
 	return (

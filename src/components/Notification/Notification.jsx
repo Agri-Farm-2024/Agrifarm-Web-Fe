@@ -85,6 +85,9 @@ export const Notification = ({handleBellClick}) => {
 		navigate(`/${navigateTo}`);
 	};
 
+
+	
+
 	const callNotification = (title, desc, navigateTo) => {
 		toast(
 			<div>

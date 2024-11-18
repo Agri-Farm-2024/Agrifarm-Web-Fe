@@ -35,13 +35,12 @@ export const ManageAccountUpdateModal = ({selectedAccount, handleModalClose, isM
 
 	useEffect(() => {
 		if (isModalOpen) {
-			console.log('Showing modal');
+			console.log('Showing modal: ' + selectedAccount);
 			form.resetFields();
-			form.setFieldValue('accountName', selectedAccount.accountName);
+			form.setFieldValue('accountName', selectedAccount.full_name);
 			form.setFieldValue('dob', dayjs(selectedAccount.dob, 'DD-MM-YYYY'));
 			form.setFieldValue('email', selectedAccount.email);
 			form.setFieldValue('phone', selectedAccount.phone);
-			form.setFieldValue('address', selectedAccount.address);
 			form.setFieldValue('role', selectedAccount.role);
 		}
 	}, [isModalOpen]);

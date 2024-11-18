@@ -1,10 +1,13 @@
-import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import {Button, DatePicker, message, Popconfirm, Select, Space, Table, Tag} from 'antd';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageAccountPage.module.css';
 import {ManageAccountDetailModal} from './ManageAccountDetailModal';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {CheckOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageAccountUpdateModal} from './ManageAccountUpdateModal';
 import {ManageAccountCreateModal} from './ManageAccountCreateModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUserList, updateStatusUser} from '../../redux/slices/userSlice';
+import {formatDate} from '../../utils';
 
 const data = [
 	{
@@ -81,26 +84,26 @@ const statusOptions = [
 		label: 'Đang hoạt động',
 	},
 	{
-		value: 'inactive',
-		label: 'Ngừng hoạt động',
+		value: 'pending',
+		label: 'Chưa hoạt động',
 	},
 ];
 
 const roleOptions = [
 	{
-		value: 'staff',
+		value: 2,
 		label: 'Nhân viên',
 	},
 	{
-		value: 'landRenter',
+		value: 4,
 		label: 'Người thuê',
 	},
 	{
-		value: 'manager',
+		value: 1,
 		label: 'Quản lý',
 	},
 	{
-		value: 'expert',
+		value: 3,
 		label: 'Chuyên gia nông nghiệp',
 	},
 ];
@@ -109,14 +112,14 @@ export const ManageAccountPage = () => {
 	const columns = [
 		{
 			title: 'ID tài khoản',
-			dataIndex: 'accountId',
-			key: 'accountId',
+			dataIndex: 'user_id',
+			key: 'user_id',
 			render: (text) => <a>{text}</a>,
 		},
 		{
 			title: 'Họ và tên',
-			dataIndex: 'accountName',
-			key: 'accountName',
+			dataIndex: 'full_name',
+			key: 'full_name',
 		},
 		{
 			title: 'Email',
@@ -129,22 +132,22 @@ export const ManageAccountPage = () => {
 			dataIndex: 'role',
 			render: (_, {role}) => (
 				<>
-					{role == 'landRenter' && (
+					{role == 4 && (
 						<Tag color="geekblue" key={role}>
 							Người thuê đất
 						</Tag>
 					)}
-					{role == 'manager' && (
+					{role == 1 && (
 						<Tag color="magenta" key={role}>
 							Quản lý
 						</Tag>
 					)}
-					{role == 'staff' && (
+					{role == 2 && (
 						<Tag color="gold" key={role}>
 							Nhân viên
 						</Tag>
 					)}
-					{role == 'expert' && (
+					{role == 3 && (
 						<Tag color="cyan" key={role}>
 							Chuyên gia nông nghiệp
 						</Tag>
@@ -154,8 +157,9 @@ export const ManageAccountPage = () => {
 		},
 		{
 			title: 'Ngày tạo',
-			dataIndex: 'createAt',
-			key: 'createAt',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (text) => <p>{formatDate(text)}</p>,
 		},
 		{
 			title: 'Trạng thái',
@@ -168,9 +172,9 @@ export const ManageAccountPage = () => {
 							Đang hoạt động
 						</Tag>
 					)}
-					{status == 'inactive' && (
+					{status == 'pending' && (
 						<Tag color="red" key={status}>
-							Ngừng hoạt động
+							Chưa hoạt động
 						</Tag>
 					)}
 				</>
@@ -188,22 +192,50 @@ export const ManageAccountPage = () => {
 							setSelectedAccount(record);
 							setIsUpdateModalOpen(true);
 						}}
-						color="primary"
+						color="default"
 						variant="filled"
 						icon={<EditOutlined />}
 					></Button>
 
-					<Popconfirm
-						onClick={(e) => e.stopPropagation()}
-						title="Đình chỉ nhân viên"
-						description="Bạn muốn đình chỉ nhân viên này?"
-						onConfirm={handleSuspendEmployee}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Đình chỉ"
-						cancelText="Huỷ"
-					>
-						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
+					{record.status === 'active' ? (
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Ngưng hoạt động tài khoản"
+							description="Bạn muốn ngưng hoạt động tài khoản này?"
+							onConfirm={(e) => {
+								e.stopPropagation();
+								handleSuspendUser(record);
+							}}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Đình chỉ"
+							cancelText="Huỷ"
+						>
+							<Button
+								color="danger"
+								variant="filled"
+								icon={<DeleteOutlined />}
+							></Button>
+						</Popconfirm>
+					) : (
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Phê duyệt tài khoản"
+							description="Bạn muốn tài khoản này hoạt động?"
+							onConfirm={(e) => {
+								e.stopPropagation();
+								handleActiveUser(record);
+							}}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Phê duyệt"
+							cancelText="Huỷ"
+						>
+							<Button
+								color="primary"
+								variant="filled"
+								icon={<CheckOutlined />}
+							></Button>
+						</Popconfirm>
+					)}
 				</Space>
 			),
 		},
@@ -213,17 +245,77 @@ export const ManageAccountPage = () => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
-	const [totalPage, setTotalPage] = useState(10);
+	const [pageSize, setPageSize] = useState(10);
+	const [status, setStatus] = useState('');
+	const [role, setRole] = useState('');
+
+	const dispatch = useDispatch();
+
+	const userList = useSelector((state) => state.userSlice?.userList?.users);
+	const pagination = useSelector((state) => state.userSlice?.userList?.pagination);
+
+	console.log(userList, pagination);
+
+	const featchUser = () => {
+		const formData = {
+			page_index: currentPage,
+			page_size: pageSize,
+			status,
+			role,
+		};
+		dispatch(getUserList(formData));
+	};
+
+	useEffect(() => {
+		featchUser();
+	}, [currentPage, role, status]);
 
 	const handleRowClick = (record) => {
 		setSelectedAccount(record);
 		setIsModalOpen(true);
 	};
 
-	const handleSuspendEmployee = (e) => {
-		e.stopPropagation();
-		console.log('Suspend employee');
+	const handleSuspendUser = (record) => {
+		console.log('Suspend employee', record.user_id);
+		dispatch(
+			updateStatusUser({
+				status: 'pending',
+				userID: record.user_id,
+			})
+		)
+			.then((res) => {
+				hideLoading();
+				message.info('Cập nhật trạng thái thành công');
+				featchUser();
+				console.log(res);
+			})
+			.catch((err) => {
+				hideLoading();
+				message.error(err);
+				console.log(err);
+			});
+	};
+
+	const handleActiveUser = (record) => {
+		console.log('handleActiveUser', record.user_id);
+		const hideLoading = message.loading('Đang xử lí...', 0);
+		dispatch(
+			updateStatusUser({
+				status: 'active',
+				userID: record.user_id,
+			})
+		)
+			.then((res) => {
+				hideLoading();
+				message.info('Cập nhật trạng thái thành công');
+				featchUser();
+				console.log(res);
+			})
+			.catch((err) => {
+				hideLoading();
+				message.error(err);
+				console.log(err);
+			});
 	};
 
 	const handleModalClose = () => {
@@ -240,9 +332,15 @@ export const ManageAccountPage = () => {
 	};
 
 	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
-			console.log('Fetching new account list when create a new plant');
-			// fetchPlantList(1);
+		if (isCreateSucess === true) {
+			console.log('Fetching list');
+			const formData = {
+				page_index: currentPage,
+				page_size: pageSize,
+				status,
+				role,
+			};
+			dispatch(getUserList(formData));
 		}
 		setIsCreateModalOpen(false);
 		setSelectedAccount(null);
@@ -262,6 +360,10 @@ export const ManageAccountPage = () => {
 							allowClear
 							placeholder="Chọn vị trí"
 							options={roleOptions}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setRole(value);
+							}}
 						></Select>
 					</div>
 					<div className={styles.fiterItem}>
@@ -273,6 +375,10 @@ export const ManageAccountPage = () => {
 							allowClear
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setStatus(value);
+							}}
 						></Select>
 					</div>
 					<Button
@@ -287,8 +393,8 @@ export const ManageAccountPage = () => {
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="employeeId"
-					dataSource={data}
+					rowKey="user_id"
+					dataSource={userList}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({
@@ -300,7 +406,7 @@ export const ManageAccountPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: Number(pagination?.total_page) * pageSize,
 						onChange: (page) => {
 							setCurrentPage(page);
 						},

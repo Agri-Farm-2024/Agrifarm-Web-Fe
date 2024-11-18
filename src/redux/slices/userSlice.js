@@ -44,6 +44,43 @@ export const getListOfStaff = createAsyncThunk(
 	}
 );
 
+export const createUser = createAsyncThunk(
+	'userSlice/createUser',
+	async ({email, password, full_name, avatar_url, dob, role}, {rejectWithValue}) => {
+		try {
+			const data = await api.post(`/users`, {
+				email,
+				password,
+				full_name,
+				avatar_url,
+				dob,
+				role,
+			});
+
+			return data.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const updateStatusUser = createAsyncThunk(
+	'userSlice/updateStatusUser',
+	async ({status, userID}, {rejectWithValue}) => {
+		try {
+			const data = await api.patch(`/users/updateStatus/${userID}`, {
+				status,
+			});
+
+			return data.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const userSlice = createSlice({
 	name: 'userSlice',
 	initialState: {
@@ -64,6 +101,7 @@ const userSlice = createSlice({
 		listOfStaff: [],
 		loading: false,
 		error: null,
+		msg: '',
 	},
 	reducers: {
 		setUser: (state, action) => {
@@ -109,6 +147,30 @@ const userSlice = createSlice({
 			.addCase(getUserList.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Login failed';
+			})
+			.addCase(createUser.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(createUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.msg = action.payload;
+			})
+			.addCase(createUser.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Create failed';
+			})
+			.addCase(updateStatusUser.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateStatusUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.msg = action.payload;
+			})
+			.addCase(updateStatusUser.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Update failed';
 			});
 	},
 });
