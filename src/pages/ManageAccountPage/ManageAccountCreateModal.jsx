@@ -1,33 +1,69 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageAccountPage.module.css';
-import {Button, DatePicker, Form, Input, Modal, Select, Tooltip} from 'antd';
+import {Button, DatePicker, Form, Input, message, Modal, Select, Tooltip} from 'antd';
 import dayjs from 'dayjs';
+import {useDispatch} from 'react-redux';
+import {createUser} from '../../redux/slices/userSlice';
+import {toast} from 'react-toastify';
 
 const roleOptions = [
+	// {
+	// 	value: 'manager',
+	// 	label: 'Quản lý',
+	// },
 	{
-		value: 'manager',
-		label: 'Quản lý',
-	},
-	{
-		value: 'staff',
+		value: 2,
 		label: 'Nhân viên',
 	},
 	{
-		value: 'expert',
+		value: 3,
 		label: 'Chuyên gia nông nghiệp',
 	},
 	{
-		value: 'landRenter',
+		value: 4,
 		label: 'Người thuê đất',
 	},
 ];
 
 export const ManageAccountCreateModal = ({handleModalClose, isModalOpen}) => {
+	const dispatch = useDispatch();
 	const [form] = Form.useForm();
 	console.log('showModal');
 
 	const onFinish = (values) => {
 		console.log('Success:', values);
+		const formUser = {
+			email: values.email,
+			password: 'password123',
+			full_name: values.accountName,
+			avatar_url: 'http://example.com/avatar.jpg',
+			dob: values.dob,
+			phone: values.phone,
+			role: values.role,
+		};
+		const hideLoading = message.loading('Đang xử lý...', 0);
+
+		dispatch(createUser(formUser))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 201) {
+					message.success('Tạo tài khoản thành công');
+					setTimeout(() => {
+						handleModalClose(true);
+					}, 1000);
+					form.resetFields();
+					return;
+				}
+				if (res.payload.statusCode === 400) {
+					if (res.payload.message === 'Email already exists') {
+						message.error('Email này đã tồn tại');
+					}
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
@@ -44,7 +80,7 @@ export const ManageAccountCreateModal = ({handleModalClose, isModalOpen}) => {
 			open={isModalOpen}
 			onCancel={handleModalClose}
 			onOk={() => form.submit()}
-			okText="Cập nhật"
+			okText="Tạo tài khoản"
 			cancelText="Đóng"
 			centered
 			width={800}

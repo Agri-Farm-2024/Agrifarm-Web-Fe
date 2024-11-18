@@ -1,11 +1,11 @@
 import React, {forwardRef} from 'react';
-import {formatDate, formatDateToVN} from '../../../utils';
+import {formatDate, formatDateToVN, formatNumber} from '../../../utils';
 
 const PrintContract = forwardRef((props, ref) => {
 	const {contract} = props;
 
 	return (
-		<div ref={ref} style={{padding: '20px', fontFamily: 'Arial, sans-serif'}}>
+		<div ref={ref} style={{padding: '50px', fontFamily: 'Arial, sans-serif'}}>
 			<h1 style={{textAlign: 'center'}}>HỢP ĐỒNG THUÊ ĐẤT</h1>
 			<p>
 				<strong>Số:</strong> …..
@@ -70,7 +70,7 @@ const PrintContract = forwardRef((props, ref) => {
 			<p>4. Mục đích sử dụng đất thuê: Làm ruộng</p>
 
 			<h4 style={{textAlign: 'left'}}>Điều 2. Tiền thuê đất:</h4>
-			<p>1. Giá thuê đất là {contract.pricePerMonth}</p>
+			<p>1. Giá thuê đất là {formatNumber(contract.pricePerMonth)} VND</p>
 			<p>3. Phương thức thanh toán: Chuyển Khoản</p>
 			<p>4. Nơi nộp tiền: MB Bank</p>
 
