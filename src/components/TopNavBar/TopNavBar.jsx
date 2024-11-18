@@ -1,16 +1,19 @@
 import React, {useState, useRef, useEffect} from 'react';
 import styles from './TopNavBar.module.css'; // Import CSS module file for styling
 import {BellOutlined} from '@ant-design/icons'; // Import icon for notification bell
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
 import {getRole} from '../../utils';
 import userSlice from '../../redux/slices/userSlice';
 import {Notification} from '../Notification/Notification';
+import {toast} from 'react-toastify';
+import socket from '../../services/socket';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
 	const user = userLocal?.user;
+	const user_id = useSelector((state) => state.userSlice.user.user.user_id);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -39,6 +42,50 @@ const TopNavbar = () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+
+	const callNotification = (title, desc, navigateTo) => {
+		toast(
+			<div>
+				<strong>{title}</strong>
+				<div>{desc}</div>
+			</div>,
+			{
+				type: 'success',
+				onClick: () => {
+					navigate(navigateTo);
+				},
+				position: 'top-right',
+				autoClose: 5000,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				icon: <BellOutlined />,
+				progress: undefined,
+			}
+		);
+	};
+
+	const socketRef = useRef(null);
+
+	useEffect(() => {
+		socketRef.current = socket;
+
+		socketRef.current.emit('online-user', user_id);
+		socketRef.current.on('notification', async (data) => {
+			let navigate = '';
+			if (data.message.type === 'booking_land') {
+				navigate = 'manage-contract-manager';
+			}
+			callNotification(data.message.title, data.message.content, navigate);
+			console.log(data);
+		});
+
+		return () => {
+			if (socketRef.current) {
+				socketRef.current.off('notification');
+			}
+		};
+	}, [user_id]);
 
 	const handleBellClick = () => {
 		setShowNotification(!showNotification);
