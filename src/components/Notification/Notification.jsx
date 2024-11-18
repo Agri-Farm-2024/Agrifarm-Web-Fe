@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {List, Badge, Avatar, Button, Typography} from 'antd';
 import {toast} from 'react-toastify';
 import {
@@ -8,6 +8,9 @@ import {
 	NotificationOutlined,
 } from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
+import socket from '../../services/socket';
+import useSelection from 'antd/es/table/hooks/useSelection';
+import {useSelector} from 'react-redux';
 
 const {Title} = Typography;
 
@@ -83,31 +86,6 @@ export const Notification = ({handleBellClick}) => {
 	const handleNavigate = (navigateTo) => {
 		handleBellClick();
 		navigate(`/${navigateTo}`);
-	};
-
-
-	
-
-	const callNotification = (title, desc, navigateTo) => {
-		toast(
-			<div>
-				<strong>Đã nhận thanh toán</strong>
-				<div>Thanh toán cho hóa đơn #1234 của bạn đã thành công.</div>
-			</div>,
-			{
-				type: 'success',
-				onClick: () => {
-					handleNavigate(navigateTo);
-				},
-				position: 'top-right',
-				autoClose: 3000,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				icon: <BellOutlined />,
-				progress: undefined,
-			}
-		);
 	};
 
 	return (
