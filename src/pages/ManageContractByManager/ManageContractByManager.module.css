@@ -73,8 +73,8 @@ button {
     font-size: 1rem;
 }
 
-.evenRow {
-    background-color: #ffffff;
+.focus {
+    background-color: rgb(254, 255, 230);
     cursor: pointer;
 }
 

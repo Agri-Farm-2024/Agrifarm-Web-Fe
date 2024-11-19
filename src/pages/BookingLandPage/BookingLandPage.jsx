@@ -269,7 +269,10 @@ const BookingLandPage = () => {
 						onClick: () => handleRowClick(record),
 					})}
 					rowClassName={(record, index) =>
-						index % 2 === 0 ? styles.evenRow : styles.oddRow
+						record.extends.filter((item) => item.status === 'pending_sign').length >=
+							1 || record.status === 'pending_sign'
+							? styles.focus
+							: styles.oddRow
 					}
 					loading={loading}
 					pagination={{
@@ -286,6 +289,7 @@ const BookingLandPage = () => {
 					handleModalClose={handleModalClose}
 					selectedBooking={selectedBooking}
 					handleUpdate={handleUpdateBooking}
+					fetchRequests={fetchRequests}
 				/>
 			</div>
 		</div>

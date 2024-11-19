@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {api} from '../../services/api';
+import {toast} from 'react-toastify';
 
 // Async action for creating a new land entry
 export const createLand = createAsyncThunk(
@@ -186,6 +187,25 @@ export const updateBooking = createAsyncThunk(
 	}
 );
 
+export const updateBookingExtend = createAsyncThunk(
+	'landSlice/updateBookingExtend',
+	async ({contract_image, reason_for_reject, status, extend_id}, {rejectWithValue}) => {
+		console.log({contract_image, reason_for_reject, status, extend_id});
+		try {
+			const response = await api.put(`extends/${extend_id}`, {
+				contract_image,
+				reason_for_reject,
+				status,
+			});
+			console.log(response.data.metadata);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const landSlice = createSlice({
 	name: 'landSlice',
 	initialState: {
@@ -312,6 +332,17 @@ const landSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(updateLandType.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Update land type fail';
+			})
+			.addCase(updateBookingExtend.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateBookingExtend.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateBookingExtend.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Update land type fail';
 			});

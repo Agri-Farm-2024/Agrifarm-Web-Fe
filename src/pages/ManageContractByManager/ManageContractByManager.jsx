@@ -106,10 +106,11 @@ const ManageContractByManager = () => {
 	const loading = useSelector((state) => state.landSlice.loading);
 
 	useEffect(() => {
-		fetchRequests(); // Pass the current page to fetchRequests
+		fetchRequests();
 	}, [filterStatus, currentPage]);
 
 	const fetchRequests = async () => {
+		console.log('goi goi');
 		try {
 			await dispatch(
 				getListOfBooking({
@@ -346,7 +347,10 @@ const ManageContractByManager = () => {
 						onClick: () => handleRowClick(record),
 					})}
 					rowClassName={(record, index) =>
-						index % 2 === 0 ? styles.evenRow : styles.oddRow
+						record.extends.filter((item) => item.status === 'pending_contract')
+							.length >= 1 || record.status === 'pending_contract'
+							? styles.focus
+							: styles.oddRow
 					}
 					loading={loading}
 					pagination={{
@@ -359,6 +363,7 @@ const ManageContractByManager = () => {
 				/>
 
 				<ManageContractDetailModal
+					fetchRequests={fetchRequests}
 					isModalOpen={isModalOpen}
 					handleModalClose={handleModalClose}
 					selectedBooking={selectedBooking}
