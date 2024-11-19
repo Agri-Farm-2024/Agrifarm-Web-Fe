@@ -1,15 +1,44 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from './ManageContractByManager.module.css';
 import {Button, Image, message, Modal, Tag, Upload} from 'antd';
 import {useReactToPrint} from 'react-to-print';
 import {convertImageURL, formatNumber} from '../../utils';
-import {UploadOutlined} from '@ant-design/icons';
+import {PrinterOutlined, UploadOutlined} from '@ant-design/icons';
 import PrintContract from './PrintContract/PrintContract';
+import {ExtendsModal} from '../../components/ExtendsModal/ExtendsModal';
 
-export const ManageContractDetailModal = ({selectedBooking, handleModalClose, isModalOpen}) => {
+export const ManageContractDetailModal = ({
+	selectedBooking,
+	handleModalClose,
+	isModalOpen,
+	fetchRequests,
+}) => {
 	const [visibleContract, setVisibleContract] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
+	const [isModalExtendsOpen, setIsModalExtendsOpen] = useState(false);
+	const [selectedExtends, setSelectedExtends] = useState(null);
 	const contentRef = useRef(null);
+
+	useEffect(() => {
+		if (!isModalExtendsOpen && selectedExtends === null) {
+			console.log('handleModalClose');
+			handleModalClose();
+		}
+	}, [isModalExtendsOpen, selectedExtends]);
+
+	const handleOpenExtendsModal = (extend) => {
+		setIsModalExtendsOpen(true);
+		setSelectedExtends(extend);
+	};
+
+	const handleCloseExtendsModal = (isUpdate) => {
+	setIsModalExtendsOpen(false);
+		// setSelectedExtends(null);
+		if (isUpdate === true) {
+			fetchRequests();
+			setSelectedExtends(null);
+		}
+	};
 
 	const handlePrint = useReactToPrint({
 		contentRef,
@@ -36,6 +65,7 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
 			width={'max-content'}
+			style={{top: 20}}
 			cancelText="Hủy"
 		>
 			{selectedBooking && (
@@ -44,7 +74,12 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Hợp đồng:</p>
 							<div className={styles.content}>
-								<Button type="primary" onClick={handlePrint}>
+								<Button
+									type="primary"
+									onClick={handlePrint}
+									icon={<PrinterOutlined />}
+									color="primary"
+								>
 									In hợp đồng
 								</Button>
 								<div style={{display: 'none'}}>
@@ -82,9 +117,6 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 							<p className={styles.title}>Số Tháng Thuê:</p>
 							<p className={styles.content}>{selectedBooking.total_month} tháng</p>
 						</div>
-					</div>
-
-					<div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Giá Thuê Mỗi Tháng:</p>
 							<p className={styles.content}>
@@ -103,6 +135,9 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 								{formatNumber(selectedBooking.total_price)} VND
 							</p>
 						</div>
+					</div>
+
+					<div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Mục Đích Thuê:</p>
 							<p className={styles.content}>{selectedBooking.purpose_rental}</p>
@@ -161,9 +196,10 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 							selectedBooking.status !== 'pending_contract' && (
 								<div className={styles.bookingItem}>
 									<p className={styles.title}>Hình ảnh hợp đồng:</p>
-									<Button type="primary" onClick={() => setVisibleContract(true)}>
-										Xem hợp đồng
+									<Button type="link" onClick={() => setVisibleContract(true)}>
+										Xem hình ảnh
 									</Button>
+
 									<Image
 										width={200}
 										style={{
@@ -182,9 +218,81 @@ export const ManageContractDetailModal = ({selectedBooking, handleModalClose, is
 									/>
 								</div>
 							)}
+
+						<div className={styles.bookingItem}>
+							<div>
+								<div className={styles.bookingItem}>
+									<p className={styles.title}>Gia hạn:</p>
+									<p className={styles.content}>
+										{selectedBooking.extends.length <= 0 &&
+											'Chưa có gia hạn nào'}
+									</p>
+								</div>
+								<div style={{display: 'flex', flexWrap: 'wrap'}}>
+									{selectedBooking.extends.map((item, index) => (
+										<div
+											style={{
+												margin: 20,
+												borderRadius: 20,
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'center',
+												border: '1px solid #7fb640',
+												padding: 10,
+											}}
+										>
+											<div>
+												<p>
+													Trạng thái:{' '}
+													{item.status == 'pending' && (
+														<Tag color="yellow">
+															Chờ ý kiến người thuê
+														</Tag>
+													)}
+													{item.status == 'rejected' && (
+														<Tag color="default">Từ chối</Tag>
+													)}
+													{item.status == 'canceled' && (
+														<Tag color="red">Chấm dứt</Tag>
+													)}
+													{item.status == 'pending_contract' && (
+														<Tag color="warning">Chờ phê duyệt</Tag>
+													)}
+													{item.status == 'pending_payment' && (
+														<Tag color="magenta">Chờ thanh toán</Tag>
+													)}
+													{item.status == 'pending_sign' && (
+														<Tag color="cyan">Chờ ký tên</Tag>
+													)}
+													{item.status == 'rejected' && (
+														<Tag color="red">Hủy yêu cầu</Tag>
+													)}
+													{item.status == 'completed' && (
+														<Tag color="green">Hủy yêu cầu</Tag>
+													)}
+												</p>
+											</div>
+											<Button
+												type="primary"
+												onClick={() => handleOpenExtendsModal(item)}
+											>
+												Gia hạn lần {index + 1}
+											</Button>
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			)}
+			<ExtendsModal
+				data={selectedExtends}
+				isModalOpen={isModalExtendsOpen}
+				handleModalClose={handleCloseExtendsModal}
+				handleModalCloseBooking={handleModalClose}
+				fetchRequests={fetchRequests}
+			/>
 		</Modal>
 	);
 };

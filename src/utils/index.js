@@ -51,7 +51,5 @@ export const getRole = (input) => {
 };
 
 export function convertImageURL(relativePath) {
-	console.log(relativePath);
-	const formattedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
-	return `${api}${formattedPath}`;
+	return `${api}${relativePath}`;
 }
