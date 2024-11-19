@@ -13,7 +13,7 @@ import socket from '../../services/socket';
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
 	const user = userLocal?.user;
-	const user_id = useSelector((state) => state.userSlice.user.user.user_id);
+	const user_id = useSelector((state) => state.userSlice?.user?.user?.user_id);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
