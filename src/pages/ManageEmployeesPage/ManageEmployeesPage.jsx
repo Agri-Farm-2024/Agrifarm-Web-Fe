@@ -1,107 +1,70 @@
 import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageEmployeesPage.module.css';
 import {ManageEmployeesDetailModal} from './ManageEmployeesDetailModal';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManageEmployeeUpdateModal} from './ManageEmployeeUpdateModal';
-
-const data = [
-	{
-		employeeId: 'NV001',
-		employeeName: 'Nguyen Van A',
-		dob: '26/09/2020',
-		dateStart: '26/09/2020',
-		email: 'nguyenvana@gmail.com',
-		status: 'Đang làm',
-		role: 'Nhân viên trang trại',
-		doingTaskNumber: 10,
-		doneTaskNumber: 5,
-		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
-	},
-	{
-		employeeId: 'NV002',
-		employeeName: 'Nguyen Van A',
-		dob: '26/09/2020',
-		dateStart: '26/09/2020',
-		email: 'nguyenvana@gmail.com',
-		status: 'Đang làm',
-		role: 'Nhân viên trang trại',
-		doingTaskNumber: 10,
-		doneTaskNumber: 5,
-		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
-	},
-	{
-		employeeId: 'NV003',
-		employeeName: 'Nguyen Van A',
-		dob: '26/09/2020',
-		dateStart: '26/09/2020',
-		email: 'nguyenvana@gmail.com',
-		status: 'Đang làm',
-		role: 'Nhân viên trang trại',
-		doingTaskNumber: 10,
-		doneTaskNumber: 5,
-		landManage: [],
-	},
-	{
-		employeeId: 'NV004',
-		employeeName: 'Nguyen Van A',
-		dob: '26/09/2020',
-		dateStart: '26/09/2020',
-		email: 'nguyenvana@gmail.com',
-		status: 'Nghỉ việc',
-		role: 'Chuyên viên nông nghiệp',
-		doingTaskNumber: 10,
-		doneTaskNumber: 5,
-		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
-	},
-	{
-		employeeId: 'NV005',
-		employeeName: 'Nguyen Van A',
-		dob: '26/09/2020',
-		dateStart: '26/09/2020',
-		email: 'nguyenvana@gmail.com',
-		status: 'Đang làm',
-		role: 'Chuyên viên nông nghiệp',
-		doingTaskNumber: 10,
-		doneTaskNumber: 5,
-		landManage: ['Mảnh đất số 1', 'Mảnh đất số 2', 'Mảnh đất số 3'],
-	},
-];
+import {useDispatch, useSelector} from 'react-redux';
+import {getListUserSelector} from '../../redux/selectors';
+import {getUserList} from '../../redux/slices/userSlice';
+import create from '@ant-design/icons/lib/components/IconFont';
 
 const statusOptions = [
 	{
-		value: 'Đang làm',
+		value: 'active',
 		label: 'Đang làm',
 	},
 	{
-		value: 'Nghỉ việc',
+		value: 'in_active',
 		label: 'Nghỉ việc',
 	},
 ];
 
 const roleOptions = [
 	{
-		value: 'Chuyên viên nông nghiệp',
+		value: 3,
 		label: 'Chuyên viên nông nghiệp',
 	},
 	{
-		value: 'Nhân viên trang trại',
+		value: 2,
 		label: 'Nhân viên trang trại',
 	},
 ];
 
 export const ManageEmployeesPage = () => {
+	const dispatch = useDispatch();
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+	const [selectedEmployee, setSelectedEmployee] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	const [totalPage, setTotalPage] = useState(10);
+	const [selectedRole, setSelectedRole] = useState(null);
+	const [selectedStatus, setSelectedStatus] = useState(null);
+	const data = useSelector(getListUserSelector);
+
+	useEffect(() => {
+		dispatch(
+			getUserList({
+				role: selectedRole,
+				page_size: pageSize,
+				page_index: currentPage,
+				status: selectedStatus,
+			})
+		);
+	}, [dispatch, currentPage, selectedRole, selectedStatus]);
+
 	const columns = [
 		{
 			title: 'ID nhân viên',
-			dataIndex: 'employeeId',
-			key: 'employeeId',
+			dataIndex: 'user_id',
+			key: 'user_id',
 			render: (text) => <a>{text}</a>,
 		},
 		{
 			title: 'Tên nhân viên',
-			dataIndex: 'employeeName',
-			key: 'employeeName',
+			dataIndex: 'full_name',
+			key: 'full_name',
 		},
 		{
 			title: 'Vị trí',
@@ -110,26 +73,29 @@ export const ManageEmployeesPage = () => {
 		},
 		{
 			title: 'Ngày bắt đầu làm',
-			dataIndex: 'dateStart',
-			key: 'dateStart',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (_, {created_at} = {}) => {
+				return new Date(created_at).toLocaleDateString();
+			},
 		},
-		{
-			title: 'Công việc đã giao',
-			dataIndex: 'doingTaskNumber',
-			key: 'doingTaskNumber',
-		},
+		// {
+		// 	title: 'Công việc đã giao',
+		// 	dataIndex: 'doingTaskNumber',
+		// 	key: 'doingTaskNumber',
+		// },
 		{
 			title: 'Trạng thái',
 			key: 'status',
 			dataIndex: 'status',
 			render: (_, {status}) => (
 				<>
-					{status == 'Đang làm' && (
+					{status == 'active' && (
 						<Tag color="green" key={status}>
 							{status}
 						</Tag>
 					)}
-					{status == 'Nghỉ việc' && (
+					{status == 'in_active' && (
 						<Tag color="red" key={status}>
 							{status}
 						</Tag>
@@ -169,12 +135,6 @@ export const ManageEmployeesPage = () => {
 			),
 		},
 	];
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-	const [selectedEmployee, setSelectedEmployee] = useState(null);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
-	const [totalPage, setTotalPage] = useState(10);
 
 	const handleRowClick = (record) => {
 		setSelectedEmployee(record);
@@ -210,6 +170,7 @@ export const ManageEmployeesPage = () => {
 							allowClear
 							placeholder="Chọn vị trí"
 							options={roleOptions}
+							onChange={(value) => setSelectedRole(value)}
 						></Select>
 					</div>
 					<div className={styles.fiterItem}>
@@ -221,6 +182,7 @@ export const ManageEmployeesPage = () => {
 							allowClear
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
+							onChange={(value) => setSelectedStatus(value)}
 						></Select>
 					</div>
 				</div>
@@ -228,7 +190,7 @@ export const ManageEmployeesPage = () => {
 			<div className={styles.tableContainer}>
 				<Table
 					rowKey="employeeId"
-					dataSource={data}
+					dataSource={data.users}
 					columns={columns}
 					scroll={{x: 'max-content'}}
 					onRow={(record) => ({

@@ -1,5 +1,6 @@
 // users
 export const getUserSelector = (state) => state.userSlice.user;
+export const getListUserSelector = (state) => state.userSlice.userList;
 
 // land
 export const getListOfRequestViewLandSlice = (state) => state.landSlice.requets;

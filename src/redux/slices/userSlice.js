@@ -21,7 +21,7 @@ export const getUserList = createAsyncThunk(
 	async (params, {rejectWithValue}) => {
 		try {
 			const data = await api.get(`/users`, {params});
-
+			console.log('Data', data);
 			return data.data.metadata;
 		} catch (error) {
 			console.error(error);
