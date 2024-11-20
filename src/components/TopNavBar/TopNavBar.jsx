@@ -46,15 +46,27 @@ const TopNavbar = () => {
 	const callNotification = (title, desc, navigateTo) => {
 		toast(
 			<div>
-				<strong>{title}</strong>
-				<div>{desc}</div>
+				<strong
+					style={{
+						fontSize: 14,
+					}}
+				>
+					{title}
+				</strong>
+				<div
+					style={{
+						fontSize: 12,
+					}}
+				>
+					{desc}
+				</div>
 			</div>,
 			{
 				type: 'success',
 				onClick: () => {
 					navigate(navigateTo);
 				},
-				position: 'top-right',
+				position: 'bottom-right',
 				autoClose: 5000,
 				closeOnClick: true,
 				pauseOnHover: true,

@@ -88,6 +88,40 @@ export const Notification = ({handleBellClick}) => {
 		navigate(`/${navigateTo}`);
 	};
 
+	const callNotification = (title, desc, navigateTo) => {
+		toast(
+			<div>
+				<strong
+					style={{
+						fontSize: 14,
+					}}
+				>
+					{title}
+				</strong>
+				<div
+					style={{
+						fontSize: 12,
+					}}
+				>
+					{desc}
+				</div>
+			</div>,
+			{
+				type: 'success',
+				onClick: () => {
+					navigate(navigateTo);
+				},
+				position: 'bottom-right',
+				autoClose: 100000,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				icon: <BellOutlined />,
+				progress: undefined,
+			}
+		);
+	};
+
 	return (
 		<div
 			style={{
@@ -117,7 +151,7 @@ export const Notification = ({handleBellClick}) => {
 		>
 			<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
 				<Title level={4}>Thông báo</Title>
-				<Button type="link" onClick={() => handleNavigate('')}>
+				<Button type="link" onClick={() => handleNavigate('/')}>
 					Xem tất cả
 				</Button>
 			</div>
@@ -138,7 +172,7 @@ export const Notification = ({handleBellClick}) => {
 							onMouseLeave={() => setHoveredItem(null)}
 							onClick={() =>
 								callNotification(
-									'Thông báo',
+									'Thanh toán cho hóa đơn #1234 của bạn đã thành công.',
 									'Thanh toán cho hóa đơn #1234 của bạn đã thành công.',
 									'manage-plants'
 								)
