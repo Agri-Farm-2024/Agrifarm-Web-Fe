@@ -8,6 +8,7 @@ import materialSlice from './slices/materialSlice';
 import landSlice from './slices/landSlice';
 import requestSlice from './slices/requestSlice';
 import processSlice from './slices/processSlice';
+import transactionSlice from './slices/transactionSlice';
 
 const rootPersistConfig = {
 	key: 'root',
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
 	requestSlice: requestSlice.reducer,
 	materialSlice: materialSlice.reducer,
 	processSlice: processSlice.reducer,
+	transactionSlice: transactionSlice.reducer,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
