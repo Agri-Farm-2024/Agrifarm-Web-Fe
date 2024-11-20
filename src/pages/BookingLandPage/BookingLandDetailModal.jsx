@@ -225,6 +225,9 @@ export const BookingLandDetailModal = ({
 
 						<Image
 							width={200}
+							style={{
+								display: 'none',
+							}}
 							preview={{
 								visible: visibleContract,
 								scaleStep: 1,
