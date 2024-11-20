@@ -23,3 +23,7 @@ export const materialListSelector = (state) => state.materialSlice.material;
 //process
 export const isLoadingProcess = (state) => state.processSlice.loading;
 export const standardProcessListSelector = (state) => state.processSlice.standardProcess;
+
+//transaction
+export const isLoadingTransaction = (state) => state.transactionSlice.loading;
+export const transactionListSelector = (state) => state.transactionSlice.transactions;

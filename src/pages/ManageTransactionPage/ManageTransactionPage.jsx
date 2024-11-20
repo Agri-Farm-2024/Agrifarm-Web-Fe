@@ -1,60 +1,42 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Table, Select, Button, Space, Tag} from 'antd';
 import styles from './ManageTransactionPage.module.css';
 import {ManageTransactionDetailModal} from './ManageTransactionDetailModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllTransaction} from '../../redux/slices/transactionSlice';
+import {transactionListSelector} from '../../redux/selectors';
 
 const {Option} = Select;
 
-const transactionList = [
-	{
-		transactionID: 'GD001',
-		customer: 'Minh Châu',
-		price: 1000000,
-		type: 'Thuê đất',
-		content: 'TJDASJK-Service',
-		createAt: '25/04/2020',
-		status: 'Thành công',
-	},
-	{
-		transactionID: 'GD002',
-		customer: 'Ngọc Anh',
-		price: 500000,
-		type: 'Mua vật tư',
-		content: 'Fertilizer Purchase',
-		createAt: '10/05/2020',
-		status: 'Đang xử lý',
-	},
-	{
-		transactionID: 'GD003',
-		customer: 'Hùng Dũng',
-		price: 2000000,
-		type: 'Thuê thiết bị',
-		content: 'Tractor Rental',
-		createAt: '15/05/2020',
-		status: 'Thất bại',
-	},
-	{
-		transactionID: 'GD004',
-		customer: 'Bá Phước',
-		price: 1500000,
-		type: 'Mua dịch vụ',
-		content: 'Soil Analysis',
-		createAt: '20/05/2020',
-		status: 'Thành công',
-	},
-];
-
 export const ManageTransactionPage = () => {
+	const dispatch = useDispatch();
+
 	const [filterStatus, setFilterStatus] = useState('');
 	const [filterType, setFilterType] = useState('');
 	const [selectedTransaction, setselectedTransaction] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [totalPage, setTotalPage] = useState(10);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	// const filteredTransactions = transactionList.filter((transaction) => {
+	// 	const matchesStatus = filterStatus ? transaction.status === filterStatus : true;
+	// 	const matchesType = filterType ? transaction.type === filterType : true;
+	// 	return matchesStatus && matchesType;
+	// });
 
-	const filteredTransactions = transactionList.filter((transaction) => {
-		const matchesStatus = filterStatus ? transaction.status === filterStatus : true;
-		const matchesType = filterType ? transaction.type === filterType : true;
-		return matchesStatus && matchesType;
-	});
+	useEffect(() => {
+		dispatch(getAllTransaction()).then((response) => {
+			if (response.payload.statusCode === 200) {
+				console.log('Data fetched:', response.payload.metadata);
+				setRequest(response.payload.metadata.requests);
+				setTotalPage(response.payload.metadata.pagination.total_page);
+			} else {
+				console.error('Error fetching data:', response.payload);
+			}
+		});
+	}, [dispatch, totalPage, currentPage, pageSize]);
+
+	const data = useSelector(transactionListSelector);
 
 	const handleRowClick = (record) => {
 		setselectedTransaction(record);
@@ -69,18 +51,25 @@ export const ManageTransactionPage = () => {
 	const columns = [
 		{
 			title: 'Mã Giao Dịch',
-			dataIndex: 'transactionID',
-			key: 'transactionID',
+			dataIndex: 'transaction_code',
+			key: 'transaction_code',
 		},
 		{
-			title: 'Khách Hàng',
-			dataIndex: 'customer',
-			key: 'customer',
+			title: 'Tên Khách Hàng',
+			dataIndex: 'user',
+			key: 'user',
+			render: (user) => user.full_name,
+		},
+		{
+			title: 'Email Khách Hàng',
+			dataIndex: 'user',
+			key: 'user',
+			render: (user) => user.email,
 		},
 		{
 			title: 'Giá',
-			dataIndex: 'price',
-			key: 'price',
+			dataIndex: 'total_price',
+			key: 'total_price',
 			render: (price) => `${price.toLocaleString()} VND`,
 		},
 		{
@@ -89,14 +78,10 @@ export const ManageTransactionPage = () => {
 			key: 'type',
 		},
 		{
-			title: 'Nội Dung',
-			dataIndex: 'content',
-			key: 'content',
-		},
-		{
 			title: 'Ngày Tạo',
-			dataIndex: 'createAt',
-			key: 'createAt',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (created_at) => new Date(created_at).toLocaleString(),
 		},
 		{
 			title: 'Trạng Thái',
@@ -105,11 +90,7 @@ export const ManageTransactionPage = () => {
 			render: (status) => (
 				<Tag
 					color={
-						status === 'Thành công'
-							? 'green'
-							: status === 'Đang xử lý'
-								? 'orange'
-								: 'red'
+						status === 'approved' ? 'green' : status === 'Đang xử lý' ? 'orange' : 'red'
 					}
 				>
 					{status}
@@ -164,7 +145,7 @@ export const ManageTransactionPage = () => {
 
 			<Table
 				columns={columns}
-				dataSource={filteredTransactions}
+				dataSource={data.transactions}
 				pagination={{pageSize: 5}}
 				rowKey="transactionID"
 				className={styles.tableContainer}
