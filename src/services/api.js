@@ -4,19 +4,29 @@ import {toast} from 'react-toastify';
 // const API = 'http://localhost:3333';
 const API = 'https://api.agrifarm.site';
 
-let accessToken =
-	localStorage.getItem('user') && JSON.parse(localStorage.getItem('user')).token.accessToken;
-
-let refreshToken =
-	localStorage.getItem('user') && JSON.parse(localStorage.getItem('user')).token.refreshToken;
-
+// Create Axios instance
 export const api = axios.create({
 	baseURL: API,
-	headers: {
-		Authorization: `Bearer ${accessToken}`,
-		Refresh: refreshToken,
-	},
 });
+
+// Request Interceptor: Dynamically set tokens in headers
+api.interceptors.request.use(
+	(config) => {
+		// Retrieve user data from localStorage
+		const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+		if (user) {
+			const {accessToken, refreshToken} = user.token;
+			config.headers.Authorization = `Bearer ${accessToken}`;
+			config.headers.Refresh = refreshToken;
+		}
+
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
 
 // Axios response interceptor to handle token expiration and renewal
 api.interceptors.response.use(
