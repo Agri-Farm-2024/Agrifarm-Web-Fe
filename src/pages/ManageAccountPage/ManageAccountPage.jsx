@@ -245,9 +245,9 @@ export const ManageAccountPage = () => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [selectedAccount, setSelectedAccount] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(8);
 	const [status, setStatus] = useState('');
-	const [role, setRole] = useState('');
+	const [role, setRole] = useState(null);
 
 	const dispatch = useDispatch();
 

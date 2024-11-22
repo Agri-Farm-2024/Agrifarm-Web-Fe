@@ -253,6 +253,19 @@ export const ManageLandUpdateModal = ({
 						</div>
 
 						<div className={styles.bookingItem}>
+							<p className={styles.title}>Giá thuê mỗi tháng:</p>
+							<Input
+								name="price_booking_per_month"
+								value={landData.price_booking_per_month}
+								onChange={handleChange}
+								style={{width: '50%'}}
+							/>
+							{errors['price_booking_per_month'] && (
+								<p className={styles.error}>{errors['price_booking_per_month']}</p>
+							)}
+						</div>
+
+						<div className={styles.bookingItem}>
 							<p className={styles.title}>Trạng thái:</p>
 							{/* <Select
 								value={landData.status}

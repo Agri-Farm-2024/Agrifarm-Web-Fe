@@ -16,7 +16,7 @@ export const LandLeaseRequestPage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1); // New state for pagination
-	const [pageSize, setPageSize] = useState(5); // New state for pagination
+	const [pageSize, setPageSize] = useState(8); // New state for pagination
 
 	const dispatch = useDispatch();
 	const requests = useSelector((state) => state.landSlice?.listOfBooking?.metadata?.bookings);
@@ -70,14 +70,14 @@ export const LandLeaseRequestPage = () => {
 				if (res.payload.statusCode === 200) {
 					fetchRequests(currentPage);
 					handleModalUpdateClose();
-					message.info('Đã tạo hợp đồng');
+					message.success('Đã tạo hợp đồng');
 				} else {
-					message.info('Có lỗi trong quá trình cập nhật');
+					message.error('Có lỗi trong quá trình cập nhật');
 				}
 			})
 			.catch(() => {
 				hideLoading();
-				message.info('Có lỗi trong quá trình cập nhật');
+				message.error('Có lỗi trong quá trình cập nhật');
 			});
 	};
 
@@ -95,12 +95,12 @@ export const LandLeaseRequestPage = () => {
 					fetchRequests(currentPage);
 					message.info('Đã từ chối');
 				} else {
-					message.info('Có lỗi trong quá trình cập nhật');
+					message.error('Có lỗi trong quá trình cập nhật');
 				}
 			})
 			.catch(() => {
 				hideLoading();
-				message.info('Có lỗi trong quá trình cập nhật');
+				message.error('Có lỗi trong quá trình cập nhật');
 			});
 	};
 
@@ -120,7 +120,7 @@ export const LandLeaseRequestPage = () => {
 			title: 'Mảnh đất',
 			dataIndex: 'land',
 			key: 'land',
-			render: (land) => <div style={{textAlign: 'center'}}>{land.name}</div>,
+			render: (land) => <div>{land.name}</div>,
 		},
 		{
 			title: 'Mục đích',
@@ -216,7 +216,7 @@ export const LandLeaseRequestPage = () => {
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
-					<Option value="pending">Chờ xử lý</Option>
+					<Option value="pending">Đang xử lí</Option>
 					<Option value="pending_contract">Chấp nhận</Option>
 					<Option value="rejected">Từ chối</Option>
 				</Select>
