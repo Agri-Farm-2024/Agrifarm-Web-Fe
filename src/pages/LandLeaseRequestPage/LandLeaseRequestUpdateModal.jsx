@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styles from './LandLeaseRequestPage.module.css';
-import {message, Modal, Checkbox} from 'antd';
+import {message, Modal, Checkbox, Tag} from 'antd';
 import {formatNumber} from '../../utils';
 
 export const LandLeaseRequestUpdateModal = ({
@@ -14,7 +14,7 @@ export const LandLeaseRequestUpdateModal = ({
 	const handleUpdateRequest = () => {
 		const body = {
 			booking_id: selectedRequest.booking_id,
-			// is_schedule: notOnSite,  
+			// is_schedule: notOnSite,
 			status: 'pending_contract',
 		};
 		handleApprove(body);
@@ -31,7 +31,7 @@ export const LandLeaseRequestUpdateModal = ({
 			open={isModalOpen}
 			onOk={handleUpdateRequest}
 			onCancel={handleModalClose}
-			style={{top: 20}}
+			// style={{top: 20}}
 			okText="Tạo Hợp Đồng"
 			cancelText="Hủy"
 			width={'max-content'}
@@ -107,7 +107,23 @@ export const LandLeaseRequestUpdateModal = ({
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Trạng Thái:</p>
-							<p className={styles.content}>{selectedRequest.status}</p>
+							<p className={styles.content}>
+								<Tag
+									color={
+										selectedRequest.status === 'pending'
+											? 'gold'
+											: selectedRequest.status === 'rejected'
+												? 'red'
+												: 'green'
+									}
+								>
+									{selectedRequest.status === 'pending'
+										? 'Đang xử lí'
+										: selectedRequest.status === 'rejected'
+											? 'Từ chối'
+											: 'Chấp nhận'}
+								</Tag>
+							</p>
 						</div>
 						{selectedRequest.reason_for_reject && (
 							<div className={styles.bookingItem}>
@@ -125,13 +141,13 @@ export const LandLeaseRequestUpdateModal = ({
 								</p>
 							</div>
 						)}
-						<div className={styles.checkboxContainer}>
+						{/* <div className={styles.checkboxContainer}>
 							<Checkbox onChange={handleCheckboxChange} checked={notOnSite}>
 								<div className={styles.bookingItem}>
 									<p className={styles.title}>Không có mặt tại trang trại</p>
 								</div>
 							</Checkbox>
-						</div>
+						</div> */}
 					</div>
 					{/* Checkbox for "Không có mặt tại trang trại" */}
 				</div>

@@ -19,7 +19,7 @@ export const ManageLandPage = () => {
 	const [isModalUpdateOpen, setisModalUpdateOpen] = useState(false);
 	const [isModalAddOpen, setisModalAddOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(8);
 	const [staffList, setStaffList] = useState([]);
 
 	const dispatch = useDispatch();

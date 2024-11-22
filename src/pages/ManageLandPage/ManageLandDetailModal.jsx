@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageLandPage.module.css';
 import {Image, Modal, Tag} from 'antd';
-import {convertImageURL} from '../../utils';
+import {convertImageURL, formatNumber} from '../../utils';
 import {useDispatch} from 'react-redux';
 import {getListOfStaff} from '../../redux/slices/userSlice';
 
@@ -32,7 +32,15 @@ export const ManageLandDetailModal = ({selectedLand, handleModalClose, isModalOp
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Diện tích:</p>
-							<p className={styles.content}>{selectedLand.acreage_land}</p>
+							<p className={styles.content}>
+								{formatNumber(selectedLand.acreage_land)} m2
+							</p>
+						</div>
+						<div className={styles.bookingItem}>
+							<p className={styles.title}>Giá thuê mỗi tháng:</p>
+							<p className={styles.content}>
+								{formatNumber(selectedLand.price_booking_per_month)} VND
+							</p>
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Trạng thái:</p>
