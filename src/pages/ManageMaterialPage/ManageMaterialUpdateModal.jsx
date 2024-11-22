@@ -221,7 +221,12 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 									<Image
 										src={convertImageURL(selectedMaterial.image_material)}
 										alt="Material Image"
-										style={{width: 300, height: 200, borderRadius: 5}}
+										style={{
+											width: 150,
+											objectFit: 'contain',
+											objectPosition: 'center',
+											borderRadius: 5,
+										}}
 									/>
 								)}
 
@@ -232,7 +237,12 @@ export const ManageMaterialUpdateModal = ({selectedMaterial, handleModalClose, i
 										convertImageURL(selectedMaterial.image_material)
 									}
 									alt="Material Image"
-									style={{width: 300, height: 200, borderRadius: 5}}
+									style={{
+										width: 150,
+										objectFit: 'contain',
+										objectPosition: 'center',
+										borderRadius: 5,
+									}}
 								/>
 							)}
 							<Upload

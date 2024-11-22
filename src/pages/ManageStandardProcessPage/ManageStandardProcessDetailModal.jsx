@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {Descriptions, Image, Modal, Tag} from 'antd';
 import {formatDate, formatNumber} from '../../utils';
@@ -10,6 +10,20 @@ export const ManageStandardProcessDetailModal = ({
 	handleModalClose,
 	isModalOpen,
 }) => {
+	const [processDetail, setProcessDetail] = useState(null);
+
+	useEffect(() => {
+		if (selectedProcess) {
+			let newArr = {
+				...selectedProcess,
+				process_standard_stage: [...selectedProcess.process_standard_stage].sort(
+					(a, b) => a.stage_numberic_order - b.stage_numberic_order
+				),
+			};
+
+			setProcessDetail(newArr);
+		}
+	}, [selectedProcess]);
 	function unitMaterialMapping(unit) {
 		const unitMapping = {
 			package: 'Túi',
@@ -22,69 +36,65 @@ export const ManageStandardProcessDetailModal = ({
 		return unitMapping[unit] || '';
 	}
 
-	const detailItems = selectedProcess && [
+	const detailItems = processDetail && [
 		{
 			key: 'processId',
 			label: 'ID quy trình',
-			children: <p>{selectedProcess.process_technical_standard_id}</p>,
+			children: <p>{processDetail.process_technical_standard_id}</p>,
 		},
 		{
 			key: 'processName',
 			label: 'Tên quy trình',
-			children: <p>{selectedProcess.name}</p>,
+			children: <p>{processDetail.name}</p>,
 		},
 		{
 			key: 'plant',
 			label: 'Giống cây',
-			children: <p>{selectedProcess.plant_season?.plant?.name}</p>,
+			children: <p>{processDetail.plant_season?.plant?.name}</p>,
 		},
 		{
 			key: 'plantSeason',
 			label: 'Mùa vụ',
 			children: (
-				<p>{`Mùa vụ ${selectedProcess?.plant_season?.plant?.name} Tháng ${selectedProcess?.plant_season?.month_start}`}</p>
+				<p>{`Mùa vụ ${processDetail?.plant_season?.plant?.name} Tháng ${processDetail?.plant_season?.month_start}`}</p>
 			),
 		},
 		{
 			key: 'expertResponsible',
 			label: 'Người chịu trách nhiệm',
-			children: <p>{selectedProcess?.expert?.full_name}</p>,
+			children: <p>{processDetail?.expert?.full_name}</p>,
 		},
 		{
 			key: 'status',
 			label: 'Trạng thái',
 			children: (
 				<>
-					{selectedProcess.status == 'accepted' && (
-						<Tag color="green">Có thể sử dụng</Tag>
-					)}
-					{selectedProcess.status == 'in_active' && (
+					{processDetail.status == 'accepted' && <Tag color="green">Có thể sử dụng</Tag>}
+					{processDetail.status == 'in_active' && (
 						<Tag color="default">Ngưng sử dụng</Tag>
 					)}
-					{selectedProcess.status == 'rejected' && (
-						<Tag color="red">Không đạt yêu cầu</Tag>
-					)}
-					{selectedProcess.status == 'pending' && <Tag color="gold">Chờ phê duyệt</Tag>}
+					{processDetail.status == 'rejected' && <Tag color="red">Không đạt yêu cầu</Tag>}
+					{processDetail.status == 'pending' && <Tag color="gold">Chờ phê duyệt</Tag>}
 				</>
 			),
 		},
 		{
 			key: 'created_at',
 			label: 'Ngày tạo',
-			children: <p>{formatDate(selectedProcess?.created_at)}</p>,
+			children: <p>{formatDate(processDetail?.created_at)}</p>,
 		},
 		{
 			key: 'updated_at',
 			label: 'Ngày cập nhật gần nhất',
-			children: <p>{formatDate(selectedProcess?.updated_at)}</p>,
+			children: <p>{formatDate(processDetail?.updated_at)}</p>,
 		},
 		{
 			key: 'plan_farming',
 			label: 'Kế hoạch canh tác',
 			children: (
 				<>
-					{selectedProcess.process_standard_stage &&
-						selectedProcess.process_standard_stage.map((plan, stageIndex) => (
+					{processDetail.process_standard_stage &&
+						processDetail.process_standard_stage.map((plan, stageIndex) => (
 							<div key={`Plan stage ${stageIndex}`}>
 								<div style={{paddingLeft: 10, fontWeight: 'bold'}}>
 									<p className={styles.title} style={{width: '70%'}}>
@@ -167,7 +177,7 @@ export const ManageStandardProcessDetailModal = ({
 			centered
 			width={1000}
 		>
-			{selectedProcess && (
+			{processDetail && (
 				<Descriptions
 					style={{marginTop: 20}}
 					labelStyle={{width: '15rem', fontWeight: 'bold'}}
