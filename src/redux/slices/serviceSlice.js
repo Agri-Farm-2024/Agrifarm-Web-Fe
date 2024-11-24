@@ -15,14 +15,20 @@ export const createServicePackage = createAsyncThunk(
 	}
 );
 
-export const getServicePackageList = createAsyncThunk(
-	'serviceSlice/getServicePackageList',
-	async () => {
+export const updateToUsedServiceSpecific = createAsyncThunk(
+	'serviceSlice/updateToUsedServiceSpecific',
+	async ({contract_image, service_specific_id}, {rejectWithValue}) => {
 		try {
-			const response = await api.get('/services/getListServicePackages');
-			return response.data.metadata;
+			const response = await api.patch(
+				`/services/updateToUsedServiceSpecific/${service_specific_id}`,
+				{
+					contract_image,
+				}
+			);
+			return response.data;
 		} catch (error) {
 			console.error(error);
+			return rejectWithValue(error.response.data);
 		}
 	}
 );
@@ -35,6 +41,18 @@ export const getServiceInUse = createAsyncThunk('serviceSlice/getServiceInUse', 
 		console.error(error);
 	}
 });
+
+export const getServicePackageList = createAsyncThunk(
+	'serviceSlice/getServicePackageList',
+	async () => {
+		try {
+			const response = await api.get('/services/getListServicePackages');
+			return response.data.metadata;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+);
 
 const serviceSlice = createSlice({
 	name: 'serviceSlice',
@@ -57,6 +75,18 @@ const serviceSlice = createSlice({
 			.addCase(createServicePackage.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Service package creation failed';
+			})
+
+			.addCase(updateToUsedServiceSpecific.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateToUsedServiceSpecific.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateToUsedServiceSpecific.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Service package update failed';
 			})
 			.addCase(getServicePackageList.pending, (state) => {
 				state.loading = true;

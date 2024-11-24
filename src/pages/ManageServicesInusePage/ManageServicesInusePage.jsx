@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Select, Button, Space, Tag, Popconfirm} from 'antd';
+import {Table, Select, Button, Space, Tag, Popconfirm, message} from 'antd';
 import styles from './ManageServicesInusePage.module.css';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ServicesInuseDetailModal} from './ServicesInuseDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
-import {getServiceInUse} from '../../redux/slices/serviceSlice';
-import {serviceInUseListSelector} from '../../redux/selectors';
+import {getServiceInUse, updateToUsedServiceSpecific} from '../../redux/slices/serviceSlice';
+import {isLoadingService, serviceInUseListSelector} from '../../redux/selectors';
 import {formatDate} from '../../utils';
 
 const {Option} = Select;
@@ -146,6 +146,7 @@ const servicesInUse = [
 export const ManageServicesInusePage = () => {
 	const dispatch = useDispatch();
 	const serviceSelector = useSelector(serviceInUseListSelector);
+	const loading = useSelector(isLoadingService);
 	console.log('Service InUse', serviceSelector);
 
 	const [filterStatus, setFilterStatus] = useState('');
@@ -157,13 +158,11 @@ export const ManageServicesInusePage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
-
 	useEffect(() => {
 		try {
 			fetchServiceList(1);
 		} catch (error) {}
 	}, []);
-
 	const fetchServiceList = (pageNumber) => {
 		try {
 			setCurrentPage(pageNumber);
@@ -175,6 +174,27 @@ export const ManageServicesInusePage = () => {
 		} catch (error) {
 			console.log('Error fetching service in use list: ' + error);
 		}
+	};
+
+	const handleUpdateServices = (body) => {
+		console.log(body);
+
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateToUsedServiceSpecific(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchServiceList(1);
+					handleModalClose();
+					message.success('Đã cập nhật');
+				} else {
+					message.error('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
 	};
 
 	// const filteredServices = servicesInUse.filter((service) => {
@@ -212,18 +232,29 @@ export const ManageServicesInusePage = () => {
 
 	const columns = [
 		{
-			title: 'Mã Dịch Vụ',
+			title: 'Mảnh đất áp dụng',
 			dataIndex: 'service_specific_id',
 			key: 'service_specific_id',
-			render: (text) => <a>{text}</a>,
+			render: (_, record) => (
+				<a>{record?.booking_land && record?.booking_land?.land?.name}</a>
+			),
 		},
 		{
 			title: 'Khách Hàng',
 			dataIndex: 'land_renter',
 			key: 'land_renter',
 			render: (_, record) => <p>{record?.land_renter?.full_name}</p>,
+			dataIndex: 'land_renter',
+			key: 'land_renter',
+			render: (_, record) => <p>{record?.land_renter?.full_name}</p>,
 		},
 		{
+			title: 'Gói dịch vụ',
+			dataIndex: 'service_package',
+			key: 'service_package',
+			render: (_, record) => (
+				<p>{record?.service_package && record?.service_package?.name}</p>
+			),
 			title: 'Gói dịch vụ',
 			dataIndex: 'service_package',
 			key: 'service_package',
@@ -236,9 +267,15 @@ export const ManageServicesInusePage = () => {
 			dataIndex: 'time_start',
 			key: 'time_start',
 			render: (text) => <p>{formatDate(text)}</p>,
+			dataIndex: 'time_start',
+			key: 'time_start',
+			render: (text) => <p>{formatDate(text)}</p>,
 		},
 		{
 			title: 'Ngày Kết Thúc',
+			dataIndex: 'time_end',
+			key: 'time_end',
+			render: (text) => <p>{formatDate(text)}</p>,
 			dataIndex: 'time_end',
 			key: 'time_end',
 			render: (text) => <p>{formatDate(text)}</p>,
@@ -248,6 +285,11 @@ export const ManageServicesInusePage = () => {
 			title: 'Chuyên Gia',
 			dataIndex: 'assignExpert',
 			key: 'assignExpert',
+			render: (_, record) =>
+				record?.process_technical_specific &&
+				record?.process_technical_specific?.expert && (
+					<p>{record?.process_technical_specific?.expert?.full_name}</p>
+				),
 			render: (_, record) =>
 				record?.process_technical_specific &&
 				record?.process_technical_specific?.expert && (
@@ -268,37 +310,37 @@ export const ManageServicesInusePage = () => {
 				</>
 			),
 		},
-		{
-			title: 'Hành Động',
-			key: 'actions',
-			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						icon={<EditOutlined />}
-						color="primary"
-						variant="filled"
-						onClick={(e) => {
-							e.stopPropagation();
-							// handleUpdateClick(record);
-						}}
-					/>
-					<Popconfirm
-						title="Từ chối yêu cầu"
-						description="Bạn muốn từ chối yêu cầu này?"
-						onConfirm={(e) => {
-							e.stopPropagation();
-							// handleRemove(record.key);
-						}}
-						onClick={(e) => e.stopPropagation()}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Từ chối"
-						cancelText="Huỷ"
-					>
-						<Button icon={<DeleteOutlined />} color="danger" variant="filled" />
-					</Popconfirm>
-				</Space>
-			),
-		},
+		// {
+		// 	title: 'Hành Động',
+		// 	key: 'actions',
+		// 	render: (_, record) => (
+		// 		<Space size="middle">
+		// 			<Button
+		// 				icon={<EditOutlined />}
+		// 				color="primary"
+		// 				variant="filled"
+		// 				onClick={(e) => {
+		// 					e.stopPropagation();
+		// 					// handleUpdateClick(record);
+		// 				}}
+		// 			/>
+		// 			<Popconfirm
+		// 				title="Từ chối yêu cầu"
+		// 				description="Bạn muốn từ chối yêu cầu này?"
+		// 				onConfirm={(e) => {
+		// 					e.stopPropagation();
+		// 					// handleRemove(record.key);
+		// 				}}
+		// 				onClick={(e) => e.stopPropagation()}
+		// 				onCancel={(e) => e.stopPropagation()}
+		// 				okText="Từ chối"
+		// 				cancelText="Huỷ"
+		// 			>
+		// 				<Button icon={<DeleteOutlined />} color="danger" variant="filled" />
+		// 			</Popconfirm>
+		// 		</Space>
+		// 	),
+		// },
 	];
 
 	return (
@@ -342,19 +384,21 @@ export const ManageServicesInusePage = () => {
 				pagination={{
 					pageSize: pageSize,
 					current: currentPage,
-					total: serviceSelector.pagination
+					total: serviceSelector?.pagination
 						? serviceSelector?.pagination.total_page * pageSize //total items
 						: 1,
 					onChange: (page) => {
 						fetchServiceList(page);
 					},
 				}}
+				loading={loading}
 			/>
 
 			<ServicesInuseDetailModal
 				isModalOpen={isModalOpen}
 				handleModalClose={handleModalClose}
 				selectedService={selectedService}
+				handleUpdate={handleUpdateServices}
 			/>
 		</div>
 	);

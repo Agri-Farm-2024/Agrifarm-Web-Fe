@@ -1,9 +1,16 @@
 import React, {useState} from 'react';
 import {Descriptions, Modal, Tag, Upload, Button, Image, message} from 'antd';
 import {FileImageOutlined, PlusOutlined, UploadOutlined} from '@ant-design/icons';
-import {formatDate} from '../../utils';
+import {convertImageURL, formatDate} from '../../utils';
+import {uploadFile} from '../../services/uploadService';
+import styles from './ManageServicesInusePage.module.css';
 
-export const ServicesInuseDetailModal = ({selectedService, handleModalClose, isModalOpen}) => {
+export const ServicesInuseDetailModal = ({
+	selectedService,
+	handleModalClose,
+	isModalOpen,
+	handleUpdate,
+}) => {
 	const [fileList, setFileList] = useState([]);
 	const [uploading, setUploading] = useState(false);
 	const totalPrice = selectedService
@@ -11,20 +18,24 @@ export const ServicesInuseDetailModal = ({selectedService, handleModalClose, isM
 			(selectedService.price_process / 1000) * selectedService.acreage_land
 		: 0;
 
-	const handleUpload = () => {
-		setUploading(true);
+	const [visibleContract, setVisibleContract] = useState(false);
+	const [imageFile, setImageFile] = useState(null);
+	const [imageAPI, setImageAPI] = useState(null);
 
-		// Simulate an API call
-		handleUpdateImagesAPI(fileList)
-			.then(() => {
-				message.success('Hợp đồng đã được tải lên thành công!');
-				setFileList([]); // Clear the file list after successful upload
-				setUploading(false);
-			})
-			.catch(() => {
-				message.error('Có lỗi xảy ra trong quá trình tải hợp đồng!');
-				setUploading(false);
+	const handleImageUpload = ({file}) => {
+		console.log(file);
+		const hideLoading = message.loading('Đang tải hợp đồng...', 0);
+		setTimeout(() => {
+			hideLoading();
+			uploadFile(file).then((res) => {
+				if (res.statusCode === 201) {
+					setImageAPI(res.metadata.folder_path);
+					message.success('Tải hợp đồng thành công');
+					setImageFile(res.metadata.folder_path);
+				}
 			});
+		}, 1000);
+		console.log('Uploaded file:', file);
 	};
 
 	const uploadProps = {
@@ -38,6 +49,22 @@ export const ServicesInuseDetailModal = ({selectedService, handleModalClose, isM
 		fileList,
 		listType: 'picture-card', // Thumbnail style for uploaded images
 	};
+
+	const handleSubmit = () => {
+		console.log('handleSubmit');
+		const body = {
+			contract_image: imageAPI,
+			service_specific_id: selectedService.service_specific_id,
+		};
+		if (!imageAPI) {
+			message.error('Chưa tải hợp đồng');
+		}
+
+		handleUpdate(body);
+		setImageAPI(null);
+		setImageFile(null);
+	};
+
 	const detailItems = selectedService && [
 		{
 			key: 'servicesID',
@@ -119,9 +146,9 @@ export const ServicesInuseDetailModal = ({selectedService, handleModalClose, isM
 			label: 'Chuyên gia được phân công',
 			children: (
 				<p>
-					{selectedService?.process_technical_specific &&
-						selectedService?.process_technical_specific?.expert &&
-						selectedService?.process_technical_specific?.expert?.full_name}
+					{selectedService?.process_technical_specific?.expert
+						? selectedService?.process_technical_specific?.expert?.full_name
+						: 'Chưa có'}
 				</p>
 			),
 		},
@@ -147,16 +174,64 @@ export const ServicesInuseDetailModal = ({selectedService, handleModalClose, isM
 			label: 'Tổng giá',
 			children: <p>{totalPrice?.toLocaleString('vi-VN')} VND</p>,
 		},
+		{
+			key: 'contractImage',
+			label: 'Hình ảnh hợp đồng',
+			children: (
+				<p>
+					{selectedService.contract_image || imageFile ? (
+						<Button type="primary" onClick={() => setVisibleContract(true)}>
+							Xem hợp đồng
+						</Button>
+					) : (
+						<Upload
+							accept="image/*"
+							showUploadList={false}
+							beforeUpload={() => false} // Prevent automatic upload
+							onChange={handleImageUpload}
+						>
+							<Button type="primary" icon={<UploadOutlined />}>
+								Tải hợp đồng
+							</Button>
+						</Upload>
+					)}
+					<Image
+						width={200}
+						style={{
+							display: 'none',
+						}}
+						preview={{
+							visible: visibleContract,
+							scaleStep: 1,
+							src: selectedService.contract_image
+								? convertImageURL(selectedService.contract_image)
+								: imageFile
+									? convertImageURL(imageFile)
+									: 'image',
+							onVisibleChange: (value) => {
+								setVisibleContract(value);
+							},
+						}}
+					/>
+				</p>
+			),
+		},
 	];
 
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết dịch vụ đang sử dụng</span>}
 			open={isModalOpen}
-			onCancel={handleModalClose}
-			okButtonProps={{style: {display: 'none'}}}
+			onCancel={() => {
+				handleModalClose();
+				setImageAPI(null);
+				setImageFile(null);
+			}}
 			width={1000}
 			centered
+			okText="Cập nhật"
+			onOk={handleSubmit}
+			okButtonProps={{disabled: selectedService?.status !== 'pending_sign'}}
 		>
 			{selectedService && (
 				<Descriptions
