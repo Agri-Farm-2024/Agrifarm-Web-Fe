@@ -27,10 +27,20 @@ export const getServicePackageList = createAsyncThunk(
 	}
 );
 
+export const getServiceInUse = createAsyncThunk('serviceSlice/getServiceInUse', async (params) => {
+	try {
+		const response = await api.get('/services/getListServiceSpecific', {params});
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+});
+
 const serviceSlice = createSlice({
 	name: 'serviceSlice',
 	initialState: {
 		service: [],
+		serviceInUse: {},
 		loading: false,
 		error: null,
 	},
@@ -57,6 +67,18 @@ const serviceSlice = createSlice({
 				state.service = action.payload;
 			})
 			.addCase(getServicePackageList.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Service package getting failed';
+			})
+			.addCase(getServiceInUse.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getServiceInUse.fulfilled, (state, action) => {
+				state.loading = false;
+				state.serviceInUse = action.payload.metadata;
+			})
+			.addCase(getServiceInUse.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Service package getting failed';
 			});

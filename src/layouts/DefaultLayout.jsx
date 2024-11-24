@@ -89,7 +89,7 @@ export const DefaultLayout = ({children}) => {
 
 		getItem('Quản lý yêu cầu', 'sub1', <FileTextOutlined />, [
 			getItem('Yêu cầu thuê đất', '/land-requests', <FileTextOutlined />),
-			getItem('Yêu cầu dịch vụ', '/service-requests', <ShoppingCartOutlined />),
+			// getItem('Yêu cầu dịch vụ', '/service-requests', <ShoppingCartOutlined />),
 			getItem('Yêu cầu thu mua', '/purchase-requests', <DeliveredProcedureOutlined />),
 		]),
 
