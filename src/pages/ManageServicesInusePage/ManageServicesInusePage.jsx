@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Table, Select, Button, Space, Tag, Popconfirm} from 'antd';
 import styles from './ManageServicesInusePage.module.css';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ServicesInuseDetailModal} from './ServicesInuseDetailModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {getServiceInUse} from '../../redux/slices/serviceSlice';
+import {serviceInUseListSelector} from '../../redux/selectors';
+import {formatDate} from '../../utils';
 
 const {Option} = Select;
 
@@ -140,16 +144,44 @@ const servicesInUse = [
 ];
 
 export const ManageServicesInusePage = () => {
+	const dispatch = useDispatch();
+	const serviceSelector = useSelector(serviceInUseListSelector);
+	console.log('Service InUse', serviceSelector);
+
 	const [filterStatus, setFilterStatus] = useState('');
 	const [filterExpert, setFilterExpert] = useState('');
 	const [selectedService, setselectedService] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	const [totalPage, setTotalPage] = useState(10);
 
-	const filteredServices = servicesInUse.filter((service) => {
-		const matchesStatus = filterStatus ? service.status === filterStatus : true;
-		const matchesExpert = filterExpert ? service.assignExpert === filterExpert : true;
-		return matchesStatus && matchesExpert;
-	});
+	useEffect(() => {
+		try {
+			fetchServiceList(1);
+		} catch (error) {}
+	}, []);
+
+	const fetchServiceList = (pageNumber) => {
+		try {
+			setCurrentPage(pageNumber);
+			const params = {
+				page_size: pageSize,
+				page_index: pageNumber,
+			};
+			dispatch(getServiceInUse(params));
+		} catch (error) {
+			console.log('Error fetching service in use list: ' + error);
+		}
+	};
+
+	// const filteredServices = servicesInUse.filter((service) => {
+	// 	const matchesStatus = filterStatus ? service.status === filterStatus : true;
+	// 	const matchesExpert = filterExpert ? service.assignExpert === filterExpert : true;
+	// 	return matchesStatus && matchesExpert;
+	// });
 
 	const handleRowClick = (record) => {
 		setselectedService(record);
@@ -161,43 +193,79 @@ export const ManageServicesInusePage = () => {
 		setselectedService(null);
 	};
 
+	const handleUpdateModalClose = (isUpdateSucess) => {
+		if (isUpdateSucess) {
+			fetchServiceList(currentPage);
+		}
+		setIsUpdateModalOpen(false);
+		setSelectedPlant(null);
+	};
+
+	const handleCreateModalClose = (isCreateSucess) => {
+		if (isCreateSucess) {
+			console.log('Fetching new service list when create a new plant');
+			fetchServiceList(1);
+		}
+		setIsCreateModalOpen(false);
+		setSelectedPlant(null);
+	};
+
 	const columns = [
 		{
 			title: 'Mã Dịch Vụ',
-			dataIndex: 'servicesID',
-			key: 'servicesID',
+			dataIndex: 'service_specific_id',
+			key: 'service_specific_id',
+			render: (text) => <a>{text}</a>,
 		},
 		{
 			title: 'Khách Hàng',
-			dataIndex: 'customer',
-			key: 'customer',
+			dataIndex: 'land_renter',
+			key: 'land_renter',
+			render: (_, record) => <p>{record?.land_renter?.full_name}</p>,
 		},
 		{
-			title: 'Quy Trình Canh Tác',
-			dataIndex: 'plantProcess',
-			key: 'plantProcess',
+			title: 'Gói dịch vụ',
+			dataIndex: 'service_package',
+			key: 'service_package',
+			render: (_, record) => (
+				<p>{record?.service_package && record?.service_package?.name}</p>
+			),
 		},
 		{
 			title: 'Ngày Bắt Đầu',
-			dataIndex: 'dateToStart',
-			key: 'dateToStart',
+			dataIndex: 'time_start',
+			key: 'time_start',
+			render: (text) => <p>{formatDate(text)}</p>,
 		},
 		{
 			title: 'Ngày Kết Thúc',
-			dataIndex: 'dateToEnd',
-			key: 'dateToEnd',
+			dataIndex: 'time_end',
+			key: 'time_end',
+			render: (text) => <p>{formatDate(text)}</p>,
 		},
+
 		{
 			title: 'Chuyên Gia',
 			dataIndex: 'assignExpert',
 			key: 'assignExpert',
+			render: (_, record) =>
+				record?.process_technical_specific &&
+				record?.process_technical_specific?.expert && (
+					<p>{record?.process_technical_specific?.expert?.full_name}</p>
+				),
 		},
 		{
 			title: 'Trạng Thái',
 			dataIndex: 'status',
 			key: 'status',
 			render: (status) => (
-				<Tag color={status === 'Đang sử dụng' ? 'green' : 'red'}>{status}</Tag>
+				<>
+					{status == 'used' && <Tag color={'green'}>Đang sử dụng</Tag>}
+					{status == 'pending_payment' && <Tag color={'gold'}>Đợi thanh toán</Tag>}
+					{status == 'pending_sign' && <Tag color={'geekblue'}>Đợi ký</Tag>}
+					{status == 'expired' && <Tag color={'default'}>Hết hạn</Tag>}
+					{status == 'canceled' && <Tag color={'error'}>Đã huỷ</Tag>}
+				</>
 			),
 		},
 		{
@@ -238,7 +306,7 @@ export const ManageServicesInusePage = () => {
 			<h1>Quản Lý Dịch Vụ Đang Sử Dụng</h1>
 
 			<div className={styles.filterContainer}>
-				<span>Lọc theo trạng thái:</span>
+				{/* <span>Lọc theo trạng thái:</span>
 				<Select
 					placeholder="Chọn Trạng Thái"
 					onChange={(value) => setFilterStatus(value)}
@@ -258,18 +326,29 @@ export const ManageServicesInusePage = () => {
 					<Option value="">Tất cả</Option>
 					<Option value="Dang Ninh">Dang Ninh</Option>
 					<Option value="Ba Phuoc">Ba Phuoc</Option>
-				</Select>
+				</Select> */}
 			</div>
 
 			<Table
 				columns={columns}
-				dataSource={filteredServices}
-				pagination={{pageSize: 5}}
+				dataSource={serviceSelector?.services || []}
+				scroll={{x: 'max-content'}}
 				rowKey="servicesID"
+				rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
 				className={styles.tableContainer}
 				onRow={(record) => ({
 					onClick: () => handleRowClick(record),
 				})}
+				pagination={{
+					pageSize: pageSize,
+					current: currentPage,
+					total: serviceSelector.pagination
+						? serviceSelector?.pagination.total_page * pageSize //total items
+						: 1,
+					onChange: (page) => {
+						fetchServiceList(page);
+					},
+				}}
 			/>
 
 			<ServicesInuseDetailModal
