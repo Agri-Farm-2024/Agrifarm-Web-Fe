@@ -191,7 +191,13 @@ export const ManageStandardProcessUpdateModal = ({
 			fetchMaterialOptions(1);
 
 			form.setFieldValue('processName', selectedProcess.name);
-			form.setFieldValue('plantingSchedule', selectedProcess.process_standard_stage);
+			let newArr = {
+				...selectedProcess,
+				process_standard_stage: [...selectedProcess.process_standard_stage].sort(
+					(a, b) => a.stage_numberic_order - b.stage_numberic_order
+				),
+			};
+			form.setFieldValue('plantingSchedule', newArr.process_standard_stage);
 		}
 	}, [isModalOpen]);
 	return (

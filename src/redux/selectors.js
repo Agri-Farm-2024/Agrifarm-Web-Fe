@@ -16,6 +16,7 @@ export const plantSeasonListSelector = (state) => state.plantSlice.plantSeason;
 export const isLoadingService = (state) => state.serviceSlice.loading;
 export const servicePackageListSelector = (state) => state.serviceSlice.service;
 export const serviceInUseListSelector = (state) => state.serviceSlice.serviceInUse;
+
 //material
 export const isLoadingMaterial = (state) => state.materialSlice.loading;
 export const materialListSelector = (state) => state.materialSlice.material;
@@ -23,6 +24,10 @@ export const materialListSelector = (state) => state.materialSlice.material;
 //process
 export const isLoadingProcess = (state) => state.processSlice.loading;
 export const standardProcessListSelector = (state) => state.processSlice.standardProcess;
+
+//request
+export const isLoadingRequest = (state) => state.requestSlice.loading;
+export const requestListSelector = (state) => state.requestSlice.requestList;
 
 //transaction
 export const isLoadingTransaction = (state) => state.transactionSlice.loading;

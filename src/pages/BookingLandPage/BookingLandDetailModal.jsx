@@ -137,7 +137,11 @@ export const BookingLandDetailModal = ({
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Tổng Giá:</p>
 							<p className={styles.content}>
-								{formatNumber(selectedBooking.total_price)} VND
+								{formatNumber(
+									selectedBooking.total_month * selectedBooking.price_per_month +
+										(selectedBooking.price_deposit - 0)
+								)}{' '}
+								VND
 							</p>
 						</div>
 					</div>
