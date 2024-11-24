@@ -15,7 +15,7 @@ export const plantSeasonListSelector = (state) => state.plantSlice.plantSeason;
 //service
 export const isLoadingService = (state) => state.serviceSlice.loading;
 export const servicePackageListSelector = (state) => state.serviceSlice.service;
-
+export const serviceInUseListSelector = (state) => state.serviceSlice.serviceInUse;
 //material
 export const isLoadingMaterial = (state) => state.materialSlice.loading;
 export const materialListSelector = (state) => state.materialSlice.material;
