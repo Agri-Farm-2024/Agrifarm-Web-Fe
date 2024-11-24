@@ -283,7 +283,7 @@ export const ManageStandardProcessPage = () => {
 					rejectReason: null,
 					processId: process.process_technical_standard_id,
 				};
-				toast.loading('Đang đăng nhập...', {autoClose: false});
+				toast.loading('Đang tiến hành...', {autoClose: false});
 				dispatch(confirmProcess(formData)).then((response) => {
 					console.log('Approve process reponse: ' + response);
 					toast.dismiss(); // Remove the loading message

@@ -1,9 +1,59 @@
 import React from 'react';
 import styles from './TaskManagementPage.module.css';
 import {Button, Modal} from 'antd';
+import {formatDate} from '../../utils';
 
 export const TaskManagementDetailModal = ({selectedRequestTask, handleModalClose, isModalOpen}) => {
-	console.log(selectedRequestTask);
+	const detailItems = selectedRequestTask && [
+		{
+			key: 'request_id',
+			label: 'ID yêu cầu',
+			children: <p>{selectedRequestTask.request_id}</p>,
+		},
+		{
+			key: 'type',
+			label: 'Loại yêu cầu',
+			children: (
+				<>
+					{selectedRequestTask.type == 'product_purchase' && (
+						<Tag color="geekblue">Thu mua</Tag>
+					)}
+					{selectedRequestTask.type == 'product_puchase_harvest' && (
+						<Tag color="success">Thu hoạch</Tag>
+					)}
+					{selectedRequestTask.type == 'cultivate_process_content' && (
+						<Tag color="lime">Ghi nhật ký</Tag>
+					)}
+					{selectedRequestTask.type == 'technical_support' && (
+						<Tag color="volcano">Hỗ trợ kỹ thuật</Tag>
+					)}
+					{selectedRequestTask.type == 'create_process_standard' && (
+						<Tag color="cyan">Tạo quy trình chuẩn</Tag>
+					)}
+					{selectedRequestTask.type == 'material_process_specfic_stage' && (
+						<Tag color="pink">Cung cấp vật tư</Tag>
+					)}
+				</>
+			),
+		},
+		{
+			key: 'created_at',
+			label: 'Ngày tạo',
+			children: <p>{formatDate(selectedRequestTask.created_at)}</p>,
+		},
+		{
+			key: 'support_type',
+			label: 'Loại yêu cầu',
+			children: (
+				<>
+					{selectedRequestTask.support_type == 'direct' && (
+						<Tag color="purple">Trực tiếp</Tag>
+					)}
+					{selectedRequestTask.support_type == 'chat' && <Tag color="orange">Chat</Tag>}
+				</>
+			),
+		},
+	];
 
 	return (
 		<Modal
