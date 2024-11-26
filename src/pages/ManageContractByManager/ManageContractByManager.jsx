@@ -16,7 +16,7 @@ import {formatNumber} from '../../utils';
 import {ManageContractDetailModal} from './ManageContractDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
-import {CheckOutlined, DeleteOutlined} from '@ant-design/icons';
+import {CheckOutlined, DeleteOutlined, SyncOutlined} from '@ant-design/icons';
 
 const data = [
 	{
@@ -262,10 +262,25 @@ const ManageContractByManager = () => {
 			render: (text) => <>{formatNumber(text)} VND</>,
 		},
 		{
-			title: 'Chi phí cọc',
+			title: 'Ghi chú',
 			dataIndex: 'price_per_month',
 			key: 'price_per_month',
-			render: (text) => <>{formatNumber(text)} VND</>,
+			render: (_, record) => (
+				<p>
+					{record.extends?.filter((item) => item.status === 'pending_contract').length >=
+					1 ? (
+						<Tag icon={<SyncOutlined spin />} color="warning">
+							Xử lí gia hạn
+						</Tag>
+					) : record.status === 'pending_contract' ? (
+						<Tag icon={<SyncOutlined spin />} color="warning">
+							Xử lí hợp đồng
+						</Tag>
+					) : (
+						'Không có'
+					)}
+				</p>
+			),
 		},
 		{
 			title: 'Hành Động',

@@ -5,6 +5,7 @@ import {formatNumber} from '../../utils';
 import {BookingLandDetailModal} from './BookingLandDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
+import {SyncOutlined} from '@ant-design/icons';
 
 const columns = [
 	{
@@ -83,10 +84,24 @@ const columns = [
 		render: (text) => <>{formatNumber(text)} VND</>,
 	},
 	{
-		title: 'Chi phí cọc',
+		title: 'Ghi chú',
 		dataIndex: 'price_per_month',
 		key: 'price_per_month',
-		render: (text) => <>{formatNumber(text)} VND</>,
+		render: (_, record) => (
+			<p>
+				{record.extends?.filter((item) => item.status === 'pending_sign').length >= 1 ? (
+					<Tag icon={<SyncOutlined spin />} color="warning">
+						Xử lí gia hạn
+					</Tag>
+				) : record.status === 'pending_sign' ? (
+					<Tag icon={<SyncOutlined spin />} color="warning">
+						Xử lí hợp đồng
+					</Tag>
+				) : (
+					'Không có'
+				)}
+			</p>
+		),
 	},
 ];
 

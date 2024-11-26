@@ -74,6 +74,10 @@ export const BookingLandDetailModal = ({
 		setImageFile(null);
 	};
 
+	const sortedExtends = [...(selectedBooking?.extends || [])].sort(
+		(a, b) => new Date(a.created_at) - new Date(b.created_at)
+	);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết hợp đồng</span>}
@@ -255,7 +259,7 @@ export const BookingLandDetailModal = ({
 									</p>
 								</div>
 								<div style={{display: 'flex', flexWrap: 'wrap'}}>
-									{selectedBooking.extends.map((item, index) => (
+									{sortedExtends.map((item, index) => (
 										<div
 											style={{
 												margin: 20,

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './ManageEmployeesPage.module.css';
-import {Modal} from 'antd';
+import {Modal, Tag} from 'antd';
 
 export const ManageEmployeesDetailModal = ({selectedEmployee, handleModalClose, isModalOpen}) => {
 	return (
@@ -15,7 +15,7 @@ export const ManageEmployeesDetailModal = ({selectedEmployee, handleModalClose, 
 				<div className={styles.modalContainer}>
 					<div className={styles.bookingItem}>
 						<p className={styles.title}>ID nhân viên:</p>
-						<p className={styles.content}>{selectedEmployee.employeeId}</p>
+						<p className={styles.content}>{selectedEmployee.user_id}</p>
 					</div>
 					<div className={styles.bookingItem}>
 						<p className={styles.title}>Ngày sinh:</p>
@@ -23,7 +23,7 @@ export const ManageEmployeesDetailModal = ({selectedEmployee, handleModalClose, 
 					</div>
 					<div className={styles.bookingItem}>
 						<p className={styles.title}>Ngày bắt đầu:</p>
-						<p className={styles.content}>{selectedEmployee.dateStart}</p>
+						<p className={styles.content}>{selectedEmployee.created_at}</p>
 					</div>
 					<div className={styles.bookingItem}>
 						<p className={styles.title}>Email:</p>
@@ -31,17 +31,25 @@ export const ManageEmployeesDetailModal = ({selectedEmployee, handleModalClose, 
 					</div>
 					<div className={styles.bookingItem}>
 						<p className={styles.title}>Trạng thái: </p>
-						<p className={styles.content}>{selectedEmployee.status}</p>
+						<p className={styles.content}>
+							{selectedEmployee.status == 'active' && (
+								<Tag color="green" key={status}>
+									Đang hoạt động
+								</Tag>
+							)}
+							{selectedEmployee.status == 'pending' && (
+								<Tag color="red" key={status}>
+									Chưa hoạt động
+								</Tag>
+							)}
+						</p>
 					</div>
 					<div className={styles.bookingItem}>
-						<p className={styles.title}>Số nhiệm vụ đã giao:</p>
-						<p className={styles.content}>{selectedEmployee.doingTaskNumber}</p>
+						<p className={styles.title}>Số điện thoại:</p>
+						<p className={styles.content}>{selectedEmployee.phone}</p>
 					</div>
-					<div className={styles.bookingItem}>
-						<p className={styles.title}>Số nhiệm vụ đã hoàn thành:</p>
-						<p className={styles.content}>{selectedEmployee.doneTaskNumber}</p>
-					</div>
-					{selectedEmployee.landManage.length > 0 && (
+
+					{selectedEmployee.landManage && selectedEmployee.landManage.length > 0 && (
 						<div className={styles.bookingItem} style={{alignItems: 'flex-start'}}>
 							<p className={styles.title}>Quản lý mảnh đất:</p>
 							<ul>

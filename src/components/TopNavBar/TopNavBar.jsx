@@ -1,10 +1,10 @@
 import React, {useState, useRef, useEffect} from 'react';
-import styles from './TopNavBar.module.css'; // Import CSS module file for styling
-import {BellOutlined} from '@ant-design/icons'; // Import icon for notification bell
+import styles from './TopNavBar.module.css';
+import {BellOutlined} from '@ant-design/icons';
 import {useDispatch, useSelector} from 'react-redux';
 import {message} from 'antd';
 import {useNavigate} from 'react-router-dom';
-import {getRole} from '../../utils';
+import {convertImageURL, getRole} from '../../utils';
 import userSlice from '../../redux/slices/userSlice';
 import {Notification} from '../Notification/Notification';
 import {toast} from 'react-toastify';
@@ -165,7 +165,7 @@ const TopNavbar = () => {
 						src={
 							// user?.avatar_url ||
 							// user?.avatar_url == '' ||
-							'https://static.vecteezy.com/system/resources/previews/009/292/244/original/default-avatar-icon-of-social-media-user-vector.jpg'
+							convertImageURL(user?.avatar_url)
 						}
 						alt="Profile"
 						className={styles.profileImage}
@@ -173,7 +173,13 @@ const TopNavbar = () => {
 					/>
 					<div className={styles.userInfo}>
 						<span className={styles.userName}>{user?.full_name}</span>
-						<span className={styles.userRole}>{getRole(user?.role)}</span>
+						<span className={styles.userRole}>
+							{user?.role === 1
+								? 'Quản lý'
+								: user?.role === 2
+									? 'Nhân viên'
+									: 'Admin'}
+						</span>
 					</div>
 					{showSignOutButton && (
 						<button
