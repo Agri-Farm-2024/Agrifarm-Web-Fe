@@ -42,6 +42,8 @@ export const ManageEmployeesPage = () => {
 	const [selectedRole, setSelectedRole] = useState(null);
 	const [selectedStatus, setSelectedStatus] = useState(null);
 	const data = useSelector(getListUserSelector);
+	const pagination = data?.pagination;
+	const loading = useSelector((state) => state.userSlice.loading);
 
 	useEffect(() => {
 		dispatch(
@@ -70,6 +72,25 @@ export const ManageEmployeesPage = () => {
 			title: 'Vị trí',
 			dataIndex: 'role',
 			key: 'role',
+			render: (text) => (
+				<p>
+					{text == 2 && (
+						<Tag bordered={false} color="volcano" key={text}>
+							Nhân viên
+						</Tag>
+					)}
+					{text == 3 && (
+						<Tag bordered={false} color="cyan" key={text}>
+							Chuyên viên
+						</Tag>
+					)}
+					{text == 4 && (
+						<Tag bordered={false} color="green" key={text}>
+							Người dùng
+						</Tag>
+					)}
+				</p>
+			),
 		},
 		{
 			title: 'Ngày bắt đầu làm',
@@ -92,12 +113,12 @@ export const ManageEmployeesPage = () => {
 				<>
 					{status == 'active' && (
 						<Tag color="green" key={status}>
-							{status}
+							Đang hoạt động
 						</Tag>
 					)}
-					{status == 'in_active' && (
+					{status == 'pending' && (
 						<Tag color="red" key={status}>
-							{status}
+							Chưa hoạt động
 						</Tag>
 					)}
 				</>
@@ -173,7 +194,7 @@ export const ManageEmployeesPage = () => {
 							onChange={(value) => setSelectedRole(value)}
 						></Select>
 					</div>
-					<div className={styles.fiterItem}>
+					{/* <div className={styles.fiterItem}>
 						<span>Lọc theo trạng thái:</span>
 						<Select
 							style={{
@@ -184,12 +205,13 @@ export const ManageEmployeesPage = () => {
 							options={statusOptions}
 							onChange={(value) => setSelectedStatus(value)}
 						></Select>
-					</div>
+					</div> */}
 				</div>
 			</div>
 			<div className={styles.tableContainer}>
 				<Table
-					rowKey="employeeId"
+					loading={loading}
+					rowKey="user_id"
 					dataSource={data.users}
 					columns={columns}
 					scroll={{x: 'max-content'}}
@@ -202,7 +224,7 @@ export const ManageEmployeesPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: totalPage * pageSize,
+						total: pagination.total_page * pageSize,
 						onChange: (page) => {
 							setCurrentPage(page);
 						},

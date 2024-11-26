@@ -4,9 +4,11 @@ import {api} from '../../services/api';
 // Async action for creating a new service package
 export const getAllTransaction = createAsyncThunk(
 	'transactions/getAllTransaction',
-	async (params, {rejectWithValue}) => {
+	async ({status, page_size, page_index}, {rejectWithValue}) => {
 		try {
-			const response = await api.get('/transactions/getAllTransaction', params);
+			const response = await api.get(`/transactions/getAllTransaction`, {
+				params: {status, page_size, page_index},
+			});
 			console.log('Response', response);
 			return response.data.metadata;
 		} catch (error) {

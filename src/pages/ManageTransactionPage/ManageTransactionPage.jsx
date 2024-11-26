@@ -11,30 +11,33 @@ const {Option} = Select;
 export const ManageTransactionPage = () => {
 	const dispatch = useDispatch();
 
-	const [filterStatus, setFilterStatus] = useState('');
+	const [filterStatus, setFilterStatus] = useState(null);
 	const [filterType, setFilterType] = useState('');
 	const [selectedTransaction, setselectedTransaction] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [totalPage, setTotalPage] = useState(10);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
-	// const filteredTransactions = transactionList.filter((transaction) => {
-	// 	const matchesStatus = filterStatus ? transaction.status === filterStatus : true;
-	// 	const matchesType = filterType ? transaction.type === filterType : true;
-	// 	return matchesStatus && matchesType;
-	// });
+	const [pageSize, setPageSize] = useState(10);
+
+	const transactions = useSelector(
+		(state) => state?.transactionSlice?.transactions?.transactions
+	);
+	const pagination = useSelector((state) => state?.transactionSlice?.transactions?.pagination);
+	const loading = useSelector((state) => state?.transactionSlice?.loading);
+
+	console.log(`transactions: ` + JSON.stringify(transactions));
 
 	useEffect(() => {
-		dispatch(getAllTransaction()).then((response) => {
-			if (response.payload.statusCode === 200) {
-				console.log('Data fetched:', response.payload.metadata);
-				setRequest(response.payload.metadata.requests);
-				setTotalPage(response.payload.metadata.pagination.total_page);
-			} else {
-				console.error('Error fetching data:', response.payload);
-			}
+		dispatch(
+			getAllTransaction({status: filterStatus, page_size: pageSize, page_index: currentPage})
+		).then((response) => {
+			console.log('Data fetched:', response.payload);
 		});
-	}, [dispatch, totalPage, currentPage, pageSize]);
+	}, [dispatch, currentPage, pageSize]);
+
+	const handlePageChange = (page) => {
+		setCurrentPage(page);
+	};
 
 	const data = useSelector(transactionListSelector);
 
@@ -53,29 +56,44 @@ export const ManageTransactionPage = () => {
 			title: 'Mã Giao Dịch',
 			dataIndex: 'transaction_code',
 			key: 'transaction_code',
+			render: (transaction) => <a>{transaction}</a>,
 		},
 		{
 			title: 'Tên Khách Hàng',
 			dataIndex: 'user',
 			key: 'user',
-			render: (user) => user.full_name,
+			render: (user) => user?.full_name,
 		},
-		{
-			title: 'Email Khách Hàng',
-			dataIndex: 'user',
-			key: 'user',
-			render: (user) => user.email,
-		},
+
 		{
 			title: 'Giá',
 			dataIndex: 'total_price',
 			key: 'total_price',
-			render: (price) => `${price.toLocaleString()} VND`,
+			render: (price) => `${price?.toLocaleString()} VND`,
 		},
 		{
-			title: 'Loại',
+			title: 'Mục đích',
+			dataIndex: 'purpose',
+			key: 'purpose',
+			render: (purpose) => (
+				<>
+					{purpose === 'booking_land' && <>Thuê đất</>}
+					{purpose === 'service' && <>Dịch vụ</>}
+					{purpose === 'order' && <>Đơn hàng</>}
+					{purpose === 'extend' && <>Gia hạn</>}
+				</>
+			),
+		},
+		{
+			title: 'Loại giao dịch',
 			dataIndex: 'type',
 			key: 'type',
+			render: (type) => (
+				<>
+					{type === 'payment' && <>Thanh toán</>}
+					{type === 'refund' && <>Trả tiền</>}
+				</>
+			),
 		},
 		{
 			title: 'Ngày Tạo',
@@ -88,13 +106,12 @@ export const ManageTransactionPage = () => {
 			dataIndex: 'status',
 			key: 'status',
 			render: (status) => (
-				<Tag
-					color={
-						status === 'approved' ? 'green' : status === 'Đang xử lý' ? 'orange' : 'red'
-					}
-				>
-					{status}
-				</Tag>
+				<>
+					{status === 'succeed' && <Tag color="green">Hoàn thành</Tag>}
+					{status === 'expired' && <Tag color="red">Hết hạn</Tag>}
+					{status === 'pending' && <Tag>Chưa tới lượt thanh toán</Tag>}
+					{status === 'approved' && <Tag color="warning">Chờ thanh toán</Tag>}
+				</>
 			),
 		},
 		// {
@@ -124,9 +141,10 @@ export const ManageTransactionPage = () => {
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
-					<Option value="Thành công">Thành công</Option>
-					<Option value="Đang xử lý">Đang xử lý</Option>
-					<Option value="Thất bại">Thất bại</Option>
+					<Option value="succeed">Hoàn thành</Option>
+					<Option value="expired">Hết hạn</Option>
+					<Option value="pending">Chưa tới lượt thanh toán</Option>
+					<Option value="approved">Chờ thanh toán</Option>
 				</Select>
 
 				<span>Lọc theo loại:</span>
@@ -135,19 +153,23 @@ export const ManageTransactionPage = () => {
 					onChange={(value) => setFilterType(value)}
 					style={{width: '20%'}}
 				>
-					<Option value="">Tất cả</Option>
-					<Option value="Thuê đất">Thuê đất</Option>
-					<Option value="Thuê thiết bị">Thuê thiết bị</Option>
-					<Option value="Mua vật tư">Mua vật tư</Option>
-					<Option value="Mua dịch vụ">Mua dịch vụ</Option>
+					<Option value={null}>Tất cả</Option>
+					<Option value="payment">Thanh toán</Option>
+					<Option value="refund">Trả tiền</Option>
 				</Select>
 			</div>
 
 			<Table
 				columns={columns}
-				dataSource={data.transactions}
-				pagination={{pageSize: 5}}
-				rowKey="transactionID"
+				dataSource={transactions}
+				loading={loading}
+				pagination={{
+					pageSize: pageSize,
+					current: currentPage,
+					total: pagination?.total_page * pageSize,
+					onChange: handlePageChange,
+				}}
+				rowKey="transaction_id"
 				className={styles.tableContainer}
 				onRow={(record) => ({
 					onClick: () => handleRowClick(record),
