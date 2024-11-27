@@ -9,14 +9,19 @@ import userSlice from '../../redux/slices/userSlice';
 import {Notification} from '../Notification/Notification';
 import {toast} from 'react-toastify';
 import socket from '../../services/socket';
+import {api} from '../../services/api';
+import axios from 'axios';
+import {fetchNotifications} from '../../redux/slices/notificationSlice';
 
 const TopNavbar = () => {
 	const userLocal = JSON.parse(localStorage.getItem('user'));
 	const user = userLocal?.user;
 	const user_id = useSelector((state) => state.userSlice?.user?.user?.user_id);
+	const [notifiNoSeenn, setNotiNoSeen] = useState(1);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const notifications = useSelector((state) => state.notificationSlice?.notifications);
 
 	const [showNotification, setShowNotification] = useState(false);
 	const [showSignOutPopup, setShowSignOutPopup] = useState(false);
@@ -88,6 +93,7 @@ const TopNavbar = () => {
 			if (data.message.type === 'booking_land') {
 				navigate = 'manage-contract-manager';
 			}
+			dispatch(fetchNotifications({pageSize: 1000, pageIndex: 1}));
 			callNotification(data.message.title, data.message.content, navigate);
 			console.log(data);
 		});
@@ -98,6 +104,15 @@ const TopNavbar = () => {
 			}
 		};
 	}, [user_id]);
+
+	useEffect(() => {
+		dispatch(fetchNotifications({pageSize: 1000, pageIndex: 1}));
+	}, [dispatch]);
+
+	useEffect(() => {
+		const numberNoSeen = notifications.filter((item) => item.is_seen === false)?.length;
+		setNotiNoSeen(numberNoSeen);
+	}, [notifications]);
 
 	const handleBellClick = () => {
 		setShowNotification(!showNotification);
@@ -153,6 +168,20 @@ const TopNavbar = () => {
 			<div className={styles.rightSection}>
 				<div className={styles.notificationIconContainer}>
 					<BellOutlined onClick={handleBellClick} className={styles.notificationIcon} />
+					<div
+						style={{
+							color: 'white',
+							position: 'absolute',
+							top: -5,
+							right: -7,
+							fontWeight: 'bold',
+							background: 'red',
+							borderRadius: '50%',
+							padding: '1px 5px 1px 5px',
+						}}
+					>
+						{notifiNoSeenn}
+					</div>
 
 					{showNotification && (
 						<div ref={notiRef} className={styles.notificationDropdown}>
