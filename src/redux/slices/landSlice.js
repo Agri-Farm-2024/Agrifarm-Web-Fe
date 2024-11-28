@@ -156,6 +156,26 @@ export const getListOfBooking = createAsyncThunk(
 	}
 );
 
+export const getListOfReportLand = createAsyncThunk(
+	'landSlice/getListOfReportLand',
+	async ({page_size, page_index, status}, {rejectWithValue}) => {
+		console.log({page_size, page_index, status});
+
+		const urlAPI =
+			status === ''
+				? `/requests/getListRequest?type=report_land&page_size=${page_size}&page_index=${page_index}`
+				: `/requests/getListRequest?type=report_land&status=${status}&page_size=${page_size}&page_index=${page_index}`;
+		try {
+			const response = await api.get(urlAPI);
+			console.log(response.data.metadata);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const updateBooking = createAsyncThunk(
 	'landSlice/updateBooking',
 	async (
@@ -217,6 +237,7 @@ const landSlice = createSlice({
 		msg: '',
 		loading: false,
 		error: null,
+		reports: [],
 	},
 	reducers: {
 		setLand: (state, action) => {
@@ -272,6 +293,19 @@ const landSlice = createSlice({
 			.addCase(getListOfLand.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Land getListOfLand failed';
+			})
+
+			.addCase(getListOfReportLand.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getListOfReportLand.fulfilled, (state, action) => {
+				state.loading = false;
+				state.reports = action.payload.metadata;
+			})
+			.addCase(getListOfReportLand.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Land getListOfReportLand failed';
 			})
 
 			.addCase(getListOfRequestViewLand.pending, (state) => {

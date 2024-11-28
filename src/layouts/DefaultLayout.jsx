@@ -100,7 +100,6 @@ export const DefaultLayout = ({children}) => {
 		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
 		getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
 		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
-		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];
 
@@ -141,6 +140,7 @@ export const DefaultLayout = ({children}) => {
 			<TruckOutlined />
 		),
 		getItem('Quản lý đơn hàng', '/manage-order', <FileTextOutlined />),
+		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 	];
 
 	// Define the menu items

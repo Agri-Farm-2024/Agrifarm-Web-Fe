@@ -135,7 +135,7 @@ export const AppRouters = () => {
 				<Route
 					path="/land-reports"
 					element={
-						<PrivateRoute roles={['staff']}>
+						<PrivateRoute roles={['manager']}>
 							<LandReportsPage />
 						</PrivateRoute>
 					}
