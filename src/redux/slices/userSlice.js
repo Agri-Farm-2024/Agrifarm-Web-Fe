@@ -44,6 +44,20 @@ export const getListOfStaff = createAsyncThunk(
 	}
 );
 
+export const getListOfExpert = createAsyncThunk(
+	'userLoginSlice/getListOfExpert',
+	async (_, {rejectWithValue}) => {
+		try {
+			const data = await api.get(`/users?role=3&page_size=20&page_index=1`);
+
+			return data.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const createUser = createAsyncThunk(
 	'userSlice/createUser',
 	async ({email, password, full_name, avatar_url, dob, role}, {rejectWithValue}) => {
@@ -99,6 +113,7 @@ const userSlice = createSlice({
 		},
 		userList: {},
 		listOfStaff: [],
+		listOfExpert: [],
 		loading: false,
 		error: null,
 		msg: '',
@@ -133,6 +148,18 @@ const userSlice = createSlice({
 				state.listOfStaff = action.payload.metadata;
 			})
 			.addCase(getListOfStaff.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'Login failed';
+			})
+			.addCase(getListOfExpert.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(getListOfExpert.fulfilled, (state, action) => {
+				state.loading = false;
+				state.listOfExpert = action.payload.metadata;
+			})
+			.addCase(getListOfExpert.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Login failed';
 			})
