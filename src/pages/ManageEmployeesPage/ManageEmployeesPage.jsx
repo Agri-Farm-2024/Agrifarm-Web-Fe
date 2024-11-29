@@ -224,7 +224,7 @@ export const ManageEmployeesPage = () => {
 					pagination={{
 						pageSize: pageSize,
 						current: currentPage,
-						total: pagination.total_page * pageSize,
+						total: pagination?.total_page * pageSize,
 						onChange: (page) => {
 							setCurrentPage(page);
 						},

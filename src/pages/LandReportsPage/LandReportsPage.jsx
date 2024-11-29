@@ -6,6 +6,7 @@ import {getListOfReportLand} from '../../redux/slices/landSlice';
 import {formatDate, formatNumber} from '../../utils';
 import {assignForTask} from '../../redux/slices/requestSlice';
 import {getListOfExpert, getListOfStaff} from '../../redux/slices/userSlice';
+import {LandReportsDetailModal} from './LandReportsDetailModal';
 
 const {Option} = Select;
 
@@ -16,6 +17,8 @@ export const LandReportsPage = () => {
 	const [isModalAssignVisible, setIsModalAssignVisible] = useState(false);
 	const [staffList, setStaffList] = useState([]);
 	const [selectedRecord, setSelectedRecord] = useState(null);
+	const [selectedReport, setSelectedReport] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const pageSize = 10;
 
 	const dispatch = useDispatch();
@@ -31,7 +34,13 @@ export const LandReportsPage = () => {
 	}, [currentPage, filterStatus]);
 
 	const fetchReports = () => {
-		dispatch(getListOfReportLand({page_size: pageSize, page_index: currentPage, status}));
+		dispatch(
+			getListOfReportLand({
+				page_size: pageSize,
+				page_index: currentPage,
+				status: filterStatus,
+			})
+		);
 	};
 
 	useEffect(() => {
@@ -46,6 +55,16 @@ export const LandReportsPage = () => {
 				console.error('Caught error:', error);
 			});
 	}, []);
+
+	const handleRowClick = (record) => {
+		setSelectedReport(record);
+		setIsModalOpen(true);
+	};
+
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+		setSelectedReport(null);
+	};
 
 	const columns = [
 		{
@@ -181,7 +200,8 @@ export const LandReportsPage = () => {
 				>
 					<Option value="">Tất cả</Option>
 					<Option value="completed">Hoàn thành</Option>
-					<Option value="processing">Đang xử lý</Option>
+					<Option value="assigned">Đã phân công</Option>
+					<Option value="pending">Chờ phân công</Option>
 				</Select>
 			</div>
 
@@ -197,6 +217,15 @@ export const LandReportsPage = () => {
 				}}
 				rowKey="request_id"
 				className={styles.tableContainer}
+				onRow={(record) => ({
+					onClick: () => handleRowClick(record),
+				})}
+			/>
+
+			<LandReportsDetailModal
+				isModalOpen={isModalOpen}
+				handleModalClose={handleModalClose}
+				selectedReport={selectedReport}
 			/>
 
 			<Modal

@@ -6,6 +6,7 @@ import {getListOfRequestViewLand} from '../../redux/slices/landSlice';
 import {ManageViewLandDetailModal} from './ManageViewLandDetailModal';
 import {getListOfStaff} from '../../redux/slices/userSlice';
 import {assignForTask} from '../../redux/slices/requestSlice';
+import {formatDateToVN, formatTimeViewLand} from '../../utils';
 
 const {Option} = Select;
 
@@ -81,36 +82,12 @@ export const ManageViewLand = () => {
 		{
 			title: 'Ngày Đến',
 			key: 'dateToCome',
-			render: ({time_start}) => (
-				<div>
-					{new Date(time_start).toLocaleString('vi-VN', {
-						year: 'numeric',
-						month: 'long',
-						day: '2-digit',
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-						timeZone: 'Asia/Ho_Chi_Minh',
-					})}
-				</div>
-			),
+			render: ({time_start}) => <div>{formatTimeViewLand(time_start)}</div>,
 		},
 		{
 			title: 'Ngày gửi',
 			key: 'created_at',
-			render: ({created_at}) => (
-				<div>
-					{new Date(created_at).toLocaleString('vi-VN', {
-						year: 'numeric',
-						month: 'long',
-						day: '2-digit',
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-						timeZone: 'Asia/Ho_Chi_Minh',
-					})}
-				</div>
-			),
+			render: ({created_at}) => <div>{formatDateToVN(created_at)}</div>,
 		},
 		{
 			title: 'Mô Tả',

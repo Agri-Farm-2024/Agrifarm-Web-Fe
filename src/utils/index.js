@@ -50,6 +50,27 @@ export const getRole = (input) => {
 	}
 };
 
+export function formatTimeViewLand(timestamp) {
+	if (!timestamp) {
+		return timestamp;
+	}
+	const date = new Date(timestamp);
+
+	// Format time
+	const optionsTime = {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: true,
+		timeZone: 'UTC', // Adjust if needed
+	};
+	const time = date.toLocaleTimeString('en-GB', optionsTime);
+
+	// Format date
+	const formattedDate = date.toLocaleDateString('en-GB');
+
+	return `${time} - ${formattedDate}`;
+}
+
 export function convertImageURL(relativePath) {
 	return `${api}${relativePath}`;
 }

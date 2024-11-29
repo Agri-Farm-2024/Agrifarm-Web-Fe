@@ -216,26 +216,24 @@ const TopNavbar = () => {
 							className={styles.signOutButton}
 							onClick={handleSignOut}
 						>
-							Sign Out
+							Đăng xuất
 						</button>
 					)}
 					{showSignOutPopup && (
 						<div className={styles.signOutPopup}>
-							<span className={styles.signOutText}>
-								Are you sure you want to sign out?
-							</span>
+							<span className={styles.signOutText}>Bạn có muốn đăng xuất?</span>
 							<div>
 								<button
 									className={styles.confirmButton}
 									onClick={handleConfirmSignOut}
 								>
-									Yes
+									Đồng ý
 								</button>
 								<button
 									className={styles.cancelButton}
 									onClick={handleCancelSignOut}
 								>
-									Cancel
+									Hủy
 								</button>
 							</div>
 						</div>
