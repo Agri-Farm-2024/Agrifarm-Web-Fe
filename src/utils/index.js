@@ -74,3 +74,10 @@ export function formatTimeViewLand(timestamp) {
 export function convertImageURL(relativePath) {
 	return `${api}${relativePath}`;
 }
+
+export function capitalizeFirstLetter(string) {
+	if (string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	return string;
+}

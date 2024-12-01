@@ -1,8 +1,11 @@
 import React from 'react';
 import {Card, Col, Row, Statistic, List} from 'antd';
 import {Column, Line, Pie} from '@ant-design/plots';
+import {useSelector} from 'react-redux';
 
 export default function ManagerDashBoardPages() {
+	const notifications = useSelector((state) => state.notificationSlice.notifications);
+
 	const summaryData = [
 		{title: 'Người thuê đất', value: 7265, color: '#8BC34A'},
 		{title: 'Yêu cầu hỗ trợ', value: 3671, color: '#8BC34A'},
@@ -58,22 +61,22 @@ export default function ManagerDashBoardPages() {
 		{type: 'Gói khác', value: 8.1},
 	];
 
-	const notifications = [
-		{message: 'Bạn đã sửa một lỗi', time: 'Vừa xong'},
-		{message: 'Người dùng mới đã đăng ký', time: '59 phút trước'},
-		{message: 'Bạn đã sửa một lỗi', time: '12 giờ trước'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-		{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
-	];
+	// const notifications = [
+	// 	{message: 'Bạn đã sửa một lỗi', time: 'Vừa xong'},
+	// 	{message: 'Người dùng mới đã đăng ký', time: '59 phút trước'},
+	// 	{message: 'Bạn đã sửa một lỗi', time: '12 giờ trước'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// 	{message: 'Andi Lane đã theo dõi bạn', time: 'Hôm nay, 11:59 AM'},
+	// ];
 
 	const revenueLineConfig = {
 		data: revenueData,
@@ -197,12 +200,20 @@ export default function ManagerDashBoardPages() {
 				</Col>
 
 				<Col span={6}>
-					<Card title="Thông báo" style={{marginBottom: 20}}>
+					<Card
+						title="Thông báo"
+						style={{
+							marginBottom: 20,
+							height: 1000,
+							scrollBehavior: 'smooth',
+							overflow: 'scroll-y',
+						}}
+					>
 						<List
 							dataSource={notifications}
 							renderItem={(item) => (
 								<List.Item>
-									<List.Item.Meta title={item.message} description={item.time} />
+									<List.Item.Meta title={item.title} description={item.content} />
 								</List.Item>
 							)}
 						/>

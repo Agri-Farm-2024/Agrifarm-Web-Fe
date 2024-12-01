@@ -132,13 +132,14 @@ export const DefaultLayout = ({children}) => {
 		]),
 
 		getItem('Quản lý giao dịch', '/manage-transaction', <TransactionOutlined />),
-		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
-		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
 		getItem(
 			'Quản lý yêu cầu thu mua',
 			'/manage-agri-product-purchase-request',
 			<TruckOutlined />
 		),
+		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
+		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
+
 		getItem('Quản lý đơn hàng', '/manage-order', <FileTextOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 	];
