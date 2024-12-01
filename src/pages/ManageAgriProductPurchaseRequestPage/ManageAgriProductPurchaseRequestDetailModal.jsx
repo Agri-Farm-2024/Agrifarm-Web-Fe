@@ -73,12 +73,11 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 					{selectedPurchaseRequest?.task?.report?.quality_plant && (
 						<>
 							<Descriptions.Item label="Số lượng thu hoạch">
-								{selectedPurchaseRequest?.task?.report?.mass_plant_expect} Kg
+								{selectedPurchaseRequest?.task?.report?.mass_plant} Kg
 							</Descriptions.Item>
 
 							<Descriptions.Item label="Chất lượng thu hoạch">
-								{selectedPurchaseRequest?.task?.report?.quality_plant_expect}% chất
-								lượng
+								{selectedPurchaseRequest?.task?.report?.quality_plant}% chất lượng
 							</Descriptions.Item>
 						</>
 					)}
@@ -124,7 +123,12 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 					{selectedPurchaseRequest?.task?.report?.report_url && (
 						<Descriptions.Item label="Hình ảnh" span={2}>
 							<Image
-								style={{width: '100%', maxWidth: 500, borderRadius: 5}}
+								style={{
+									width: '100%',
+									maxWidth: 500,
+									height: 500,
+									borderRadius: 5,
+								}}
 								src={convertImageURL(
 									selectedPurchaseRequest?.task?.report?.report_url[0]?.url_link
 								)}

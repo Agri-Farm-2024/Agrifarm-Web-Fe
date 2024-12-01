@@ -33,7 +33,7 @@ export const ManageTransactionDetailModal = ({
 						{selectedTransaction?.user?.email}
 					</Descriptions.Item>
 					<Descriptions.Item label="Giá">
-						{selectedTransaction?.price?.toLocaleString()} VND
+						{selectedTransaction?.total_price?.toLocaleString()} VND
 					</Descriptions.Item>
 					<Descriptions.Item label="Loại">
 						{selectedTransaction?.type === 'payment' && <>Thanh toán</>}

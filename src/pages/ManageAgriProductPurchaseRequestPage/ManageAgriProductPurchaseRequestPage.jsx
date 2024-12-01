@@ -119,11 +119,11 @@ const statusOptions = [
 	},
 	{
 		value: 'pending',
-		label: 'Chờ phân công',
+		label: 'Đợi phân công',
 	},
 	{
 		value: 'pending_approval',
-		label: 'Chờ phê duyệt',
+		label: 'Đợi phê duyệt',
 	},
 	{
 		value: 'assigned',

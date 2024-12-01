@@ -81,6 +81,7 @@ export const ManageTransactionPage = () => {
 					{purpose === 'service' && <>Dịch vụ</>}
 					{purpose === 'order' && <>Đơn hàng</>}
 					{purpose === 'extend' && <>Gia hạn</>}
+					{purpose === 'extend' && <>Gia hạn</>}
 				</>
 			),
 		},
