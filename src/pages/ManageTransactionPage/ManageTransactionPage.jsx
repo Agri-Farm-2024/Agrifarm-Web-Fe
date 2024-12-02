@@ -29,11 +29,16 @@ export const ManageTransactionPage = () => {
 
 	useEffect(() => {
 		dispatch(
-			getAllTransaction({status: filterStatus, page_size: pageSize, page_index: currentPage})
+			getAllTransaction({
+				status: filterStatus,
+				type: filterType,
+				page_size: pageSize,
+				page_index: currentPage,
+			})
 		).then((response) => {
 			console.log('Data fetched:', response.payload);
 		});
-	}, [dispatch, currentPage, pageSize]);
+	}, [dispatch, currentPage, pageSize, filterStatus, filterType]);
 
 	const handlePageChange = (page) => {
 		setCurrentPage(page);
