@@ -1,7 +1,7 @@
 import React from 'react';
-import {Modal, Descriptions, Tag} from 'antd';
+import {Modal, Descriptions, Tag, Image} from 'antd';
 import styles from './LandReportsPage.module.css';
-import {formatDate, formatNumber} from '../../utils';
+import {convertImageURL, formatDate, formatNumber} from '../../utils';
 
 export const LandReportsDetailModal = ({selectedReport, handleModalClose, isModalOpen}) => {
 	return (
@@ -23,7 +23,7 @@ export const LandReportsDetailModal = ({selectedReport, handleModalClose, isModa
 					contentStyle={{paddingLeft: '1rem'}}
 				>
 					<Descriptions.Item label="ID Report">
-						<a>{selectedReport?.created_at}</a>
+						<a>{selectedReport?.request_id}</a>
 					</Descriptions.Item>
 					<Descriptions.Item label="Ngày tạo">
 						{formatDate(selectedReport?.created_at)}
@@ -95,9 +95,28 @@ export const LandReportsDetailModal = ({selectedReport, handleModalClose, isModa
 					</Descriptions.Item>
 
 					<Descriptions.Item label="Chất lượng báo cáo">
-						{selectedReport?.booking_land?.quality_report}
+						<strong>{selectedReport?.booking_land?.quality_report * 100}%</strong>
 						{!selectedReport?.booking_land?.quality_report && 'Chưa báo cáo'}
 					</Descriptions.Item>
+					<Descriptions.Item label="Nội dung báo cáo">
+						<strong>{selectedReport?.task?.report?.content}</strong>
+						{!selectedReport?.task?.report?.content && 'Chưa báo cáo'}
+					</Descriptions.Item>
+					{selectedReport?.task?.report?.report_url && (
+						<Descriptions.Item label="Hình ảnh báo cáo" span={2}>
+							<Image
+								style={{
+									width: '100%',
+									maxWidth: 500,
+									height: 500,
+									borderRadius: 5,
+								}}
+								src={convertImageURL(
+									selectedReport?.task?.report?.report_url[0]?.url_link
+								)}
+							/>
+						</Descriptions.Item>
+					)}
 				</Descriptions>
 			)}
 		</Modal>

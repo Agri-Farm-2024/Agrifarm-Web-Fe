@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Select, Button, Space, Tag, Modal, message} from 'antd';
+import {Table, Select, Button, Space, Tag, Modal, message, Tooltip, Popconfirm} from 'antd';
 import styles from './LandReportsPage.module.css';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfReportLand} from '../../redux/slices/landSlice';
-import {formatDate, formatNumber} from '../../utils';
-import {assignForTask} from '../../redux/slices/requestSlice';
+import {formatDate, formatNumber, formatTimeViewLand} from '../../utils';
+import {approveRequest, assignForTask} from '../../redux/slices/requestSlice';
 import {getListOfExpert, getListOfStaff} from '../../redux/slices/userSlice';
 import {LandReportsDetailModal} from './LandReportsDetailModal';
+import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 
 const {Option} = Select;
 
@@ -66,12 +67,72 @@ export const LandReportsPage = () => {
 		setSelectedReport(null);
 	};
 
+	const handleChangeStatusRequest = (e, actionType, request) => {
+		e.stopPropagation();
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		if (actionType == 'approve') {
+			const params = {
+				requestId: request.request_id,
+				formData: {
+					status: 'completed',
+					reason_for_reject: null,
+				},
+			};
+			dispatch(approveRequest(params)).then((response) => {
+				hideLoading();
+				console.log('Approve request reponse: ' + response);
+				if (response.payload && response.payload.statusCode) {
+					//Catch Error message
+					if (response.payload.statusCode !== 200) {
+						if (response.payload.message === 'Request purchase already exist') {
+							message.error('Yêu cầu thu hoạch đã được tạo');
+							return;
+						}
+						message.error('Chấp nhận yêu cầu thất bại');
+						console.log('Approve request failed!: ' + response.payload.message);
+					}
+
+					if (response.payload.statusCode === 200) {
+						message.success('Chấp nhận yêu cầu thành công');
+						fetchReports();
+					}
+				}
+			});
+		}
+
+		if (actionType == 'reject') {
+			const params = {
+				requestId: request.request_id,
+				formData: {
+					status: 'rejected',
+					reason_for_reject: 'Không chấp nhận',
+				},
+			};
+			dispatch(approveRequest(params)).then((response) => {
+				hideLoading();
+				console.log('Approve request reponse: ' + response);
+				if (response.payload && response.payload.statusCode) {
+					//Catch Error message
+					if (response.payload.statusCode !== 200) {
+						message.error('Từ chối yêu cầu thất bại');
+						console.log('Approve request failed!');
+					}
+
+					if (response.payload.statusCode === 200) {
+						message.info('Từ chối yêu cầu thành công');
+						fetchReports();
+					}
+				}
+			});
+		}
+	};
+
 	const columns = [
 		{
-			title: 'Mã Hợp Đồng',
-			dataIndex: 'contract_id',
-			key: 'contract_id',
-			render: (_, record) => <a> {record?.booking_land?.booking_id}</a>,
+			title: 'Ngày tạo',
+			dataIndex: 'create_at',
+			key: 'create_at',
+			render: (_, record) => <div> {formatTimeViewLand(record?.created_at)}</div>,
 		},
 		{
 			title: 'Tên Người Thuê',
@@ -119,14 +180,26 @@ export const LandReportsPage = () => {
 			render: (status) => (
 				<Tag
 					color={
-						status === 'assigned' ? 'blue' : status === 'completed' ? 'green' : 'orange'
+						status === 'assigned'
+							? 'blue'
+							: status === 'completed'
+								? 'green'
+								: status === 'pending_approval'
+									? 'magenta'
+									: status === 'rejected'
+										? 'red'
+										: 'orange'
 					}
 				>
 					{status === 'assigned'
 						? 'Đã phân công'
 						: status === 'completed'
 							? 'Hoàn thành'
-							: 'Chờ phân công'}
+							: status === 'pending_approval'
+								? 'Chờ phê duyệt'
+								: status === 'rejected'
+									? 'Đã từ chối'
+									: 'Chờ phân công'}
 				</Tag>
 			),
 		},
@@ -146,6 +219,42 @@ export const LandReportsPage = () => {
 					>
 						Chọn chuyên viên
 					</Button>
+					<Tooltip title="Chấp nhận">
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Chấp nhận yêu cầu"
+							description="Bạn muốn chấp nhận yêu cầu này?"
+							onConfirm={(e) => handleChangeStatusRequest(e, 'approve', record)}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Chấp nhận"
+							cancelText="Huỷ"
+						>
+							<Button
+								disabled={record.status != 'pending_approval' ? true : false}
+								color="primary"
+								variant="filled"
+								icon={<CheckOutlined />}
+							></Button>
+						</Popconfirm>
+					</Tooltip>
+					<Tooltip title="Từ chối">
+						<Popconfirm
+							onClick={(e) => e.stopPropagation()}
+							title="Từ chối yêu cầu"
+							description="Bạn muốn từ chối yêu cầu này?"
+							onConfirm={(e) => handleChangeStatusRequest(e, 'reject', record)}
+							onCancel={(e) => e.stopPropagation()}
+							okText="Từ chối"
+							cancelText="Huỷ"
+						>
+							<Button
+								disabled={record.status != 'pending_approval' ? true : false}
+								color="danger"
+								variant="filled"
+								icon={<CloseOutlined />}
+							></Button>
+						</Popconfirm>
+					</Tooltip>
 				</Space>
 			),
 		},
@@ -200,8 +309,10 @@ export const LandReportsPage = () => {
 				>
 					<Option value="">Tất cả</Option>
 					<Option value="completed">Hoàn thành</Option>
+					<Option value="pending_approval">Chờ phê duyệt</Option>
 					<Option value="assigned">Đã phân công</Option>
 					<Option value="pending">Chờ phân công</Option>
+					<Option value="rejected">Từ chối</Option>
 				</Select>
 			</div>
 
