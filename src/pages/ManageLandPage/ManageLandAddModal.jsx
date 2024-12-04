@@ -38,8 +38,8 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 				setErrors({...errors, [name]: 'Trường này không được để trống'});
 			} else if (Number(value) < 1000) {
 				setErrors({...errors, [name]: 'Diện tích không được nhỏ hơn 1000 m2'});
-			} else if (Number(value) >= 10000) {
-				setErrors({...errors, [name]: 'Diện tích không được lớn hơn 10,000 m2'});
+			} else if (Number(value) >= 100000) {
+				setErrors({...errors, [name]: 'Diện tích không được lớn hơn 100,000 m2'});
 			} else {
 				const {[name]: removedError, ...rest} = errors;
 				setErrors(rest);
@@ -142,12 +142,15 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 
 		// Upload images
 		const imageUploadPromises = landData.images.map((file) =>
-			uploadFile(file.file).then((response) => response.metadata[0])
+			uploadFile(file.file).then((response) => {
+				console.log(response.metadata.folder_path);
+				return response.metadata.folder_path;
+			})
 		);
 
 		// Upload videos
 		const videoUploadPromises = landData.videos.map((file) =>
-			uploadFile(file.file).then((response) => response.metadata[0])
+			uploadFile(file.file).then((response) => response.metadata.folder_path)
 		);
 
 		// Wait for all image and video uploads to complete
@@ -209,15 +212,51 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 		if (validateInputs()) {
 			const landInfor = {
 				name: landData.nameLand,
-				title: landData.description.title,
-				description: landData.description.desc,
+				title: landData.description?.title,
+				description: landData.description?.desc,
 				acreage_land: Number(landData.area),
 				price_booking_per_month: Number(landData.pricePermonth),
+				land_type_id: '28efc93c-1ead-498f-acd1-62ba0e52fe2c', //default
 				images: images,
 				videos: videos,
 			};
 			console.log(landInfor);
-			
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			setLoading(true);
+			dispatch(createLand(landInfor))
+				.then((res) => {
+					console.log(res);
+					setLoading(false);
+					hideLoading();
+					if (res.payload.statusCode !== 201) {
+						if (res.payload.message === 'Land name already exist') {
+							message.error(`Tên mảnh đất đã tồn tại trên trang trại`);
+						}
+						if (res.payload.message === 'numeric field overflow') {
+							message.error(`Diện tích vượt quá quy định`);
+						}
+					}
+					if (res.payload.statusCode === 201) {
+						message.success('Tạo mảnh đất thành công.');
+						handleModalClose();
+						// Reset landData
+						setLandData({
+							nameLand: '',
+							area: '',
+							pricePermonth: '',
+							description: {
+								title: '',
+								desc: '',
+							},
+							images: [],
+							videos: [],
+						});
+					}
+				})
+				.catch((err) => {
+					hideLoading();
+					message.error('Unexpected error:', err);
+				});
 		} else {
 			message.error('Hãy điền đủ trường nhé');
 		}
@@ -227,7 +266,16 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Thêm mảnh đất</span>}
 			open={isModalOpen}
-			onCancel={handleModalClose}
+			onCancel={() => {
+				setLandData({
+					nameLand: '',
+					area: '',
+					pricePermonth: '',
+					images: [],
+					videos: [],
+				});
+				handleModalClose();
+			}}
 			onOk={handleUploadFile}
 			style={{top: 20}}
 			cancelText="Hủy"
@@ -421,7 +469,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 							<p className={styles.title}>Tiêu đề:</p>
 							<Input
 								name="title"
-								value={landData.description.title}
+								value={landData.description?.title}
 								onChange={(e) => {
 									const updatedTitle = e.target.value;
 									setLandData({
@@ -475,7 +523,7 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 								style={{ width: '50%' }}
 							/> */}
 							<TextEditor
-								initialValue={landData.description.desc} // Pass initial value from Formik
+								initialValue={landData.description?.desc} // Pass initial value from Formik
 								onChange={handleEditorChange}
 							/>
 							{errors['description.desc'] && (

@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './ManageTransactionPage.module.css';
 import {Modal, Descriptions, Tag} from 'antd';
+import {formatTimeViewLand} from '../../utils';
 
 export const ManageTransactionDetailModal = ({
 	selectedTransaction,
@@ -46,7 +47,7 @@ export const ManageTransactionDetailModal = ({
 						{selectedTransaction?.purpose === 'extend' && <>Gia hạn</>}
 					</Descriptions.Item>
 					<Descriptions.Item label="Ngày tạo">
-						{new Date(selectedTransaction?.created_at).toLocaleString()}
+						{formatTimeViewLand(selectedTransaction?.created_at)}
 					</Descriptions.Item>
 					<Descriptions.Item label="Trạng thái">
 						{selectedTransaction?.status === 'succeed' && (

@@ -87,11 +87,29 @@ export const LandReportsDetailModal = ({selectedReport, handleModalClose, isModa
 						{formatNumber(selectedReport?.booking_land?.land?.acreage_land)} m2
 					</Descriptions.Item>
 					<Descriptions.Item label="Trạng thái báo cáo">
-						{selectedReport?.status === 'assigned'
-							? 'Đã phân công'
-							: selectedReport?.status === 'completed'
-								? 'Hoàn thành'
-								: 'Chờ phân công'}
+						<Tag
+							color={
+								selectedReport?.status === 'assigned'
+									? 'blue'
+									: selectedReport?.status === 'completed'
+										? 'green'
+										: selectedReport?.status === 'pending_approval'
+											? 'magenta'
+											: selectedReport?.status === 'rejected'
+												? 'red'
+												: 'orange'
+							}
+						>
+							{selectedReport?.status === 'assigned'
+								? 'Đã phân công'
+								: selectedReport?.status === 'completed'
+									? 'Hoàn thành'
+									: selectedReport?.status === 'pending_approval'
+										? 'Chờ phê duyệt'
+										: selectedReport?.status === 'rejected'
+											? 'Đã từ chối'
+											: 'Chờ phân công'}
+						</Tag>
 					</Descriptions.Item>
 
 					<Descriptions.Item label="Chất lượng báo cáo">

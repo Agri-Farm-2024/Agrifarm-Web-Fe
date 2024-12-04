@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Descriptions, Modal, Tag} from 'antd';
-import {formatNumber} from '../../utils';
+import {formatNumber, formatTimeViewLand} from '../../utils';
 import {getRequestById} from '../../redux/slices/requestSlice';
 import {useDispatch} from 'react-redux';
 
@@ -71,19 +71,7 @@ export const ManageViewLandDetailModal = ({
 		{
 			key: 'time_start',
 			label: 'Thời gian',
-			children: (
-				<span>
-					{new Date(data.time_start).toLocaleString('vi-VN', {
-						year: 'numeric',
-						month: 'long',
-						day: '2-digit',
-						hour: '2-digit',
-						minute: '2-digit',
-						hour12: false,
-						timeZone: 'Asia/Ho_Chi_Minh',
-					})}
-				</span>
-			),
+			children: <span>{formatTimeViewLand(data.time_start)}</span>,
 		},
 		{
 			key: 'description',

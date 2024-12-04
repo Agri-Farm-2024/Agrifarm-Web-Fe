@@ -5,7 +5,13 @@ import {convertImageURL, formatNumber} from '../../utils';
 import {useDispatch} from 'react-redux';
 import {getListOfStaff} from '../../redux/slices/userSlice';
 
-export const ManageLandDetailModal = ({selectedLand, handleModalClose, isModalOpen, staffList}) => {
+export const ManageLandDetailModal = ({
+	selectedLand,
+	handleModalClose,
+	isModalOpen,
+	staffList,
+	landTypeList,
+}) => {
 	console.log(selectedLand);
 	const dispatch = useDispatch();
 
@@ -64,18 +70,23 @@ export const ManageLandDetailModal = ({selectedLand, handleModalClose, isModalOp
 							</p>
 						</div>
 						<div className={styles.bookingItem}>
-							<p className={styles.title}>Loại đất:</p>
-							<p className={styles.content}>
-								{selectedLand.typeOfLand ? selectedLand.typeOfLand : 'Chưa có'}
-							</p>
-						</div>
-						<div className={styles.bookingItem}>
 							<p className={styles.title}>Nhân viên phụ trách:</p>
 							<p className={styles.content}>
 								{selectedLand.staff_id
 									? staffList.find(
 											(staff) => staff.user_id == selectedLand?.staff_id
 										).full_name
+									: 'Chưa có'}
+							</p>
+						</div>
+						<div className={styles.bookingItem}>
+							<p className={styles.title}>Loại đất:</p>
+							<p className={styles.content}>
+								{selectedLand.land_type_id
+									? landTypeList.find(
+											(type) =>
+												type.land_type_id == selectedLand?.land_type_id
+										).name
 									: 'Chưa có'}
 							</p>
 						</div>
