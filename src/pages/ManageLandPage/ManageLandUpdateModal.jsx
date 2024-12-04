@@ -14,6 +14,7 @@ export const ManageLandUpdateModal = ({
 	isModalOpen,
 	staffList,
 	handleModalCloseAndUpdate,
+	landTypeList,
 }) => {
 	const [landData, setLandData] = useState(selectedLand);
 	const [errors, setErrors] = useState({});
@@ -167,6 +168,7 @@ export const ManageLandUpdateModal = ({
 				acreage_land: Number(landData.acreage_land),
 				price_booking_per_month: Number(landData.price_booking_per_month),
 				staff_id: landData.staff_id,
+				land_type_id: landData.land_type_id,
 				land_id: landData.land_id,
 				url: landData.url,
 				url_deleted: imageDeleted,
@@ -313,6 +315,24 @@ export const ManageLandUpdateModal = ({
 
 							{errors['staff_id'] && (
 								<p className={styles.error}>{errors['staff_id']}</p>
+							)}
+						</div>
+						<div className={styles.bookingItem}>
+							<p className={styles.title}>Loại đất:</p>
+							<Select
+								value={landData.land_type_id}
+								onChange={(value) => handleSelectChange('land_type_id', value)}
+								style={{width: '50%'}}
+							>
+								{landTypeList.map((type, index) => (
+									<Select.Option key={index} value={type.land_type_id}>
+										{type.name}
+									</Select.Option>
+								))}
+							</Select>
+
+							{errors['land_type_id'] && (
+								<p className={styles.error}>{errors['land_type_id']}</p>
 							)}
 						</div>
 						<div

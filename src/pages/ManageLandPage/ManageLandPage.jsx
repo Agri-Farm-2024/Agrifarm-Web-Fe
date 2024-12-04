@@ -6,8 +6,8 @@ import {ManageLandDetailModal} from './ManageLandDetailModal';
 import {ManageLandUpdateModal} from './ManageLandUpdateModal';
 import {ManageLandAddModal} from './ManageLandAddModal';
 import {useDispatch, useSelector} from 'react-redux';
-import {getListOfLand, getListOfRequestViewLand} from '../../redux/slices/landSlice';
-import {formatNumber} from '../../utils';
+import {getLandType, getListOfLand, getListOfRequestViewLand} from '../../redux/slices/landSlice';
+import {capitalizeFirstLetter, formatNumber} from '../../utils';
 import {getListOfStaff} from '../../redux/slices/userSlice';
 
 const {Option} = Select;
@@ -21,6 +21,7 @@ export const ManageLandPage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(8);
 	const [staffList, setStaffList] = useState([]);
+	const [landTypeList, setLandTypeList] = useState([]);
 
 	const dispatch = useDispatch();
 
@@ -50,6 +51,12 @@ export const ManageLandPage = () => {
 				if (res.payload.statusCode === 200) {
 					console.log('getListOfStaff: ' + JSON.stringify(res.payload.metadata.users));
 					setStaffList(res.payload.metadata.users);
+					dispatch(getLandType()).then((res) => {
+						if (res.payload.statusCode === 200) {
+							console.log('getLandType: ' + JSON.stringify(res.payload.metadata));
+							setLandTypeList(res.payload.metadata);
+						}
+					});
 				}
 			})
 			.catch((error) => {
@@ -87,15 +94,11 @@ export const ManageLandPage = () => {
 	};
 
 	const columns = [
-		// {
-		// 	title: 'ID Đất',
-		// 	dataIndex: 'land_id',
-		// 	key: 'land_id',
-		// },
 		{
 			title: 'Tên Mảnh Đất',
 			dataIndex: 'name',
 			key: 'name',
+			render: (name) => <a>{capitalizeFirstLetter(name)}</a>,
 		},
 		{
 			title: 'Mô tả',
@@ -256,6 +259,7 @@ export const ManageLandPage = () => {
 				handleModalClose={handleModalClose}
 				selectedLand={selectedLand}
 				staffList={staffList}
+				landTypeList={landTypeList}
 			/>
 
 			<ManageLandAddModal
@@ -269,6 +273,7 @@ export const ManageLandPage = () => {
 				handleModalCloseAndUpdate={handleModalCloseAndUpdate}
 				selectedLand={selectedLand}
 				staffList={staffList}
+				landTypeList={landTypeList}
 			/>
 		</div>
 	);

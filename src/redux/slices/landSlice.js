@@ -42,6 +42,7 @@ export const updateLand = createAsyncThunk(
 			acreage_land,
 			price_booking_per_month,
 			staff_id,
+			land_type_id,
 			land_id,
 			url,
 			url_deleted,
@@ -55,6 +56,7 @@ export const updateLand = createAsyncThunk(
 			acreage_land,
 			price_booking_per_month,
 			staff_id,
+			land_type_id,
 			url,
 			url_deleted,
 		};

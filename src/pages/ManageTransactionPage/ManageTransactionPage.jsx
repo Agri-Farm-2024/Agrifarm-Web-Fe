@@ -5,6 +5,7 @@ import {ManageTransactionDetailModal} from './ManageTransactionDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllTransaction} from '../../redux/slices/transactionSlice';
 import {transactionListSelector} from '../../redux/selectors';
+import {formatTimeViewLand} from '../../utils';
 
 const {Option} = Select;
 
@@ -105,7 +106,7 @@ export const ManageTransactionPage = () => {
 			title: 'Ngày Tạo',
 			dataIndex: 'created_at',
 			key: 'created_at',
-			render: (created_at) => new Date(created_at).toLocaleString(),
+			render: (created_at) => <>{formatTimeViewLand(created_at)}</>,
 		},
 		{
 			title: 'Trạng Thái',
