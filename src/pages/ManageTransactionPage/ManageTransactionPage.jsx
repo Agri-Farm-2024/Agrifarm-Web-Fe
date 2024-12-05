@@ -83,11 +83,14 @@ export const ManageTransactionPage = () => {
 			key: 'purpose',
 			render: (purpose) => (
 				<>
-					{purpose === 'booking_land' && <>Thuê đất</>}
-					{purpose === 'service' && <>Dịch vụ</>}
 					{purpose === 'order' && <>Đơn hàng</>}
+					{purpose === 'booking_land' && <>Thuê đất</>}
+					{purpose === 'booking_material' && <>Thuê thiết bị</>}
 					{purpose === 'extend' && <>Gia hạn</>}
-					{purpose === 'extend' && <>Gia hạn</>}
+					{purpose === 'service' && <>Dịch vụ</>}
+					{purpose === 'cancel_service' && <>Hủy dịch vụ</>}
+					{purpose === 'cancel_booking_land' && <>Hủy thuê đất</>}
+					{purpose === 'service_purchase_product' && <>Thu mua</>}
 				</>
 			),
 		},

@@ -41,10 +41,18 @@ export const ManageTransactionDetailModal = ({
 						{selectedTransaction?.type === 'refund' && <>Trả tiền</>}
 					</Descriptions.Item>
 					<Descriptions.Item label="Mục đich">
-						{selectedTransaction?.purpose === 'booking_land' && <>Thuê đất</>}
-						{selectedTransaction?.purpose === 'service' && <>Dịch vụ</>}
 						{selectedTransaction?.purpose === 'order' && <>Đơn hàng</>}
+						{selectedTransaction?.purpose === 'booking_land' && <>Thuê đất</>}
+						{selectedTransaction?.purpose === 'booking_material' && <>Thuê thiết bị</>}
 						{selectedTransaction?.purpose === 'extend' && <>Gia hạn</>}
+						{selectedTransaction?.purpose === 'service' && <>Dịch vụ</>}
+						{selectedTransaction?.purpose === 'cancel_service' && <>Hủy dịch vụ</>}
+						{selectedTransaction?.purpose === 'cancel_booking_land' && (
+							<>Hủy thuê đất</>
+						)}
+						{selectedTransaction?.purpose === 'service_purchase_product' && (
+							<>Thu mua</>
+						)}
 					</Descriptions.Item>
 					<Descriptions.Item label="Ngày tạo">
 						{formatTimeViewLand(selectedTransaction?.created_at)}
