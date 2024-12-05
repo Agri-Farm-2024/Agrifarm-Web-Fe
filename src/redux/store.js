@@ -10,6 +10,7 @@ import requestSlice from './slices/requestSlice';
 import processSlice from './slices/processSlice';
 import transactionSlice from './slices/transactionSlice';
 import notificationSlice from './slices/notificationSlice';
+import dashboardSlice from './slices/dashboard';
 
 const rootPersistConfig = {
 	key: 'root',
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
 	processSlice: processSlice.reducer,
 	transactionSlice: transactionSlice.reducer,
 	notificationSlice: notificationSlice.reducer,
+	dashboardSlice: dashboardSlice.reducer,
 });
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
