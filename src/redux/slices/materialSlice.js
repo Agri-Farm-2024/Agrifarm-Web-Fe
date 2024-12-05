@@ -14,6 +14,19 @@ export const getMaterial = createAsyncThunk(
 	}
 );
 
+export const getBookingMaterial = createAsyncThunk(
+	'materialSlice/getBookingMaterial',
+	async (params, {rejectWithValue}) => {
+		try {
+			const data = await api.get(`/materials/bookingMaterial`, {params});
+			return data.data.metadata;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const createMaterial = createAsyncThunk(
 	'materialSlice/createMaterial',
 	async (formData, {rejectWithValue}) => {
@@ -66,6 +79,7 @@ export const materialSlice = createSlice({
 	name: 'materialSlice',
 	initialState: {
 		material: {},
+		bookingMaterial: null,
 		loading: false,
 		error: null,
 	},
@@ -80,6 +94,17 @@ export const materialSlice = createSlice({
 				state.material = action.payload;
 			})
 			.addCase(getMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(getBookingMaterial.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(getBookingMaterial.fulfilled, (state, action) => {
+				state.loading = false;
+				state.bookingMaterial = action.payload;
+			})
+			.addCase(getBookingMaterial.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

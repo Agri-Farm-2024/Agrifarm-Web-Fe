@@ -99,6 +99,7 @@ export const DefaultLayout = ({children}) => {
 		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
 		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
 		getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
+		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
 		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
 		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];
