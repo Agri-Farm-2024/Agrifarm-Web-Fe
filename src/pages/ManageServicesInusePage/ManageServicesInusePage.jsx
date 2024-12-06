@@ -153,8 +153,6 @@ export const ManageServicesInusePage = () => {
 	const [filterExpert, setFilterExpert] = useState('');
 	const [selectedService, setselectedService] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
@@ -213,23 +211,6 @@ export const ManageServicesInusePage = () => {
 		setselectedService(null);
 	};
 
-	const handleUpdateModalClose = (isUpdateSucess) => {
-		if (isUpdateSucess) {
-			fetchServiceList(currentPage);
-		}
-		setIsUpdateModalOpen(false);
-		setSelectedPlant(null);
-	};
-
-	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
-			console.log('Fetching new service list when create a new plant');
-			fetchServiceList(1);
-		}
-		setIsCreateModalOpen(false);
-		setSelectedPlant(null);
-	};
-
 	const columns = [
 		{
 			title: 'Mảnh đất áp dụng',
@@ -244,17 +225,8 @@ export const ManageServicesInusePage = () => {
 			dataIndex: 'land_renter',
 			key: 'land_renter',
 			render: (_, record) => <p>{record?.land_renter?.full_name}</p>,
-			dataIndex: 'land_renter',
-			key: 'land_renter',
-			render: (_, record) => <p>{record?.land_renter?.full_name}</p>,
 		},
 		{
-			title: 'Gói dịch vụ',
-			dataIndex: 'service_package',
-			key: 'service_package',
-			render: (_, record) => (
-				<p>{record?.service_package && record?.service_package?.name}</p>
-			),
 			title: 'Gói dịch vụ',
 			dataIndex: 'service_package',
 			key: 'service_package',
@@ -267,15 +239,9 @@ export const ManageServicesInusePage = () => {
 			dataIndex: 'time_start',
 			key: 'time_start',
 			render: (text) => <p>{formatDate(text)}</p>,
-			dataIndex: 'time_start',
-			key: 'time_start',
-			render: (text) => <p>{formatDate(text)}</p>,
 		},
 		{
 			title: 'Ngày Kết Thúc',
-			dataIndex: 'time_end',
-			key: 'time_end',
-			render: (text) => <p>{formatDate(text)}</p>,
 			dataIndex: 'time_end',
 			key: 'time_end',
 			render: (text) => <p>{formatDate(text)}</p>,
@@ -285,11 +251,6 @@ export const ManageServicesInusePage = () => {
 			title: 'Chuyên Gia',
 			dataIndex: 'assignExpert',
 			key: 'assignExpert',
-			render: (_, record) =>
-				record?.process_technical_specific &&
-				record?.process_technical_specific?.expert && (
-					<p>{record?.process_technical_specific?.expert?.full_name}</p>
-				),
 			render: (_, record) =>
 				record?.process_technical_specific &&
 				record?.process_technical_specific?.expert && (

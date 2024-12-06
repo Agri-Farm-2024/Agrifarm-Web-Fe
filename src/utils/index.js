@@ -83,3 +83,18 @@ export function capitalizeFirstLetter(string) {
 	}
 	return string;
 }
+
+export const calculateDaysDifference = (date1, date2) => {
+	const firstDate = new Date(date1);
+	const secondDate = new Date(date2);
+
+	if (isNaN(firstDate) || isNaN(secondDate)) {
+		return 'Invalid date';
+	}
+
+	const differenceInMilliseconds = Math.abs(firstDate - secondDate);
+
+	const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+
+	return differenceInDays;
+};

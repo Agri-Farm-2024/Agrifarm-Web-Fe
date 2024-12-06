@@ -20,6 +20,7 @@ export const serviceInUseListSelector = (state) => state.serviceSlice.serviceInU
 //material
 export const isLoadingMaterial = (state) => state.materialSlice.loading;
 export const materialListSelector = (state) => state.materialSlice.material;
+export const bookingMaterialListSelector = (state) => state.materialSlice.bookingMaterial;
 
 //process
 export const isLoadingProcess = (state) => state.processSlice.loading;

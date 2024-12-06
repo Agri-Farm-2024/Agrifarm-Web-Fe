@@ -101,7 +101,7 @@ export const ManageMaterialDetailModal = ({selectedMaterial, handleModalClose, i
 			{
 				key: 'price_of_rent',
 				label: 'Giá thuê',
-				children: <p>{formatNumber(selectedMaterial.price_of_rent)} VND/tháng</p>,
+				children: <p>{formatNumber(selectedMaterial.price_of_rent)} VND/ngày</p>,
 			},
 			{
 				key: 'deposit_per_piece',

@@ -14,11 +14,44 @@ export const getMaterial = createAsyncThunk(
 	}
 );
 
+export const getBookingMaterial = createAsyncThunk(
+	'materialSlice/getBookingMaterial',
+	async (params, {rejectWithValue}) => {
+		try {
+			const data = await api.get(`/materials/bookingMaterial`, {params});
+			return data.data.metadata;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const createMaterial = createAsyncThunk(
 	'materialSlice/createMaterial',
 	async (formData, {rejectWithValue}) => {
 		try {
 			const data = await api.post(`/materials/createMaterial`, formData);
+			return data.data;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const updateBookingMaterialStatus = createAsyncThunk(
+	'materialSlice/updateBookingMaterialStatus',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const {booking_material_id, contract_image, status} = formData;
+			const data = await api.patch(
+				`/materials/updateBookingMaterialStatus/${booking_material_id}`,
+				{
+					status,
+					contract_image,
+				}
+			);
 			return data.data;
 		} catch (error) {
 			console.log('error', error);
@@ -66,6 +99,7 @@ export const materialSlice = createSlice({
 	name: 'materialSlice',
 	initialState: {
 		material: {},
+		bookingMaterial: null,
 		loading: false,
 		error: null,
 	},
@@ -83,6 +117,17 @@ export const materialSlice = createSlice({
 				state.loading = false;
 				state.error = action.payload;
 			})
+			.addCase(getBookingMaterial.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(getBookingMaterial.fulfilled, (state, action) => {
+				state.loading = false;
+				state.bookingMaterial = action.payload;
+			})
+			.addCase(getBookingMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
 			.addCase(createMaterial.pending, (state, action) => {
 				state.loading = true;
 			})
@@ -90,6 +135,16 @@ export const materialSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(createMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(updateBookingMaterialStatus.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(updateBookingMaterialStatus.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateBookingMaterialStatus.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

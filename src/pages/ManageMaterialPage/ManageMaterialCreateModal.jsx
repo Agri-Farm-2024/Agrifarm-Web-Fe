@@ -305,7 +305,7 @@ export const ManageMaterialCreateModal = ({handleModalClose, isModalOpen}) => {
 				{materialType === 'rent' && (
 					<>
 						<Form.Item
-							label="Giá cho thuê (VND/tháng)"
+							label="Giá cho thuê (VND/ngày)"
 							name="rentPrice"
 							rules={[
 								{required: true, message: 'Vui lòng không bỏ trống!'},
