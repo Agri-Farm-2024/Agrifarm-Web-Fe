@@ -40,6 +40,26 @@ export const createMaterial = createAsyncThunk(
 	}
 );
 
+export const updateBookingMaterialStatus = createAsyncThunk(
+	'materialSlice/updateBookingMaterialStatus',
+	async (formData, {rejectWithValue}) => {
+		try {
+			const {booking_material_id, contract_image, status} = formData;
+			const data = await api.patch(
+				`/materials/updateBookingMaterialStatus/${booking_material_id}`,
+				{
+					status,
+					contract_image,
+				}
+			);
+			return data.data;
+		} catch (error) {
+			console.log('error', error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const updateMaterial = createAsyncThunk(
 	'materialSlice/updateMaterial',
 	async (formData, {rejectWithValue}) => {
@@ -115,6 +135,16 @@ export const materialSlice = createSlice({
 				state.loading = false;
 			})
 			.addCase(createMaterial.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(updateBookingMaterialStatus.pending, (state, action) => {
+				state.loading = true;
+			})
+			.addCase(updateBookingMaterialStatus.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateBookingMaterialStatus.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

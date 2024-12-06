@@ -7,6 +7,7 @@ import {
 	formatNumber,
 } from '../../utils';
 import {UploadOutlined} from '@ant-design/icons';
+import {uploadFile} from '../../services/uploadService';
 
 export const ManageRentalEquipmentDetailModal = ({
 	selectedMaterial,
@@ -19,11 +20,11 @@ export const ManageRentalEquipmentDetailModal = ({
 	const [imageAPI, setImageAPI] = useState(null);
 
 	const handleImageUpload = ({file}) => {
-		console.log(file);
 		const hideLoading = message.loading('Đang tải hợp đồng...', 0);
 		setTimeout(() => {
 			hideLoading();
 			uploadFile(file).then((res) => {
+				console.log('Upload file result: ' + JSON.stringify(res));
 				if (res.statusCode === 201) {
 					setImageAPI(res.metadata.folder_path);
 					message.success('Tải hợp đồng thành công');
@@ -31,14 +32,14 @@ export const ManageRentalEquipmentDetailModal = ({
 				}
 			});
 		}, 1000);
-		console.log('Uploaded file:', file);
 	};
 
 	const handleSubmit = () => {
 		console.log('handleSubmit');
 		const body = {
 			contract_image: imageAPI,
-			service_specific_id: selectedMaterial.service_specific_id,
+			booking_material_id: selectedMaterial.booking_material_id,
+			status: 'completed',
 		};
 		if (!imageAPI) {
 			message.error('Chưa tải hợp đồng');

@@ -4,7 +4,7 @@ import styles from './ManageRentalEquipmentPage.module.css';
 import {ManageRentalEquipmentDetailModal} from './ManageRentalEquipmentDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {bookingMaterialListSelector, isLoadingMaterial} from '../../redux/selectors';
-import {getBookingMaterial} from '../../redux/slices/materialSlice';
+import {getBookingMaterial, updateBookingMaterialStatus} from '../../redux/slices/materialSlice';
 import {
 	calculateDaysDifference,
 	capitalizeFirstLetter,
@@ -114,22 +114,22 @@ export const ManageRentalEquipmentPage = () => {
 	const handleUpdateBookingMaterial = (body) => {
 		console.log(body);
 
-		// const hideLoading = message.loading('Đang xử lý...', 0);
-		// dispatch(updateToUsedServiceSpecific(body))
-		// 	.then((res) => {
-		// 		hideLoading();
-		// 		if (res.payload.statusCode === 200) {
-		// 			fetchServiceList(1);
-		// 			handleModalClose();
-		// 			message.success('Đã cập nhật');
-		// 		} else {
-		// 			message.error('Có lỗi trong quá trình cập nhật');
-		// 		}
-		// 	})
-		// 	.catch(() => {
-		// 		hideLoading();
-		// 		message.error('Có lỗi trong quá trình cập nhật');
-		// 	});
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(updateBookingMaterialStatus(body))
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					fetchBookingMaterialList(1);
+					handleModalClose();
+					message.success('Đã cập nhật');
+				} else {
+					message.error('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
 	};
 
 	const handleRowClick = (record) => {
