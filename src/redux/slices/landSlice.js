@@ -197,7 +197,7 @@ export const updateBooking = createAsyncThunk(
 				is_schedule,
 				contract_image,
 				reason_for_reject,
-				payment_frequency,
+				// payment_frequency,
 				status,
 			});
 			console.log(response.data.metadata);

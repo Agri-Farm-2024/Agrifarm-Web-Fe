@@ -11,10 +11,11 @@ const statusMapping = {
 
 const paymentFrequencyMapping = {
 	single: 'Một lần',
-	schedule: 'Theo lịch trình',
+	multiple: 'Nhiều lần',
 };
 
 export const LandLeaseRequestDetailModal = ({selectedRequest, handleModalClose, isModalOpen}) => {
+	console.log('LandLeaseRequestDetailModal: ' + JSON.stringify(selectedRequest));
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết yêu cầu thuê đất</span>}
@@ -60,9 +61,9 @@ export const LandLeaseRequestDetailModal = ({selectedRequest, handleModalClose, 
 					<Descriptions.Item label="Tiền Đặt Cọc">
 						{formatNumber(selectedRequest.price_deposit)} VND
 					</Descriptions.Item>
-					<Descriptions.Item label="Tổng Giá">
+					{/* <Descriptions.Item label="Tổng Giá">
 						{formatNumber(selectedRequest.total_price)} VND
-					</Descriptions.Item>
+					</Descriptions.Item> */}
 					<Descriptions.Item label="Mục Đích Thuê">
 						{selectedRequest.purpose_rental}
 					</Descriptions.Item>
