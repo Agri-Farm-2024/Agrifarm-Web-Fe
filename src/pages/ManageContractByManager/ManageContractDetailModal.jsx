@@ -50,7 +50,7 @@ export const ManageContractDetailModal = ({
 	const contract = {
 		createAt: selectedBooking?.created_at,
 		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân',
-		landrenter: selectedBooking?.land_renter?.full_name,
+		landrenter: selectedBooking?.land_renter,
 		totalMonth: selectedBooking?.total_month,
 		purpose: selectedBooking?.purpose_rental,
 		area: selectedBooking?.land?.acreage_land,
