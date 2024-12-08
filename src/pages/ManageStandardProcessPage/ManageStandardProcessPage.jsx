@@ -8,7 +8,7 @@ import {ManageStandardProcessCreateRequestModal} from './ManageStandardProcessCr
 import {useDispatch, useSelector} from 'react-redux';
 import {isLoadingProcess, standardProcessListSelector} from '../../redux/selectors';
 import {confirmProcess, getStandardProcessList} from '../../redux/slices/processSlice';
-import {formatDate} from '../../utils';
+import {capitalizeFirstLetter, formatDate} from '../../utils';
 import {RejectStandardProcessModal} from './RejectStandardProcessModal';
 import {toast} from 'react-toastify';
 
@@ -150,12 +150,15 @@ export const ManageStandardProcessPage = () => {
 			title: 'Tên quy trình',
 			dataIndex: 'name',
 			key: 'name',
+			render: (name) => <p>{capitalizeFirstLetter(name)}</p>,
 		},
 		{
 			title: 'Giống cây',
 			dataIndex: 'plantName',
 			key: 'plantName',
-			render: (_, record) => <p>{record?.plant_season?.plant?.name}</p>,
+			render: (_, record) => (
+				<p>{capitalizeFirstLetter(record?.plant_season?.plant?.name)}</p>
+			),
 		},
 
 		{

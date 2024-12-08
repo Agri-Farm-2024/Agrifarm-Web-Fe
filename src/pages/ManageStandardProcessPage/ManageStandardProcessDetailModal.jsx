@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {Descriptions, Image, Modal, Tag} from 'antd';
-import {formatDate, formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatDate, formatNumber} from '../../utils';
 import {imageExporter} from '../../assets/images';
 
 const API = 'https://api.agrifarm.site';
@@ -14,14 +14,28 @@ export const ManageStandardProcessDetailModal = ({
 
 	useEffect(() => {
 		if (selectedProcess) {
-			let newArr = {
+			let sortStage = {
 				...selectedProcess,
 				process_standard_stage: [...selectedProcess.process_standard_stage].sort(
 					(a, b) => a.stage_numberic_order - b.stage_numberic_order
 				),
 			};
 
-			setProcessDetail(newArr);
+			let sortStageContent = {
+				...sortStage,
+				process_standard_stage: [...sortStage.process_standard_stage].map(
+					(stage, index) => {
+						return {
+							...stage,
+							process_standard_stage_content: [
+								...stage?.process_standard_stage_content,
+							].sort((a, b) => a.content_numberic_order - b.content_numberic_order),
+						};
+					}
+				),
+			};
+
+			setProcessDetail(sortStageContent);
 		}
 	}, [selectedProcess]);
 	function unitMaterialMapping(unit) {
@@ -45,12 +59,12 @@ export const ManageStandardProcessDetailModal = ({
 		{
 			key: 'processName',
 			label: 'Tên quy trình',
-			children: <p>{processDetail.name}</p>,
+			children: <p>{capitalizeFirstLetter(processDetail.name)}</p>,
 		},
 		{
 			key: 'plant',
 			label: 'Giống cây',
-			children: <p>{processDetail.plant_season?.plant?.name}</p>,
+			children: <p>{capitalizeFirstLetter(processDetail.plant_season?.plant?.name)}</p>,
 		},
 		{
 			key: 'plantSeason',
@@ -109,7 +123,10 @@ export const ManageStandardProcessDetailModal = ({
 											style={{paddingLeft: 20}}
 											className={styles.bookingItem}
 										>
-											<p className={styles.title}>
+											<p
+												className={[styles.title]}
+												style={{fontWeight: 'bold'}}
+											>
 												{`Ngày ${action.time_start == action.time_end ? action.time_start : `${action.time_start} - ngày ${action.time_end}`}: ${action.title}`}
 											</p>
 											<p className={styles.content}>{action.content}</p>
@@ -155,7 +172,7 @@ export const ManageStandardProcessDetailModal = ({
 															}}
 															fallback={imageExporter.placeHolderImg}
 														/>
-														<p>{`${material.material.name} - ${material.quantity} ${unitMaterialMapping(material.material.unit)}`}</p>
+														<p>{`${capitalizeFirstLetter(material.material.name)} - ${material.quantity} ${unitMaterialMapping(material.material.unit)}`}</p>
 													</div>
 												</li>
 											</ul>
@@ -175,17 +192,24 @@ export const ManageStandardProcessDetailModal = ({
 			onCancel={handleModalClose}
 			okButtonProps={{style: {display: 'none'}}}
 			centered
-			width={1000}
+			width={1200}
 		>
-			{processDetail && (
-				<Descriptions
-					style={{marginTop: 20}}
-					labelStyle={{width: '15rem', fontWeight: 'bold'}}
-					column={1}
-					bordered
-					items={detailItems}
-				/>
-			)}
+			<div
+				style={{
+					height: 650,
+					overflowY: 'auto',
+				}}
+			>
+				{processDetail && (
+					<Descriptions
+						style={{marginTop: 20}}
+						labelStyle={{width: '15rem', fontWeight: 'bold'}}
+						column={1}
+						bordered
+						items={detailItems}
+					/>
+				)}
+			</div>
 		</Modal>
 	);
 };

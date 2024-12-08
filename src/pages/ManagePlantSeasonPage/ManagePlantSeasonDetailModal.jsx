@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
 import {Descriptions, Modal, Tag} from 'antd';
-import {formatDate, formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatDate, formatNumber} from '../../utils';
 
 export const ManagePlantSeasonDetailModal = ({
 	selectedPlantSeason,
@@ -17,7 +17,7 @@ export const ManagePlantSeasonDetailModal = ({
 		{
 			key: 'plant',
 			label: 'Loại cây',
-			children: <p>{selectedPlantSeason?.plant?.name}</p>,
+			children: <p>{capitalizeFirstLetter(selectedPlantSeason?.plant?.name)}</p>,
 		},
 		{
 			key: 'type',

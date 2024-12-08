@@ -106,8 +106,13 @@ export const ManageRentalEquipmentDetailModal = ({
 							showUploadList={false}
 							beforeUpload={() => false} // Prevent automatic upload
 							onChange={handleImageUpload}
+							disabled={selectedMaterial.status !== 'pending_sign'}
 						>
-							<Button type="primary" icon={<UploadOutlined />}>
+							<Button
+								disabled={selectedMaterial.status !== 'pending_sign'}
+								type="primary"
+								icon={<UploadOutlined />}
+							>
 								Tải hợp đồng
 							</Button>
 						</Upload>

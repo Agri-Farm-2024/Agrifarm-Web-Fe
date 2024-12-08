@@ -11,11 +11,17 @@ import {
 	formatDate,
 	formatNumber,
 } from '../../utils';
+import {ReloadOutlined} from '@ant-design/icons';
 
 export const ManageRentalEquipmentPage = () => {
 	const columns = [
 		{
-			title: '#',
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => fetchBookingMaterialList(1)}
+				/>
+			),
 			dataIndex: 'index',
 			key: 'index',
 			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,

@@ -1,18 +1,22 @@
 import React from 'react';
 import {Descriptions, Modal, Tag} from 'antd';
-import {formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatNumber} from '../../utils';
 
 export const ManagePlantDetailModal = ({selectedPlant, handleModalClose, isModalOpen}) => {
 	const detailItems = selectedPlant && [
 		{
 			key: 'plant',
 			label: 'Loại cây',
-			children: <p>{selectedPlant.name}</p>,
+			children: <p>{capitalizeFirstLetter(selectedPlant.name)}</p>,
 		},
 		{
 			key: 'land_type_id',
 			label: 'Loại đất phù hợp',
-			children: <p>{selectedPlant.land_type && selectedPlant.land_type.name}</p>,
+			children: (
+				<p>
+					{capitalizeFirstLetter(selectedPlant.land_type && selectedPlant.land_type.name)}
+				</p>
+			),
 		},
 		{
 			key: 'status',

@@ -4,7 +4,7 @@ import styles from './ManagePlantSeasonPage.module.css';
 import {ManagePlantSeasonDetailModal} from './ManagePlantSeasonDetailModal';
 import {CaretRightOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {ManagePlantSeasonUpdateModal} from './ManagePlantSeasonUpdateModal';
-import {formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatNumber} from '../../utils';
 import {ManagePlantSeasonCreateModal} from './ManagePlantSeasonCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {deletePlantSeason, getPlantSeasonList} from '../../redux/slices/plantSlice';
@@ -101,7 +101,7 @@ export const ManagePlantSeasonPage = () => {
 			title: 'Loại cây',
 			dataIndex: 'plant',
 			key: 'plant',
-			render: (plant) => <>{plant.name}</>,
+			render: (plant) => <>{capitalizeFirstLetter(plant.name)}</>,
 		},
 		{
 			title: 'Tháng bắt đầu',

@@ -1,7 +1,7 @@
 import {Button, DatePicker, Input, Popconfirm, Select, Space, Table, Tag, message} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantPage.module.css';
-import {formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatNumber} from '../../utils';
 import {ManagePlantDetailModal} from './ManagePlantDetailModal';
 import {DeleteOutlined, EditOutlined, RetweetOutlined} from '@ant-design/icons';
 import {ManagePlantUpdateModal} from './ManagePlantUpdateModal';
@@ -56,6 +56,7 @@ export const ManagePlantPage = () => {
 			title: 'Tên giống cây',
 			dataIndex: 'name',
 			key: 'name',
+			render: (name) => <p>{capitalizeFirstLetter(name)}</p>,
 		},
 		{
 			title: 'Loại đất phù hợp',
@@ -64,7 +65,7 @@ export const ManagePlantPage = () => {
 			render: (_, record) => (
 				<>
 					{record.land_type_id && record.land_type && record.land_type.name && (
-						<p>{record.land_type.name}</p>
+						<p>{capitalizeFirstLetter(record.land_type.name)}</p>
 					)}
 				</>
 			),
