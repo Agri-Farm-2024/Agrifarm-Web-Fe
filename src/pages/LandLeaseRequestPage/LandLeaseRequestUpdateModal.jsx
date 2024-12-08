@@ -87,12 +87,12 @@ export const LandLeaseRequestUpdateModal = ({
 								{formatNumber(selectedRequest.price_deposit)} VND
 							</p>
 						</div>
-						<div className={styles.bookingItem}>
+						{/* <div className={styles.bookingItem}>
 							<p className={styles.title}>Tổng Giá:</p>
 							<p className={styles.content}>
 								{formatNumber(selectedRequest.total_price)} VND
 							</p>
-						</div>
+						</div> */}
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Mục Đích Thuê:</p>
 							<p className={styles.content}>{selectedRequest.purpose_rental}</p>

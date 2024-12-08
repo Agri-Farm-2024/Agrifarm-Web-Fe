@@ -58,7 +58,7 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 					<Descriptions.Item label="Ngày gửi yêu cầu">
 						{formatDate(selectedPurchaseRequest.created_at)}
 					</Descriptions.Item>
-					{selectedPurchaseRequest?.task?.report?.quality_plant_expect && (
+					{selectedPurchaseRequest?.task?.report?.quality_plant_expect ? (
 						<>
 							<Descriptions.Item label="Số lượng dự kiến">
 								{selectedPurchaseRequest?.task?.report?.mass_plant_expect} Kg
@@ -69,8 +69,7 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 								lượng
 							</Descriptions.Item>
 						</>
-					)}
-					{selectedPurchaseRequest?.task?.report?.quality_plant && (
+					) : (
 						<>
 							<Descriptions.Item label="Số lượng thu hoạch">
 								{selectedPurchaseRequest?.task?.report?.mass_plant} Kg
@@ -81,6 +80,17 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							</Descriptions.Item>
 						</>
 					)}
+					{/* {selectedPurchaseRequest?.task?.report?.quality_plant && (
+						<>
+							<Descriptions.Item label="Số lượng thu hoạch">
+								{selectedPurchaseRequest?.task?.report?.mass_plant} Kg
+							</Descriptions.Item>
+
+							<Descriptions.Item label="Chất lượng thu hoạch">
+								{selectedPurchaseRequest?.task?.report?.quality_plant}% chất lượng
+							</Descriptions.Item>
+						</>
+					)} */}
 					<Descriptions.Item label="Nhân viên thu mua">
 						{selectedPurchaseRequest?.task?.assign_to?.full_name
 							? selectedPurchaseRequest?.task?.assign_to?.full_name

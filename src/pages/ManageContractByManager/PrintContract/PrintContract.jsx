@@ -20,7 +20,9 @@ const PrintContract = forwardRef((props, ref) => {
 			</p>
 
 			<h2 style={{textAlign: 'center'}}>HỢP ĐỒNG THUÊ ĐẤT</h2>
-			<p style={{textAlign: 'justify'}}>Căn cứ Luật Đất đai ngày 29 tháng 11 năm 2013;</p>
+			<p style={{textAlign: 'justify'}}>
+				Căn cứ Luật Đất đai ngày 29Danh sách hợp đồng tháng 11 năm 2013;
+			</p>
 			<p style={{textAlign: 'justify'}}>
 				Căn cứ Nghị định số 43/2014/NĐ-CP ngày 15 tháng 5 năm 2014 của Chính phủ quy định
 				chi tiết thi hành một số điều của Luật Đất đai;
@@ -49,14 +51,8 @@ const PrintContract = forwardRef((props, ref) => {
 			<h3 style={{textAlign: 'left'}}>II. Bên thuê đất:</h3>
 			<p>
 				<strong>Tên: </strong>
-				{contract.landrenter}
+				{contract.landrenter.full_name}
 			</p>
-			{/* <p>
-				<strong>Địa chỉ: </strong>123 Đường Nguyễn Văn Cừ, TP HCM
-			</p>
-			<p>
-				<strong>Điện thoại: </strong>0912 345 678
-			</p> */}
 
 			<h3 style={{textAlign: 'left'}}>III. Các điều khoản của hợp đồng thuê đất:</h3>
 
@@ -111,6 +107,19 @@ const PrintContract = forwardRef((props, ref) => {
 			<p>
 				Hợp đồng có hiệu lực từ ngày ký và được lập thành 04 bản, mỗi bên giữ một bản và gửi
 				đến cơ quan thuế, kho bạc nhà nước nơi thu tiền thuê đất.
+			</p>
+
+			<h4 style={{textAlign: 'left'}}>Điều 9. Điều khoản bảo mật:</h4>
+			<p>
+				Các bên cam kết bảo mật thông tin về hợp đồng, các điều khoản trong hợp đồng cũng
+				như thông tin tài chính liên quan đến hợp đồng thuê đất này.
+			</p>
+
+			<h4 style={{textAlign: 'left'}}>Điều 10. Giải quyết tranh chấp:</h4>
+			<p>
+				Mọi tranh chấp phát sinh từ hợp đồng này sẽ được giải quyết qua thương lượng. Nếu
+				không thể thương lượng thành công, tranh chấp sẽ được giải quyết tại Tòa án có thẩm
+				quyền.
 			</p>
 
 			<div style={{display: 'flex', justifyContent: 'space-between', marginTop: '30px'}}>

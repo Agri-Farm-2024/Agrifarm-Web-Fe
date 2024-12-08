@@ -159,7 +159,7 @@ export const BookingLandDetailModal = ({
 							<p className={styles.content}>
 								{selectedBooking.payment_frequency === 'single'
 									? 'Một lần'
-									: 'Theo lịch trình'}
+									: 'Nhiều lần'}
 							</p>
 						</div>
 						<div className={styles.bookingItem}>

@@ -170,6 +170,9 @@ export default function ManagerDashBoardPages() {
 				fill: '#3f51b5',
 			},
 		},
+		style: {
+			lineWidth: 3,
+		},
 		smooth: true,
 	};
 
@@ -302,10 +305,11 @@ export default function ManagerDashBoardPages() {
 					<Card
 						title="Thông báo"
 						style={{
+							overflowY: 'scroll',
 							marginBottom: 20,
-							height: 1000,
+							height: 2000,
 							scrollBehavior: 'smooth',
-							overflow: 'scroll-y',
+							borderBottom: '1px solid',
 						}}
 					>
 						<List
