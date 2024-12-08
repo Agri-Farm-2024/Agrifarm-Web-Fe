@@ -252,9 +252,10 @@ export const ManageServicesInusePage = () => {
 			dataIndex: 'assignExpert',
 			key: 'assignExpert',
 			render: (_, record) =>
-				record?.process_technical_specific &&
-				record?.process_technical_specific?.expert && (
+				record?.process_technical_specific && record?.process_technical_specific?.expert ? (
 					<p>{record?.process_technical_specific?.expert?.full_name}</p>
+				) : (
+					<p>Chưa có</p>
 				),
 		},
 		{
