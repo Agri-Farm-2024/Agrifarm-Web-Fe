@@ -357,7 +357,7 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 							></Button>
 						</Popconfirm>
 					</Tooltip>
-					<Tooltip title="Từ chối">
+					{/* <Tooltip title="Từ chối">
 						<Popconfirm
 							onClick={(e) => e.stopPropagation()}
 							title="Từ chối yêu cầu"
@@ -374,7 +374,7 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 								icon={<CloseOutlined />}
 							></Button>
 						</Popconfirm>
-					</Tooltip>
+					</Tooltip> */}
 				</Space>
 			),
 		},
