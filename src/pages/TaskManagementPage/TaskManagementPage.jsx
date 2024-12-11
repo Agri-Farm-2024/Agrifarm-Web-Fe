@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Button, Space, Select, Tag, Popconfirm, message} from 'antd';
 import styles from './TaskManagementPage.module.css';
-import {CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {
+	CheckOutlined,
+	CloseOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import {TaskManagementDetailModal} from './TaskManagementDetailModal';
 import {TaskManagementAssignModal} from './TaskManagementAssignModal';
 import {TaskManagementAddModal} from './TaskManagementAddModal';
@@ -222,10 +228,23 @@ export const TaskManagementPage = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchTaskList(1);
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'ID Nhiệm Vụ',
 			dataIndex: 'request_id',
 			key: 'request_id',
-			render: (text) => <a>{text}</a>,
+			render: (text) => <>{text}</>,
 		},
 		// {
 		// 	title: 'ID Lô Đất',

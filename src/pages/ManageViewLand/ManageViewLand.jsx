@@ -7,6 +7,7 @@ import {ManageViewLandDetailModal} from './ManageViewLandDetailModal';
 import {getListOfStaff} from '../../redux/slices/userSlice';
 import {assignForTask} from '../../redux/slices/requestSlice';
 import {formatDateToVN, formatTimeViewLand} from '../../utils';
+import {ReloadOutlined} from '@ant-design/icons';
 
 const {Option} = Select;
 
@@ -63,10 +64,23 @@ export const ManageViewLand = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchRequests(currentPage, filterStatus, filterStaff);
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'Khách Hàng',
 			dataIndex: 'guest_full_name',
 			key: 'guest_full_name',
-			render: (text) => <a>{text}</a>,
+			render: (text) => <>{text}</>,
 		},
 		{
 			title: 'Email',

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import styles from './ManageLandTypePage.module.css';
 import {formatDate, shortenText} from '../../utils';
 import {ManageLandTypeDetailModal} from './ManageLandTypeDetailModal';
-import {EditOutlined} from '@ant-design/icons';
+import {EditOutlined, ReloadOutlined} from '@ant-design/icons';
 import {ManageLandTypeUpdateModal} from './ManageLandTypeUpdateModal';
 import {ManageLandTypeCreateModal} from './ManageLandTypeCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
@@ -11,50 +11,6 @@ import {getLandTypeListSelector, isLoadingLandSelector} from '../../redux/select
 import {getLandType} from '../../redux/slices/landSlice';
 
 export const ManageLandTypePage = () => {
-	const columns = [
-		{
-			title: '#',
-			dataIndex: 'index',
-			key: 'index',
-			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
-		},
-		{
-			title: 'Loại đất',
-			dataIndex: 'name',
-			key: 'name',
-		},
-		{
-			title: 'Mô tả',
-			dataIndex: 'description',
-			key: 'description',
-			render: (description) => <p>{shortenText(description, 100)}</p>,
-		},
-		{
-			title: 'Ngày tạo',
-			dataIndex: 'created_at',
-			key: 'created_at',
-			render: (createAt) => <p>{formatDate(createAt, 0)}</p>,
-		},
-		{
-			title: 'Hành động',
-			key: 'action',
-			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log('CLick');
-							setSelectedLandType(record);
-							setIsUpdateModalOpen(true);
-						}}
-						color="primary"
-						variant="filled"
-						icon={<EditOutlined />}
-					></Button>
-				</Space>
-			),
-		},
-	];
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -104,6 +60,59 @@ export const ManageLandTypePage = () => {
 		setIsCreateModalOpen(false);
 		setSelectedLandType(null);
 	};
+
+	const columns = [
+		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchLandTypeList();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		,
+		{
+			title: 'Loại đất',
+			dataIndex: 'name',
+			key: 'name',
+		},
+		{
+			title: 'Mô tả',
+			dataIndex: 'description',
+			key: 'description',
+			render: (description) => <p>{shortenText(description, 100)}</p>,
+		},
+		{
+			title: 'Ngày tạo',
+			dataIndex: 'created_at',
+			key: 'created_at',
+			render: (createAt) => <p>{formatDate(createAt, 0)}</p>,
+		},
+		{
+			title: 'Hành động',
+			key: 'action',
+			render: (_, record) => (
+				<Space size="middle">
+					<Button
+						onClick={(e) => {
+							e.stopPropagation();
+							console.log('CLick');
+							setSelectedLandType(record);
+							setIsUpdateModalOpen(true);
+						}}
+						color="primary"
+						variant="filled"
+						icon={<EditOutlined />}
+					></Button>
+				</Space>
+			),
+		},
+	];
 	return (
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>

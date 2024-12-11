@@ -2,7 +2,13 @@ import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip, mess
 import React, {useEffect, useState} from 'react';
 import styles from './ManageAgriProductPurchaseRequestPage.module.css';
 import {ManageAgriProductPurchaseRequestDetailModal} from './ManageAgriProductPurchaseRequestDetailModal';
-import {CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {
+	CheckOutlined,
+	CloseOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import {useDispatch, useSelector} from 'react-redux';
 import {approveRequest, getListRequest} from '../../redux/slices/requestSlice';
 import {capitalizeFirstLetter, formatDate, formatNumber} from '../../utils';
@@ -240,6 +246,19 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 		dispatch(getListRequest(params));
 	};
 	const columns = [
+		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchRequestList();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
 		{
 			title: 'Ngày gửi yêu cầu',
 			dataIndex: 'created_at',

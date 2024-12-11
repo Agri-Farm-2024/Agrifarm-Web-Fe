@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAllTransaction} from '../../redux/slices/transactionSlice';
 import {transactionListSelector} from '../../redux/selectors';
 import {formatTimeViewLand} from '../../utils';
+import {ReloadOutlined} from '@ant-design/icons';
 
 const {Option} = Select;
 
@@ -59,10 +60,32 @@ export const ManageTransactionPage = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						dispatch(
+							getAllTransaction({
+								status: filterStatus,
+								type: filterType,
+								page_size: pageSize,
+								page_index: currentPage,
+							})
+						).then((response) => {
+							console.log('Data fetched:', response.payload);
+						});
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'Mã Giao Dịch',
 			dataIndex: 'transaction_code',
 			key: 'transaction_code',
-			render: (transaction) => <a>{transaction}</a>,
+			render: (transaction) => <>{transaction}</>,
 		},
 		{
 			title: 'Tên Khách Hàng',
