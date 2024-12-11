@@ -5,105 +5,7 @@ import {formatNumber} from '../../utils';
 import {BookingLandDetailModal} from './BookingLandDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
-import {SyncOutlined} from '@ant-design/icons';
-
-const columns = [
-	{
-		title: 'Mảnh đất',
-		dataIndex: 'land',
-		key: 'land',
-		render: (land) => <a>{land.name}</a>,
-	},
-	{
-		title: 'Khách Hàng',
-		dataIndex: 'land_renter',
-		key: 'land_renter',
-		render: (landRenter) => <div>{landRenter.full_name}</div>,
-	},
-
-	{
-		title: 'Thời Gian Bắt Đầu',
-		dataIndex: 'time_start',
-		key: 'time_start',
-		render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
-	},
-	{
-		title: 'Thời Gian Kết Thúc',
-		dataIndex: 'time_end',
-		key: 'time_end',
-		render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
-	},
-	{
-		title: 'Trạng thái',
-		key: 'status',
-		dataIndex: 'status',
-		render: (_, {status}) => (
-			<>
-				{status == 'completed' && (
-					<Tag color="green" key={status}>
-						Đang hiệu lực
-					</Tag>
-				)}
-				{status == 'expired' && (
-					<Tag color="default" key={status}>
-						Sắp hết hạn
-					</Tag>
-				)}
-				{status == 'canceled' && (
-					<Tag color="red" key={status}>
-						Chấm dứt
-					</Tag>
-				)}
-				{status == 'pending_contract' && (
-					<Tag color="warning" key={status}>
-						Chờ phê duyệt
-					</Tag>
-				)}
-				{status == 'pending_payment' && (
-					<Tag color="magenta" key={status}>
-						Chờ thanh toán
-					</Tag>
-				)}
-				{status == 'pending_sign' && (
-					<Tag color="cyan" key={status}>
-						Chờ ký tên
-					</Tag>
-				)}
-				{status == 'rejected' && (
-					<Tag color="red" key={status}>
-						Hủy yêu cầu
-					</Tag>
-				)}
-			</>
-		),
-	},
-	{
-		title: 'Chi phí mỗi tháng',
-		dataIndex: 'price_per_month',
-		key: 'price_per_month',
-		render: (text) => <>{formatNumber(text)} VND</>,
-	},
-	{
-		title: 'Ghi chú',
-		dataIndex: 'price_per_month',
-		key: 'price_per_month',
-		render: (_, record) => (
-			<p>
-				{record.extends?.filter((item) => item.status === 'pending_sign').length >= 1 ? (
-					<Tag icon={<SyncOutlined spin />} color="warning">
-						Xử lí gia hạn
-					</Tag>
-				) : record.status === 'pending_sign' ? (
-					<Tag icon={<SyncOutlined spin />} color="warning">
-						Xử lí hợp đồng
-					</Tag>
-				) : (
-					'Không có'
-				)}
-			</p>
-		),
-	},
-];
+import {ReloadOutlined, SyncOutlined} from '@ant-design/icons';
 
 // const data = [
 // 	{
@@ -246,6 +148,118 @@ const BookingLandPage = () => {
 				message.error('Có lỗi trong quá trình cập nhật');
 			});
 	};
+
+	const columns = [
+		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchRequests();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
+			title: 'Mảnh đất',
+			dataIndex: 'land',
+			key: 'land',
+			render: (land) => <>{land.name}</>,
+		},
+		{
+			title: 'Khách Hàng',
+			dataIndex: 'land_renter',
+			key: 'land_renter',
+			render: (landRenter) => <div>{landRenter.full_name}</div>,
+		},
+
+		{
+			title: 'Thời Gian Bắt Đầu',
+			dataIndex: 'time_start',
+			key: 'time_start',
+			render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
+		},
+		{
+			title: 'Thời Gian Kết Thúc',
+			dataIndex: 'time_end',
+			key: 'time_end',
+			render: (text) => <div>{new Date(text).toLocaleDateString()}</div>,
+		},
+		{
+			title: 'Trạng thái',
+			key: 'status',
+			dataIndex: 'status',
+			render: (_, {status}) => (
+				<>
+					{status == 'completed' && (
+						<Tag color="green" key={status}>
+							Đang hiệu lực
+						</Tag>
+					)}
+					{status == 'expired' && (
+						<Tag color="default" key={status}>
+							Sắp hết hạn
+						</Tag>
+					)}
+					{status == 'canceled' && (
+						<Tag color="red" key={status}>
+							Chấm dứt
+						</Tag>
+					)}
+					{status == 'pending_contract' && (
+						<Tag color="warning" key={status}>
+							Chờ phê duyệt
+						</Tag>
+					)}
+					{status == 'pending_payment' && (
+						<Tag color="magenta" key={status}>
+							Chờ thanh toán
+						</Tag>
+					)}
+					{status == 'pending_sign' && (
+						<Tag color="cyan" key={status}>
+							Chờ ký tên
+						</Tag>
+					)}
+					{status == 'rejected' && (
+						<Tag color="red" key={status}>
+							Hủy yêu cầu
+						</Tag>
+					)}
+				</>
+			),
+		},
+		{
+			title: 'Chi phí mỗi tháng',
+			dataIndex: 'price_per_month',
+			key: 'price_per_month',
+			render: (text) => <>{formatNumber(text)} VND</>,
+		},
+		{
+			title: 'Ghi chú',
+			dataIndex: 'price_per_month',
+			key: 'price_per_month',
+			render: (_, record) => (
+				<p>
+					{record.extends?.filter((item) => item.status === 'pending_sign').length >=
+					1 ? (
+						<Tag icon={<SyncOutlined spin />} color="warning">
+							Xử lí gia hạn
+						</Tag>
+					) : record.status === 'pending_sign' ? (
+						<Tag icon={<SyncOutlined spin />} color="warning">
+							Xử lí hợp đồng
+						</Tag>
+					) : (
+						'Không có'
+					)}
+				</p>
+			),
+		},
+	];
 
 	return (
 		<div className={styles.container}>

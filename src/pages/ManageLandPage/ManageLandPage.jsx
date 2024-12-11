@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Select, Button, Space, Tag, Popconfirm} from 'antd';
 import styles from './ManageLandPage.module.css';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, ReloadOutlined} from '@ant-design/icons';
 import {ManageLandDetailModal} from './ManageLandDetailModal';
 import {ManageLandUpdateModal} from './ManageLandUpdateModal';
 import {ManageLandAddModal} from './ManageLandAddModal';
@@ -95,10 +95,23 @@ export const ManageLandPage = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchData();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'Tên Mảnh Đất',
 			dataIndex: 'name',
 			key: 'name',
-			render: (name) => <a>{capitalizeFirstLetter(name)}</a>,
+			render: (name) => <>{capitalizeFirstLetter(name)}</>,
 		},
 		{
 			title: 'Mô tả',

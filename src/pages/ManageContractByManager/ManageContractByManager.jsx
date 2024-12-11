@@ -16,7 +16,7 @@ import {formatNumber} from '../../utils';
 import {ManageContractDetailModal} from './ManageContractDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
-import {CheckOutlined, DeleteOutlined, SyncOutlined} from '@ant-design/icons';
+import {CheckOutlined, DeleteOutlined, ReloadOutlined, SyncOutlined} from '@ant-design/icons';
 
 const data = [
 	{
@@ -187,10 +187,24 @@ const ManageContractByManager = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchRequests();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+
+		{
 			title: 'Mảnh đất',
 			dataIndex: 'land',
 			key: 'land',
-			render: (land) => <a>{land.name}</a>,
+			render: (land) => <>{land.name}</>,
 		},
 		{
 			title: 'Khách Hàng',

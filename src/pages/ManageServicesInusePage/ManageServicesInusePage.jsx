@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Select, Button, Space, Tag, Popconfirm, message} from 'antd';
 import styles from './ManageServicesInusePage.module.css';
-import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, ReloadOutlined} from '@ant-design/icons';
 import {ServicesInuseDetailModal} from './ServicesInuseDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getServiceInUse, updateToUsedServiceSpecific} from '../../redux/slices/serviceSlice';
 import {isLoadingService, serviceInUseListSelector} from '../../redux/selectors';
-import {formatDate} from '../../utils';
+import {capitalizeFirstLetter, formatDate} from '../../utils';
 
 const {Option} = Select;
 
@@ -213,11 +213,27 @@ export const ManageServicesInusePage = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchServiceList(1);
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'Mảnh đất áp dụng',
 			dataIndex: 'service_specific_id',
 			key: 'service_specific_id',
 			render: (_, record) => (
-				<a>{record?.booking_land && record?.booking_land?.land?.name}</a>
+				<>
+					{record?.booking_land &&
+						capitalizeFirstLetter(record?.booking_land?.land?.name)}
+				</>
 			),
 		},
 		{

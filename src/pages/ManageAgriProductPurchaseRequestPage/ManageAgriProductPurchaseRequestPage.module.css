@@ -103,3 +103,12 @@ button {
 .formContainer .inputField {
 	width: 100%;
 }
+
+.reloadBtn {
+	transition: all ease 0.5s;
+}
+
+.reloadBtn:hover {
+	color: #7fb640;
+	rotate: 360deg;
+}

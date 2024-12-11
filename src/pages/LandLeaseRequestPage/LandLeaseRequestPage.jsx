@@ -1,7 +1,13 @@
 import {DatePicker, Input, Table, Button, Space, Popconfirm, Tag, Select, message} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './LandLeaseRequestPage.module.css';
-import {CheckOutlined, DeleteOutlined, EditOutlined, FileAddOutlined} from '@ant-design/icons';
+import {
+	CheckOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	FileAddOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import {formatNumber} from '../../utils';
 import {LandLeaseRequestDetailModal} from './LandLeaseRequestDetailModal';
 import {LandLeaseRequestUpdateModal} from './LandLeaseRequestUpdateModal';
@@ -111,10 +117,23 @@ export const LandLeaseRequestPage = () => {
 
 	const columns = [
 		{
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchRequests();
+					}}
+				/>
+			),
+			dataIndex: 'index',
+			key: 'index',
+			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
+		},
+		{
 			title: 'Khách Hàng',
 			dataIndex: 'land_renter',
 			key: 'land_renter',
-			render: (landRenter) => <a style={{textAlign: 'center'}}>{landRenter.full_name}</a>,
+			render: (landRenter) => <div style={{textAlign: 'center'}}>{landRenter.full_name}</div>,
 		},
 		{
 			title: 'Mảnh đất',
