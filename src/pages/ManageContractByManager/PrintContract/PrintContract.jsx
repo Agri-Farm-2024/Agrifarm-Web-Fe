@@ -16,7 +16,17 @@ const PrintContract = forwardRef((props, ref) => {
 				Độc lập - Tự do - Hạnh phúc
 			</p>
 			<p style={{textAlign: 'right'}}>
-				<strong>Đồng Nai, {formatDateToVN(contract?.createAt)}</strong>
+				<strong>
+					Đồng Nai,{' '}
+					<span
+						style={{
+							fontStyle: 'italic',
+						}}
+					>
+						{' '}
+						{formatDateToVN(contract?.createAt)}
+					</span>
+				</strong>
 			</p>
 
 			<h2 style={{textAlign: 'center'}}>HỢP ĐỒNG THUÊ ĐẤT</h2>
@@ -32,14 +42,20 @@ const PrintContract = forwardRef((props, ref) => {
 				nguyên và Môi trường quy định về hồ sơ giao đất, cho thuê đất, chuyển mục đích sử
 				dụng đất, thu hồi đất;
 			</p>
-			<p style={{textAlign: 'justify'}}>
+			{/* <p style={{textAlign: 'justify'}}>
 				Căn cứ Quyết định số………….ngày…tháng …năm…của Ủy ban nhân dân……..về việc cho thuê
 				đất……………..
-			</p>
+			</p> */}
 
 			<h3 style={{textAlign: 'left'}}>I. Bên cho thuê đất:</h3>
 			<p>
-				<strong>{contract.farmOwner} </strong>
+				<strong
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{contract.farmOwner}{' '}
+				</strong>
 			</p>
 			<p>
 				<strong>Địa chỉ: </strong>268 Ấp Trung Tâm, Thanh Bình, Trảng Bom, Đồng Nai
@@ -51,39 +67,131 @@ const PrintContract = forwardRef((props, ref) => {
 			<h3 style={{textAlign: 'left'}}>II. Bên thuê đất:</h3>
 			<p>
 				<strong>Tên: </strong>
-				{contract.landrenter.full_name}
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{contract.landrenter.full_name}
+				</span>
 			</p>
 
 			<h3 style={{textAlign: 'left'}}>III. Các điều khoản của hợp đồng thuê đất:</h3>
 
 			<h4 style={{textAlign: 'left'}}>Điều 1. Diện tích đất cho thuê:</h4>
 			<p>
-				1. Diện tích đất: {contract.area} m² (ghi rõ bằng số và bằng chữ, đơn vị là mét
-				vuông)
+				1. Diện tích đất:
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{contract.area}
+				</span>
+				m² (ghi rõ bằng số và bằng chữ, đơn vị là mét vuông)
 			</p>
-			<p>2. Vị trí: {contract.position} của trang trại</p>
-			<p>3. Thời hạn thuê đất: {contract.totalMonth}</p>
-			<p>4. Mục đích sử dụng đất thuê: Làm ruộng</p>
+			<p>
+				2. Vị trí:
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{contract.position}
+				</span>{' '}
+				của trang trại
+			</p>
+			<p>
+				3. Thời hạn thuê đất:
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{contract.totalMonth}
+				</span>{' '}
+				tháng
+			</p>
+			<p>
+				4. Mục đích sử dụng đất thuê:
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{contract.purpose}
+				</span>
+			</p>
 
 			<h4 style={{textAlign: 'left'}}>Điều 2. Tiền thuê đất:</h4>
-			<p>1. Giá thuê đất là {formatNumber(contract.pricePerMonth)} VND</p>
+			<p>
+				1. Giá thuê đất là
+				<span
+					style={{
+						fontStyle: 'italic',
+					}}
+				>
+					{' '}
+					{formatNumber(contract.pricePerMonth)}
+				</span>{' '}
+				VND
+			</p>
 			<p>3. Phương thức thanh toán: Chuyển Khoản</p>
 			<p>4. Nơi nộp tiền: MB Bank</p>
 
-			<h4 style={{textAlign: 'left'}}>Điều 3. Quyền và nghĩa vụ của các bên:</h4>
+			<h4 style={{textAlign: 'left'}}>
+				Điều 3. Việc sử dụng đất trên khu đất thuê phải phù hợp với mục đích sử dụng đất đã
+				ghi tại Điều 1 của Hợp đồng này 6
+			</h4>
+
+			<h4 style={{textAlign: 'left'}}>Điều 4.Quyền và nghĩa vụ của các bên :</h4>
 			<p>
-				1. Bên cho thuê đất cam kết bảo đảm việc sử dụng đất của bên thuê trong suốt thời
-				gian thuê.
+				1.Bên cho thuê đất bảo đảm việc sử dụng đất của Bên thuê đất trong thời gian thực
+				hiện hợp đồng, không được chuyển giao quyền sử dụng khu đất trên cho bên thứ ba,
+				chấp hành quyết định thu hồi đất theo quy định của pháp luật về đất đai;
 			</p>
-			<p>2. Bên thuê đất có quyền và nghĩa vụ theo quy định của pháp luật.</p>
 			<p>
-				3. Trong thời gian hợp đồng còn hiệu lực, nếu có gia hạn hợp đồng, yêu cầu phải được
-				gửi trước 2 tháng.
+				2. Trong thời gian thực hiện hợp đồng, Bên thuê đất có các quyền và nghĩa vụ theo
+				quy định của pháp luật về đất đai.
+			</p>
+			<p>
+				Trường hợp Bên thuê đất bị thay đổi do chia tách, sáp nhập, chuyển đổi doanh nghiệp,
+				bán tài sản gắn liền với đất thuê thì tổ chức, cá nhân được hình thành hợp pháp sau
+				khi Bên thuê đất bị thay đổi sẽ thực hiện tiếp quyền và nghĩa vụ của Bên thuê đất
+				trong thời gian còn lại của Hợp đồng này.
 			</p>
 
-			<h4 style={{textAlign: 'left'}}>Điều 4. Vi phạm hợp đồng:</h4>
-			<p>1. Bên thuê đất phải bồi thường nếu làm hư đất canh tác.</p>
+			<p>
+				3.Trong thời hạn hợp đồng còn hiệu lực thi hành Nếu bên thuê đất có gia hạn hợp
+				đồng: Nếu muốn tiếp tục thuê đất sau khi hợp đồng kết thúc, yêu cầu phải được gửi
+				trước 2 tháng.Trường hợp có bên thứ ba thuê sau khi hết hợp đồng thì sẽ gửi yêu cầu
+				cho bên thuê đất thuê là có muốn thuê tiếp sau khi hết hợp đồng hay không.Bên cho
+				thuê sẽ xem tình trạng đất có phù hợp cho gia hạn hay không(xử lí trong 1 tuần từ
+				ngày nhận đơn yêu cầu)
+			</p>
+			<p>
+				4. Bên thuê đất không có quyền chuyển nhượng đất cho bên thứ ba trong thời gian hợp
+				động còn hiệu lực.
+			</p>
 
+			<p>
+				5. Vi phạm hợp đồng: Nếu bên thuê đất làm hư đất canh tác thì phải đền bù theo quy
+				định tiền do bên cho thuê quyết định
+			</p>
+			<p>
+				6. Thời gian thuê: Nếu chọn quy trinh chuẩn VietGap sẽ thuê ngắn hạn Nếu tự canh tác
+				sẽ tùy thời gian thuê của người thuê đất .
+			</p>
+
+			<p>
+				7.Thu tiền hợp đồng Hợp đồng từ 1 năm trở lên sẽ thu tiền theo mốc (6 tháng thu 1
+				lần). Nếu HĐ 1 năm sẽ thu 1 lần
+			</p>
 			<h4 style={{textAlign: 'left'}}>Điều 5. Chấm dứt hợp đồng:</h4>
 			<p>1. Hợp đồng hết thời hạn thuê và không được gia hạn.</p>
 			<p>

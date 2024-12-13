@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Descriptions, Modal, Tag, Upload, Button, Image, message} from 'antd';
-import {FileImageOutlined, PlusOutlined, UploadOutlined} from '@ant-design/icons';
+import {FileImageOutlined, PlusOutlined, PrinterOutlined, UploadOutlined} from '@ant-design/icons';
 import {convertImageURL, formatDate} from '../../utils';
 import {uploadFile} from '../../services/uploadService';
 import styles from './ManageServicesInusePage.module.css';
+import PrintContract from './PrintContract/PrintContract';
+import {useReactToPrint} from 'react-to-print';
 
 export const ServicesInuseDetailModal = ({
 	selectedService,
@@ -21,6 +23,7 @@ export const ServicesInuseDetailModal = ({
 	const [visibleContract, setVisibleContract] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
 	const [imageAPI, setImageAPI] = useState(null);
+	const contentRef = useRef(null);
 
 	const handleImageUpload = ({file}) => {
 		console.log(file);
@@ -63,6 +66,22 @@ export const ServicesInuseDetailModal = ({
 		handleUpdate(body);
 		setImageAPI(null);
 		setImageFile(null);
+	};
+
+	const handlePrint = useReactToPrint({
+		contentRef,
+		documentTitle: `Hợp_đồng_${selectedService?.service_specific_id}`,
+	});
+
+	const contract = {
+		createAt: selectedService?.created_at,
+		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân',
+		landrenter: selectedService?.land_renter,
+		productName: selectedService?.plant_season?.plant?.name,
+		price: selectedService?.price_purchase_per_kg,
+		area: selectedService?.acreage_land,
+		timeStart: selectedService?.time_start,
+		timeEnd: selectedService?.time_end,
 	};
 
 	const detailItems = selectedService && [
@@ -180,8 +199,8 @@ export const ServicesInuseDetailModal = ({
 			children: (
 				<p>
 					{selectedService.contract_image || imageFile ? (
-						<Button type="primary" onClick={() => setVisibleContract(true)}>
-							Xem hợp đồng
+						<Button type="link" onClick={() => setVisibleContract(true)}>
+							Xem hình ảnh
 						</Button>
 					) : (
 						<Upload
@@ -213,6 +232,25 @@ export const ServicesInuseDetailModal = ({
 							},
 						}}
 					/>
+				</p>
+			),
+		},
+		{
+			key: 'print',
+			label: 'In Hợp đồng',
+			children: (
+				<p>
+					<Button
+						type="primary"
+						onClick={handlePrint}
+						icon={<PrinterOutlined />}
+						color="primary"
+					>
+						In hợp đồng
+					</Button>
+					<div style={{display: 'none'}}>
+						<PrintContract contract={contract} ref={contentRef} />
+					</div>
 				</p>
 			),
 		},

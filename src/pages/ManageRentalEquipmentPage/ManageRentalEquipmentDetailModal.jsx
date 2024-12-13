@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Button, Descriptions, Image, Modal, Tag, Upload, message} from 'antd';
 import {
 	calculateDaysDifference,
@@ -6,8 +6,10 @@ import {
 	convertImageURL,
 	formatNumber,
 } from '../../utils';
-import {UploadOutlined} from '@ant-design/icons';
+import {PrinterOutlined, UploadOutlined} from '@ant-design/icons';
 import {uploadFile} from '../../services/uploadService';
+import {useReactToPrint} from 'react-to-print';
+import PrintContract from './PrintContract/PrintContract';
 
 export const ManageRentalEquipmentDetailModal = ({
 	selectedMaterial,
@@ -18,6 +20,21 @@ export const ManageRentalEquipmentDetailModal = ({
 	const [visibleContract, setVisibleContract] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
 	const [imageAPI, setImageAPI] = useState(null);
+	const contentRef = useRef(null);
+
+	const contract = {
+		createAt: selectedMaterial?.created_at,
+		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân',
+		landrenter: selectedMaterial?.landrenter,
+		productList: selectedMaterial?.booking_material_detail,
+		timeStart: selectedMaterial?.time_start,
+		timeEnd: selectedMaterial?.time_end,
+	};
+
+	const handlePrint = useReactToPrint({
+		contentRef,
+		documentTitle: `Hợp_đồng_${selectedMaterial?.booking_material_id}`,
+	});
 
 	const handleImageUpload = ({file}) => {
 		const hideLoading = message.loading('Đang tải hợp đồng...', 0);
@@ -135,6 +152,25 @@ export const ManageRentalEquipmentDetailModal = ({
 							},
 						}}
 					/>
+				</p>
+			),
+		},
+		{
+			key: 'print',
+			label: 'In Hợp đồng',
+			children: (
+				<p>
+					<Button
+						type="primary"
+						onClick={handlePrint}
+						icon={<PrinterOutlined />}
+						color="primary"
+					>
+						In hợp đồng
+					</Button>
+					<div style={{display: 'none'}}>
+						<PrintContract contract={contract} ref={contentRef} />
+					</div>
 				</p>
 			),
 		},
