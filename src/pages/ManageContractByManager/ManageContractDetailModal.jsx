@@ -300,6 +300,7 @@ export const ManageContractDetailModal = ({
 				handleModalClose={handleCloseExtendsModal}
 				handleModalCloseBooking={handleModalClose}
 				fetchRequests={fetchRequests}
+				selectedBooking={selectedBooking}
 			/>
 		</Modal>
 	);

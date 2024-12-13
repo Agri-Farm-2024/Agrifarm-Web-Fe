@@ -7,11 +7,7 @@ import PrintExtendContract from './PrintExtendContract/PrintExtendContract';
 import {useDispatch} from 'react-redux';
 import {getListOfBooking, updateBookingExtend} from '../../redux/slices/landSlice';
 
-export const ExtendsModal = ({
-	data,
-	handleModalClose,
-	isModalOpen,
-}) => {
+export const ExtendsModal = ({data, handleModalClose, isModalOpen, selectedBooking}) => {
 	const [visibleContract, setVisibleContract] = useState(false);
 	const contentRef = useRef(null);
 	const dispatch = useDispatch();
@@ -20,15 +16,17 @@ export const ExtendsModal = ({
 		documentTitle: `Hợp_đồng_${data?.extend_id}`,
 	});
 
+	// console.log('ExtendsModal: ' + JSON.stringify(data));
+
 	const contract = {
 		createAt: data?.created_at,
-		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân',
-		landrenter: data?.land_renter?.full_name,
+		farmOwner: 'Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân NInh',
+		landrenter: selectedBooking?.land_renter?.full_name,
+		email: selectedBooking?.land_renter?.email,
 		totalMonth: data?.total_month,
-		purpose: data?.purpose_rental,
-		area: data?.land?.acreage_land,
-		position: data?.land?.name,
-		pricePerMonth: data?.land?.price_booking_per_month,
+		area: selectedBooking?.land?.acreage_land,
+		position: selectedBooking?.land?.name,
+		pricePerMonth: data?.price_per_month,
 	};
 
 	const handleApproveBooking = () => {
