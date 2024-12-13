@@ -37,7 +37,7 @@ const PrintContract = forwardRef((props, ref) => {
 
 			<div>
 				<p>
-					<strong>Bên A - BÊN THUÊ:</strong> {contract?.landrenter?.full_name} Ninh
+					<strong>Bên A - BÊN THUÊ:</strong> {contract?.landrenter?.full_name}
 				</p>
 			</div>
 
