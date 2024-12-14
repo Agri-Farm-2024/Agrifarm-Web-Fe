@@ -85,15 +85,17 @@ export const ManagePlantSeasonDetailModal = ({
 			centered
 			width={800}
 		>
-			{selectedPlantSeason && (
-				<Descriptions
-					style={{marginTop: 20}}
-					labelStyle={{width: '15rem', fontWeight: 'bold'}}
-					column={1}
-					bordered
-					items={detailItems}
-				/>
-			)}
+			<div style={{height: 600, overflowY: 'auto'}}>
+				{selectedPlantSeason && (
+					<Descriptions
+						style={{marginTop: 20}}
+						labelStyle={{width: '15rem', fontWeight: 'bold'}}
+						column={1}
+						bordered
+						items={detailItems}
+					/>
+				)}
+			</div>
 		</Modal>
 	);
 };

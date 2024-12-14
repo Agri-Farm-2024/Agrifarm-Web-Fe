@@ -36,11 +36,6 @@
 	width: 50%;
 }
 
-.tableContainer {
-	width: 100%;
-	padding: 0 20px;
-}
-
 button {
 	border: none !important;
 	outline: none !important;
@@ -90,4 +85,147 @@ button {
 
 .formContainer .inputField {
 	width: 100%;
+}
+
+.tableContainer {
+	margin: 0 auto;
+	width: 98%;
+	min-height: 70vh;
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	flex-wrap: nowrap;
+	overflow-x: scroll;
+}
+
+.monthColumn {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	height: max-content;
+	background-color: #fff;
+	box-shadow:
+		rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+		rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.columnHeader {
+	padding: 10px;
+	width: 100%;
+	min-width: 200px;
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.itemContainer {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	height: max-content;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.seasonItem {
+	width: 200px;
+	padding: 10px;
+	box-shadow:
+		rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+		rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+	background-color: #fff;
+	border-radius: 12px;
+	position: relative;
+	cursor: pointer;
+}
+
+.seasonItem p {
+	margin: 5px 0;
+}
+
+.seasonName {
+	font-size: 14px;
+	font-weight: bold;
+	color: #141414;
+}
+
+.seasonType {
+	font-size: 12px;
+	color: #707070;
+}
+
+.tagSize {
+	font-size: 10px;
+}
+
+.actionBar {
+	width: 100%;
+	justify-content: flex-end;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.actionButton {
+	display: none;
+}
+
+.seasonItem:hover .actionButton {
+	display: block;
+}
+
+.addItemBar {
+	width: 200px;
+	padding: 5px;
+	border-radius: 7px;
+	font-size: 14px;
+	color: #707070;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+}
+
+.addItemBar:hover {
+	background-color: #d0d4db;
+}
+
+/* For the entire scrollbar */
+.tableContainer::-webkit-scrollbar {
+	width: 8px; /* Width for vertical scrollbars */
+	height: 8px; /* Height for horizontal scrollbars */
+}
+
+/* The scrollbar track (background) */
+.tableContainer::-webkit-scrollbar-track {
+	background: #f1f1f1; /* Light gray background */
+	border-radius: 8px; /* Rounded corners */
+}
+
+/* The draggable part of the scrollbar */
+.tableContainer::-webkit-scrollbar-thumb {
+	background: #3c603c40; /* Green thumb color */
+	border-radius: 8px; /* Rounded edges for the thumb */
+}
+
+/* For the entire scrollbar */
+.itemContainer::-webkit-scrollbar {
+	width: 5px; /* Width for vertical scrollbars */
+	height: 5px; /* Height for horizontal scrollbars */
+}
+
+/* The scrollbar track (background) */
+.itemContainer::-webkit-scrollbar-track {
+	background: #f1f1f1; /* Light gray background */
+	border-radius: 8px; /* Rounded corners */
+}
+
+/* The draggable part of the scrollbar */
+.itemContainer::-webkit-scrollbar-thumb {
+	background: #c4c9d2; /* thumb color */
+	border-radius: 8px; /* Rounded edges for the thumb */
 }

@@ -30,7 +30,7 @@ const plantTypeOptions = [
 		label: 'Dưa hấu',
 	},
 ];
-export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) => {
+export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, selectMonth}) => {
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 
@@ -146,6 +146,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen}) =>
 			form.resetFields();
 			setPlantPageNumber(1);
 			fetchPlantTypeOptions(1);
+			form.setFieldValue('monthStart', selectMonth);
 		}
 	}, [isModalOpen]);
 	return (
