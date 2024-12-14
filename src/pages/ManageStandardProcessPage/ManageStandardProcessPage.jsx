@@ -271,7 +271,7 @@ export const ManageStandardProcessPage = () => {
 	const [selectedProcess, setSelectedProcess] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
-	const [totalPage, setTotalPage] = useState(10);
+	const [filterStatus, setFilterStatus] = useState('');
 
 	const dispatch = useDispatch();
 
@@ -315,10 +315,12 @@ export const ManageStandardProcessPage = () => {
 	};
 
 	const fetchStandardProcess = (pageIndex) => {
+		console.log('filterStatus: ' + filterStatus);
 		try {
 			const params = {
 				page_index: pageIndex,
 				page_size: pageSize,
+				status: filterStatus,
 			};
 			dispatch(getStandardProcessList(params));
 			setCurrentPage(pageIndex);
@@ -329,7 +331,7 @@ export const ManageStandardProcessPage = () => {
 
 	useEffect(() => {
 		fetchStandardProcess(1);
-	}, []);
+	}, [filterStatus]);
 
 	const handleRowClick = (record) => {
 		console.log('setSelectedProcess', record);
@@ -383,22 +385,29 @@ export const ManageStandardProcessPage = () => {
 							style={{
 								width: '50%',
 							}}
-							allowClear
+							allowClearQuản lý quy trình canh tác chuẩn
 							placeholder="Chọn giống cây"
 							options={plantNameOptions}
 						></Select>
 					</div>
+					*/}
 					<div className={styles.fiterItem}>
 						<span>Lọc theo trạng thái:</span>
 						<Select
-							style={{
-								width: '50%',
-							}}
-							allowClear
+							className={styles.filterInput}
 							placeholder="Chọn trạng thái"
-							options={statusOptions}
-						></Select>
-					</div> */}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setFilterStatus(value);
+							}}
+						>
+							<Option value="">Tất cả</Option>
+							<Option value="pending">Chờ phê duyệt</Option>
+							<Option value="accepted">Có thể sử dụng</Option>
+							<Option value="in_active">Ngưng sử dụng</Option>
+							<Option value="rejected">Không đạt yêu cầu</Option>
+						</Select>
+					</div>
 					<Button
 						type="primary"
 						onClick={() => {

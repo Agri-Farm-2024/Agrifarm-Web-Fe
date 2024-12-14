@@ -169,6 +169,7 @@ export const ManageMaterialPage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
+	const [filterType, setFilterType] = useState('');
 
 	const dispatch = useDispatch();
 
@@ -177,14 +178,16 @@ export const ManageMaterialPage = () => {
 
 	useEffect(() => {
 		fetchMaterialList(1);
-	}, []);
+	}, [filterType]);
 
 	const fetchMaterialList = (pageNumber) => {
+		console.log('filterType: ' + filterType);
 		try {
 			setCurrentPage(pageNumber);
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
+				material_type: filterType,
 			};
 			dispatch(getMaterial(params));
 		} catch (error) {
@@ -232,16 +235,7 @@ export const ManageMaterialPage = () => {
 						<span>Lọc theo tên vật tư:</span>
 						<Input className={styles.filterInput} />
 					</div>
-					<div className={styles.fiterItem}>
-						<span>Lọc theo loại vật tư:</span>
-						<Select
-							style={{
-								width: '50%',
-							}}
-							allowClear
-							placeholder="Chọn loại vật tư"
-							options={materialTypeOptions}
-						></Select>
+					
 					</div>
 					<div className={styles.fiterItem}>
 						<span>Lọc theo trạng thái:</span>
@@ -254,6 +248,22 @@ export const ManageMaterialPage = () => {
 							options={statusOptions}
 						></Select>
 					</div> */}
+					<div className={styles.fiterItem}>
+						<span>Lọc loại vật tư:</span>
+						<Select
+							className={styles.filterInput}
+							placeholder="Chọn loại"
+							onChange={(value) => {
+								setCurrentPage(1);
+								setFilterType(value);
+							}}
+						>
+							<Option value="">Tất cả</Option>
+							<Option value="buy">Bán</Option>
+							<Option value="rent">Cho thuê</Option>
+						</Select>
+					</div>
+
 					<Button
 						type="primary"
 						onClick={() => {
