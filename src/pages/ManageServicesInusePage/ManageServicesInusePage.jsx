@@ -160,13 +160,15 @@ export const ManageServicesInusePage = () => {
 		try {
 			fetchServiceList(1);
 		} catch (error) {}
-	}, []);
+	}, [filterStatus]);
 	const fetchServiceList = (pageNumber) => {
+		console.log('filterStatus: ' + filterStatus);
 		try {
 			setCurrentPage(pageNumber);
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
+				status: filterStatus,
 			};
 			dispatch(getServiceInUse(params));
 		} catch (error) {
@@ -347,6 +349,24 @@ export const ManageServicesInusePage = () => {
 					<Option value="Dang Ninh">Dang Ninh</Option>
 					<Option value="Ba Phuoc">Ba Phuoc</Option>
 				</Select> */}
+				<div className={styles.fiterItem}>
+					<span>Lọc theo trạng thái:</span>
+					<Select
+						className={styles.filterInput}
+						placeholder="Chọn trạng thái"
+						onChange={(value) => {
+							setCurrentPage(1);
+							setFilterStatus(value);
+						}}
+					>
+						<Option value="">Tất cả</Option>
+						<Option value="used">Đang sử dụng</Option>
+						<Option value="pending_payment">Đợi thanh toán</Option>
+						<Option value="pending_sign">Đợi ký</Option>
+						<Option value="expired">Hết hạn</Option>
+						<Option value="canceled">Đã huỷ</Option>
+					</Select>
+				</div>
 			</div>
 
 			<Table

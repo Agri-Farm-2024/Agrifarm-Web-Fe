@@ -121,7 +121,7 @@ export const TaskManagementPage = () => {
 	console.log('requestList', requestList);
 
 	const [filterStatus, setFilterStatus] = useState('');
-	const [filterPriority, setFilterPriority] = useState('');
+	const [filterType, setfilterType] = useState('');
 	const [selectedRequestTask, setselectedRequestTask] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isModalAssignOpen, setIsModalAssignOpen] = useState(false);
@@ -134,14 +134,17 @@ export const TaskManagementPage = () => {
 
 	useEffect(() => {
 		fetchTaskList(1);
-	}, []);
+	}, [filterStatus, filterType]);
 
 	const fetchTaskList = (pageNumber) => {
+		console.log('filterType: ' + filterType);
 		try {
 			setCurrentPage(pageNumber);
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
+				status: filterStatus,
+				type: filterType,
 			};
 			dispatch(getListRequest(params));
 		} catch (error) {
@@ -256,16 +259,24 @@ export const TaskManagementPage = () => {
 			dataIndex: 'type',
 			render: (type) => (
 				<>
-					{type == 'product_purchase' && <Tag color="geekblue">Thu mua</Tag>}
-					{type == 'product_puchase_harvest' && <Tag color="success">Thu hoạch</Tag>}
-					{type == 'cultivate_process_content' && <Tag color="lime">Ghi nhật ký</Tag>}
-					{type == 'technical_support' && <Tag color="volcano">Hỗ trợ kỹ thuật</Tag>}
-					{type == 'create_process_standard' && (
+					{type === 'view_land' && <Tag color="gold">Xem đất</Tag>}
+					{type === 'product_purchase' && <Tag color="geekblue">Thu mua</Tag>}
+					{type === 'product_puchase_harvest' && <Tag color="success">Thu hoạch</Tag>}
+					{type === 'technical_support' && <Tag color="volcano">Hỗ trợ kỹ thuật</Tag>}
+					{type === 'create_process_standard' && (
 						<Tag color="cyan">Tạo quy trình chuẩn</Tag>
 					)}
-					{type == 'material_process_specfic_stage' && (
+					{type === 'report_land' && <Tag color="purple">Báo cáo đất</Tag>}
+					{type === 'report_booking_material' && (
+						<Tag color="magenta">Báo cáo vật tư</Tag>
+					)}
+					{type === 'report_service_specific' && (
+						<Tag color="orange">Báo cáo dịch vụ</Tag>
+					)}
+					{type === 'material_process_specfic_stage' && (
 						<Tag color="pink">Cung cấp vật tư</Tag>
 					)}
+					{type === 'cultivate_process_content' && <Tag color="lime">Ghi nhật ký</Tag>}
 				</>
 			),
 		},
@@ -386,29 +397,49 @@ export const TaskManagementPage = () => {
 				{/* <Button type="primary" onClick={() => setisModalAddOpen(true)}>
 					Thêm nhiệm vụ
 				</Button>
-				<span>Lọc theo độ ưu tiên:</span>
-				<Select
-					placeholder="Chọn Độ Ưu Tiên"
-					onChange={(value) => setFilterPriority(value)}
-					style={{width: '20%', marginRight: 8}}
-				>
-					<Option value="">Tất cả</Option>
-					<Option value="Cao">Cao</Option>
-					<Option value="Trung bình">Trung bình</Option>
-					<Option value="Thấp">Thấp</Option>
-				</Select>
-				<span>Lọc theo trạng thái:</span>
-				<Select
-					placeholder="Chọn Trạng Thái"
-					onChange={(value) => setFilterStatus(value)}
-					style={{width: '20%'}}
-				>
-					<Option value="">Tất cả</Option>
-					<Option value="Hoàn thành">Hoàn thành</Option>
-					<Option value="Chờ xử lý">Chờ xử lý</Option>
-					<Option value="Chờ phân công">Chờ phân công</Option>
-					<Option value="Đang xử lý">Đang xử lý</Option>
-				</Select> */}
+				
+			 */}
+				<div className={styles.fiterItem}>
+					<span>Lọc theo loại yêu cầu:</span>
+					<Select
+						className={styles.filterInput}
+						placeholder="Chọn loại yêu cầu"
+						onChange={(value) => {
+							setCurrentPage(1);
+							setfilterType(value);
+						}}
+					>
+						<Option value="">Tất cả</Option>
+						<Option value="view_land">Xem đất</Option>
+						<Option value="product_purchase">Thu mua</Option>
+						<Option value="product_puchase_harvest">Thu hoạch</Option>
+						<Option value="cultivate_process_content">Ghi nhật ký</Option>
+						<Option value="technical_support">Hỗ trợ kỹ thuật</Option>
+						<Option value="create_process_standard">Tạo quy trình chuẩn</Option>
+						<Option value="report_land">Báo cáo đất</Option>
+						<Option value="report_booking_material">Báo cáo vật tư</Option>
+						<Option value="report_service_specific">Báo cáo dịch vụ</Option>
+						<Option value="material_process_specfic_stage">Cung cấp vật tư</Option>
+					</Select>
+				</div>
+				<div className={styles.fiterItem}>
+					<span>Lọc theo trạng thái:</span>
+					<Select
+						className={styles.filterInput}
+						placeholder="Chọn trạng thái"
+						onChange={(value) => {
+							setCurrentPage(1);
+							setFilterStatus(value);
+						}}
+					>
+						<Option value="">Tất cả</Option>
+						<Option value="assigned">Đã phân công</Option>
+						<Option value="completed">Hoàn thành</Option>
+						<Option value="pending">Đang xử lý</Option>
+						<Option value="pending_approval">Đợi duyệt</Option>
+						<Option value="rejected">Từ chối</Option>
+					</Select>
+				</div>
 			</div>
 
 			<Table
@@ -425,6 +456,7 @@ export const TaskManagementPage = () => {
 					onChange: (page) => {
 						fetchTaskList(page);
 					},
+					showSizeChanger: false,
 				}}
 				rowClassName={(record, index) => (index % 2 === 0 ? styles.evenRow : styles.oddRow)}
 				rowKey="IDTask"

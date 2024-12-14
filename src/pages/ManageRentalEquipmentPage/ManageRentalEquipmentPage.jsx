@@ -1,4 +1,4 @@
-import {Button, Image, Table, Tag, Upload, message} from 'antd';
+import {Button, Image, Select, Table, Tag, Upload, message} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManageRentalEquipmentPage.module.css';
 import {ManageRentalEquipmentDetailModal} from './ManageRentalEquipmentDetailModal';
@@ -93,6 +93,7 @@ export const ManageRentalEquipmentPage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
+	const [filterStatus, setFilterStatus] = useState('');
 
 	const bookingMaterialList = useSelector(bookingMaterialListSelector);
 	const loading = useSelector(isLoadingMaterial);
@@ -102,7 +103,7 @@ export const ManageRentalEquipmentPage = () => {
 
 	useEffect(() => {
 		fetchBookingMaterialList(1);
-	}, []);
+	}, [filterStatus]);
 
 	const fetchBookingMaterialList = (pageNumber) => {
 		try {
@@ -110,6 +111,7 @@ export const ManageRentalEquipmentPage = () => {
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
+				status: filterStatus,
 			};
 			dispatch(getBookingMaterial(params));
 		} catch (error) {
@@ -152,7 +154,25 @@ export const ManageRentalEquipmentPage = () => {
 		<div className={styles.container}>
 			<div className={styles.headerContainer}>
 				<p>Quản lý thiết bị thuê</p>
-				<div className={styles.filterContainer}></div>
+				<div className={styles.filterContainer}>
+					<div className={styles.fiterItem}>
+						<span>Lọc theo trạng thái:</span>
+						<Select
+							className={styles.filterInput}
+							placeholder="Chọn trạng thái"
+							onChange={(value) => {
+								setCurrentPage(1);
+								setFilterStatus(value);
+							}}
+						>
+							<Option value="">Tất cả</Option>
+							<Option value="pending_payment">Chờ thanh toán</Option>
+							<Option value="pending_sign">Chờ ký</Option>
+							<Option value="completed">Đang sử dụng</Option>
+							<Option value="expired">Hết hạn</Option>
+						</Select>
+					</div>
+				</div>
 			</div>
 			<div className={styles.tableContainer}>
 				{bookingMaterialList && (

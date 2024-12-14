@@ -10,18 +10,41 @@
 }
 
 .filterContainer {
-    margin-bottom: 2rem;
+    width: 70%;
     display: flex;
+    float: right;
+    justify-content: end;
     align-items: center;
-    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
-.filterContainer>span {
+/* .filterContainer>span {
     margin-right: 0.5rem;
     margin-left: 1rem;
     font-weight: bold;
     text-align: right;
+} */
+
+
+.headerContainer .filterContainer .fiterItem {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
+.headerContainer .filterContainer .fiterItem>span {
+    margin-right: 0.5rem;
+    width: 50%;
+    font-weight: bold;
+    text-align: right;
+}
+
+.filterContainer .fiterItem .filterInput {
+    width: 50%;
+}
+
 
 .tableContainer {
     width: 100%;

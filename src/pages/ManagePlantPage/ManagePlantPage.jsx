@@ -9,6 +9,7 @@ import {ManagePlantCreateModal} from './ManagePlantCreateModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {deletePlant, getPlantList} from '../../redux/slices/plantSlice';
 import {isLoadingPlant, plantListSelector} from '../../redux/selectors';
+import {getLandType} from '../../redux/slices/landSlice';
 
 const statusOptions = [
 	{
@@ -25,24 +26,24 @@ const statusOptions = [
 	},
 ];
 
-const plantTypeOptions = [
-	{
-		value: 'Rau ăn quả',
-		label: 'Rau ăn quả',
-	},
-	{
-		value: 'Rau ăn củ',
-		label: 'Rau ăn củ',
-	},
-	{
-		value: 'Rau ăn lá',
-		label: 'Rau ăn lá',
-	},
-	{
-		value: 'Cây ăn quả',
-		label: 'Cây ăn quả',
-	},
-];
+// const plantTypeOptions = [
+// 	{
+// 		value: 'Rau ăn quả',
+// 		label: 'Rau ăn quả',
+// 	},
+// 	{
+// 		value: 'Rau ăn củ',
+// 		label: 'Rau ăn củ',
+// 	},
+// 	{
+// 		value: 'Rau ăn lá',
+// 		label: 'Rau ăn lá',
+// 	},
+// 	{
+// 		value: 'Cây ăn quả',
+// 		label: 'Cây ăn quả',
+// 	},
+// ];
 
 export const ManagePlantPage = () => {
 	const columns = [
@@ -133,6 +134,8 @@ export const ManagePlantPage = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
+	const [landTypeOtions, setLandTypeOptions] = useState([]);
+	const [landTypeSelected, setLandTypeSelected] = useState([]);
 
 	const plantList = useSelector(plantListSelector);
 	const loading = useSelector(isLoadingPlant);
@@ -142,19 +145,39 @@ export const ManagePlantPage = () => {
 
 	useEffect(() => {
 		fetchPlantList(1);
-	}, []);
+		fetchLandType();
+	}, [landTypeSelected]);
 
 	const fetchPlantList = (pageNumber) => {
+		console.log('landTypeSelected: ' + landTypeSelected);
 		try {
 			setCurrentPage(pageNumber);
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
+				land_type_id: landTypeSelected,
 			};
 			dispatch(getPlantList(params));
 		} catch (error) {
 			console.log('Error fetching plant list: ' + error);
 		}
+	};
+
+	const fetchLandType = () => {
+		dispatch(getLandType())
+			.then((response) => {
+				console.log('getLandType response:', response);
+				if (response.payload.statusCode === 200) {
+					const optionData = response.payload.metadata.map((landType) => ({
+						label: landType.name,
+						value: landType.land_type_id,
+					}));
+					setLandTypeOptions(optionData);
+				}
+			})
+			.catch((error) => {
+				console.log('getLandType error', error);
+			});
 	};
 
 	const handleRowClick = (record) => {
@@ -226,17 +249,23 @@ export const ManagePlantPage = () => {
 							options={plantTypeOptions}
 						></Select>
 					</div>
+					 */}
 					<div className={styles.fiterItem}>
-						<span>Lọc theo trạng thái:</span>
+						<span>Lọc theo loại đất:</span>
 						<Select
 							style={{
 								width: '50%',
 							}}
 							allowClear
-							placeholder="Chọn trạng thái"
-							options={statusOptions}
+							placeholder="Chọn loại đất"
+							onChange={(value) => {
+								setLandTypeSelected(value);
+								setCurrentPage(1);
+							}}
+							options={landTypeOtions || []}
 						></Select>
-					</div> */}
+					</div>
+
 					<Button
 						type="primary"
 						onClick={() => {
