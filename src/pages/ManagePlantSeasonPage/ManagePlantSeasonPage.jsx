@@ -1,6 +1,7 @@
 import {
 	Button,
 	DatePicker,
+	Empty,
 	Popconfirm,
 	Select,
 	Skeleton,
@@ -399,6 +400,11 @@ export const ManagePlantSeasonPage = () => {
 				paragraph={{rows: 3}}
 			>
 				<div className={styles.tableContainer}>
+					{(!plantSeasonList ||
+						!plantSeasonList.plant_seasons ||
+						plantSeasonList.plant_seasons.length == 0) && (
+						<Empty style={{width: '100%', marginTop: '50px'}} />
+					)}
 					{plantSeasonList &&
 						plantSeasonList.plant_seasons &&
 						plantSeasonList.plant_seasons.length > 0 &&
