@@ -1,8 +1,20 @@
-import {Button, DatePicker, Popconfirm, Select, Space, Table, Tag, Tooltip, message} from 'antd';
+import {
+	Button,
+	DatePicker,
+	Empty,
+	Popconfirm,
+	Select,
+	Skeleton,
+	Space,
+	Table,
+	Tag,
+	Tooltip,
+	message,
+} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './ManagePlantSeasonPage.module.css';
 import {ManagePlantSeasonDetailModal} from './ManagePlantSeasonDetailModal';
-import {CaretRightOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {CaretRightOutlined, DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {ManagePlantSeasonUpdateModal} from './ManagePlantSeasonUpdateModal';
 import {capitalizeFirstLetter, formatNumber} from '../../utils';
 import {ManagePlantSeasonCreateModal} from './ManagePlantSeasonCreateModal';
@@ -86,6 +98,69 @@ const plantTypeOptions = [
 	{
 		value: 'Dưa hấu',
 		label: 'Dưa hấu',
+	},
+];
+
+const months = [
+	{
+		label: 'Tháng 1',
+		value: 1,
+		color: '#f0f3fa',
+	},
+	{
+		label: 'Tháng 2',
+		value: 2,
+		color: '#fff1f0',
+	},
+	{
+		label: 'Tháng 3',
+		value: 3,
+		color: '#fff2e8',
+	},
+	{
+		label: 'Tháng 4',
+		value: 4,
+		color: '#fff7e6',
+	},
+	{
+		label: 'Tháng 5',
+		value: 5,
+		color: '#fffbe6',
+	},
+	{
+		label: 'Tháng 6',
+		value: 6,
+		color: '#fcffe6',
+	},
+	{
+		label: 'Tháng 7',
+		value: 7,
+		color: '#f6ffed',
+	},
+	{
+		label: 'Tháng 8',
+		value: 8,
+		color: '#e6fffb',
+	},
+	{
+		label: 'Tháng 9',
+		value: 9,
+		color: '#e6f4ff',
+	},
+	{
+		label: 'Tháng 10',
+		value: 10,
+		color: '#f0f5ff',
+	},
+	{
+		label: 'Tháng 11',
+		value: 11,
+		color: '#f9f0ff',
+	},
+	{
+		label: 'Tháng 12',
+		value: 12,
+		color: '#fff0f6',
 	},
 ];
 
@@ -207,8 +282,9 @@ export const ManagePlantSeasonPage = () => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [selectedPlantSeason, setSelectedPlantSeason] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
+	const [pageSize, setPageSize] = useState(100);
 	const [totalPage, setTotalPage] = useState(10);
+	const [selectMonth, setSelectMonth] = useState(1);
 
 	const dispatch = useDispatch();
 
@@ -266,7 +342,7 @@ export const ManagePlantSeasonPage = () => {
 	};
 
 	const handleUpdateModalClose = (isUpdateSucess) => {
-		if (isUpdateSucess) {
+		if (isUpdateSucess == true) {
 			fetchPlantSeasonList(currentPage);
 		}
 		setIsUpdateModalOpen(false);
@@ -274,7 +350,7 @@ export const ManagePlantSeasonPage = () => {
 	};
 
 	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
+		if (isCreateSucess == true) {
 			fetchPlantSeasonList(1);
 		}
 		setIsCreateModalOpen(false);
@@ -307,60 +383,148 @@ export const ManagePlantSeasonPage = () => {
 						></Select>
 					</div> */}
 
-					<Button
+					{/* <Button
 						type="primary"
 						onClick={() => {
 							setIsCreateModalOpen(true);
 						}}
 					>
 						Tạo mùa vụ
-					</Button>
+					</Button> */}
 				</div>
 			</div>
-			<div className={styles.tableContainer}>
-				<Table
-					rowKey="id"
-					loading={loading}
-					dataSource={(plantSeasonList && plantSeasonList.plant_seasons) || []}
-					columns={columns}
-					scroll={{x: 'max-content'}}
-					onRow={(record) => ({
-						onClick: () => handleRowClick(record),
-					})}
-					rowClassName={(record, index) =>
-						index % 2 === 0 ? styles.evenRow : styles.oddRow
-					}
-					pagination={{
-						pageSize: pageSize,
-						current: currentPage,
-						total:
-							plantSeasonList && plantSeasonList.pagination
-								? plantSeasonList?.pagination.total_page * pageSize //total items
-								: 1,
-						onChange: (page) => {
-							fetchPlantSeasonList(page);
-						},
-					}}
-					className={styles.table}
-				/>
+			<Skeleton
+				style={{margin: '0 auto', width: '98%'}}
+				active
+				loading={loading}
+				paragraph={{rows: 3}}
+			>
+				<div className={styles.tableContainer}>
+					{(!plantSeasonList ||
+						!plantSeasonList.plant_seasons ||
+						plantSeasonList.plant_seasons.length == 0) && (
+						<Empty style={{width: '100%', marginTop: '50px'}} />
+					)}
+					{plantSeasonList &&
+						plantSeasonList.plant_seasons &&
+						plantSeasonList.plant_seasons.length > 0 &&
+						months.map((month, index) => (
+							<div className={styles.monthColumn}>
+								<div
+									className={styles.columnHeader}
+									style={{backgroundColor: month.color}}
+								>
+									{month.label}
+								</div>
+								<div className={styles.itemContainer}>
+									{plantSeasonList.plant_seasons
+										.filter((item) => item?.month_start == month.value)
+										.map((season, index) => (
+											<div
+												className={styles.seasonItem}
+												style={{backgroundColor: month.color}}
+												onClick={() => handleRowClick(season)}
+											>
+												<p className={styles.seasonName}>
+													{capitalizeFirstLetter(season?.plant?.name)}
+												</p>
+												<p className={styles.seasonType}>
+													{season?.type == 'in_season'
+														? 'Mùa thuận'
+														: 'Mùa nghịch'}
+												</p>
+												<p>
+													{season?.status == 'active' && (
+														<Tag
+															className={styles.tagSize}
+															color="green"
+														>
+															Đang áp dụng
+														</Tag>
+													)}
+													{season?.status == 'deleted' && (
+														<Tag className={styles.tagSize} color="red">
+															Ngừng áp dụng
+														</Tag>
+													)}
+												</p>
+												<Space className={styles.actionBar}>
+													<Button
+														className={styles.actionButton}
+														size="small"
+														onClick={(e) => {
+															e.stopPropagation();
+															console.log('CLick');
+															setSelectedPlantSeason(season);
+															setIsUpdateModalOpen(true);
+														}}
+														color="primary"
+														variant="filled"
+														icon={<EditOutlined />}
+														disabled={season.status === 'deleted'}
+													></Button>
 
-				<ManagePlantSeasonDetailModal
-					isModalOpen={isModalOpen}
-					handleModalClose={handleModalClose}
-					selectedPlantSeason={selectedPlantSeason}
-				/>
+													<Popconfirm
+														onClick={(e) => e.stopPropagation()}
+														title="Xoá dụng mùa vụ này"
+														description="Bạn muốn xoá dụng mùa vụ này?"
+														onConfirm={(e) =>
+															handleStopPlantSeason(
+																e,
+																season.plant_season_id
+															)
+														}
+														onCancel={(e) => e.stopPropagation()}
+														okText="Xoá dụng"
+														cancelText="Huỷ"
+														disabled={season.status === 'deleted'}
+													>
+														<Button
+															className={styles.actionButton}
+															disabled={season.status === 'deleted'}
+															size="small"
+															color="danger"
+															variant="filled"
+															icon={<DeleteOutlined />}
+														></Button>
+													</Popconfirm>
+												</Space>
+											</div>
+										))}
+									<div
+										className={styles.addItemBar}
+										onClick={() => {
+											setIsCreateModalOpen(true);
+											setSelectMonth(month.value);
+										}}
+									>
+										<span>
+											<PlusOutlined /> Tạo mùa vụ
+										</span>
+									</div>
+								</div>
+							</div>
+						))}
 
-				<ManagePlantSeasonUpdateModal
-					isModalOpen={isUpdateModalOpen}
-					handleModalClose={handleUpdateModalClose}
-					selectedPlantSeason={selectedPlantSeason}
-				/>
+					<ManagePlantSeasonDetailModal
+						isModalOpen={isModalOpen}
+						handleModalClose={handleModalClose}
+						selectedPlantSeason={selectedPlantSeason}
+					/>
 
-				<ManagePlantSeasonCreateModal
-					isModalOpen={isCreateModalOpen}
-					handleModalClose={handleCreateModalClose}
-				/>
-			</div>
+					<ManagePlantSeasonUpdateModal
+						isModalOpen={isUpdateModalOpen}
+						handleModalClose={handleUpdateModalClose}
+						selectedPlantSeason={selectedPlantSeason}
+					/>
+
+					<ManagePlantSeasonCreateModal
+						selectMonth={selectMonth}
+						isModalOpen={isCreateModalOpen}
+						handleModalClose={handleCreateModalClose}
+					/>
+				</div>
+			</Skeleton>
 		</div>
 	);
 };

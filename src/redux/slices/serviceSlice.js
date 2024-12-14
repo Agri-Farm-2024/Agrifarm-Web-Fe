@@ -33,6 +33,22 @@ export const updateToUsedServiceSpecific = createAsyncThunk(
 	}
 );
 
+export const updateServicePackage = createAsyncThunk(
+	'serviceSlice/updateServicePackage',
+	async ({formData, service_package_id}, {rejectWithValue}) => {
+		try {
+			const response = await api.put(
+				`/services/updateServicePackage/${service_package_id}`,
+				formData
+			);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 export const getServiceInUse = createAsyncThunk('serviceSlice/getServiceInUse', async (params) => {
 	try {
 		const response = await api.get('/services/getListServiceSpecific', {params});
@@ -86,7 +102,18 @@ const serviceSlice = createSlice({
 			})
 			.addCase(updateToUsedServiceSpecific.rejected, (state, action) => {
 				state.loading = false;
-				state.error = action.payload || 'Service package update failed';
+				state.error = action.payload;
+			})
+			.addCase(updateServicePackage.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(updateServicePackage.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(updateServicePackage.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
 			})
 			.addCase(getServicePackageList.pending, (state) => {
 				state.loading = true;
