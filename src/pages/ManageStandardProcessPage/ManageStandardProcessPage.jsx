@@ -348,7 +348,7 @@ export const ManageStandardProcessPage = () => {
 	};
 
 	const handleUpdateModalClose = (isUpdateSuccess) => {
-		if (isUpdateSuccess) {
+		if (isUpdateSuccess == true) {
 			fetchStandardProcess(1);
 		}
 		setIsUpdateModalOpen(false);

@@ -158,8 +158,8 @@ export const ManageServicePackagePage = () => {
 						onClick={(e) => {
 							e.stopPropagation();
 							console.log('CLick Update');
-							// setSelectedServicePackage(record);
-							// setIsUpdateModalOpen(true);
+							setSelectedServicePackage(record);
+							setIsUpdateModalOpen(true);
 						}}
 						color="primary"
 						variant="filled"
@@ -222,13 +222,16 @@ export const ManageServicePackagePage = () => {
 		setSelectedServicePackage(null);
 	};
 
-	const handleUpdateModalClose = () => {
+	const handleUpdateModalClose = (isUpdateSucess) => {
+		if (isUpdateSucess == true) {
+			dispatch(getServicePackageList());
+		}
 		setIsUpdateModalOpen(false);
 		setSelectedServicePackage(null);
 	};
 
 	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
+		if (isCreateSucess == true) {
 			dispatch(getServicePackageList());
 		}
 		setIsCreateModalOpen(false);

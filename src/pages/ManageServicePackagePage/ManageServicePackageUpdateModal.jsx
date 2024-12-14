@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styles from './ManageServicePackagePage.module.css';
-import {Form, Input, InputNumber, Modal, Radio, Select} from 'antd';
+import {Form, Input, InputNumber, Modal, Radio, Select, message} from 'antd';
+import {useDispatch} from 'react-redux';
+import {updateServicePackage} from '../../redux/slices/serviceSlice';
 
 const statusOptions = [
 	{
@@ -23,9 +25,45 @@ export const ManageServicePackageUpdateModal = ({
 	isModalOpen,
 }) => {
 	const [form] = Form.useForm();
+	const dispatch = useDispatch();
 
 	const onFinish = (values) => {
-		console.log('Success:', values);
+		try {
+			console.log('Success:', values);
+			const formData = {
+				name: values.servicePackageName,
+				description: values.servicePackageDescription,
+				process_of_plant: true,
+				material: values.isMaterial,
+				purchase: values.isPurchase,
+				price: values.price,
+				status: 'active',
+			};
+
+			const params = {
+				formData: formData,
+				service_package_id: selectedServicePackage?.service_package_id,
+			};
+
+			dispatch(updateServicePackage(params)).then((response) => {
+				console.log('update service package response', response);
+				if (response.payload && response.payload.statusCode) {
+					if (response.payload.statusCode !== 200) {
+						if (response.payload.message === 'Service package already exists') {
+							message.error(`Gói dịch vụ đã tồn tại`);
+						}
+					}
+
+					if (response.payload.statusCode === 200) {
+						message.success('Cập nhật gói dịch vụ thành công.');
+						handleModalClose(true);
+					}
+				}
+			});
+		} catch (error) {
+			message.error('Cập nhật gói dịch vụ thất bại');
+			console.log('Error update service package', error);
+		}
 	};
 	const onFinishFailed = (errorInfo) => {
 		console.log('Failed:', errorInfo);
@@ -33,18 +71,17 @@ export const ManageServicePackageUpdateModal = ({
 
 	useEffect(() => {
 		if (isModalOpen) {
+			console.log('Selected service', selectedServicePackage);
 			form.resetFields();
-			form.setFieldValue('servicePackageName', selectedServicePackage.servicePackageName);
-			form.setFieldValue(
-				'servicePackageDescription',
-				selectedServicePackage.servicePackageDescription
-			);
-			form.setFieldValue('isPurchase', selectedServicePackage.isPurchase);
-			form.setFieldValue('isMaterial', selectedServicePackage.isMaterial);
-			form.setFieldValue('status', selectedServicePackage.status);
+			form.setFieldValue('servicePackageName', selectedServicePackage.name);
+			form.setFieldValue('servicePackageDescription', selectedServicePackage.description);
+			form.setFieldValue('isPurchase', selectedServicePackage.purchase);
+			form.setFieldValue('isMaterial', selectedServicePackage.material);
+			// form.setFieldValue('status', selectedServicePackage.status);
 			form.setFieldValue('price', selectedServicePackage.price);
 		}
 	}, [isModalOpen]);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Cập nhật gói dịch vụ</span>}
@@ -59,7 +96,7 @@ export const ManageServicePackageUpdateModal = ({
 			{selectedServicePackage && (
 				<Form
 					form={form}
-					name="UpdateServicePackage"
+					name="CreateServicePackage"
 					labelCol={{
 						span: 5,
 					}}
@@ -83,7 +120,7 @@ export const ManageServicePackageUpdateModal = ({
 							},
 						]}
 					>
-						<Input label="Tên gói dịch vụ" className={styles.inputField} />
+						<Input placeholder="Tên gói dịch vụ" className={styles.inputField} />
 					</Form.Item>
 					<Form.Item
 						label="Mô tả"
@@ -102,55 +139,37 @@ export const ManageServicePackageUpdateModal = ({
 						/>
 					</Form.Item>
 
-					<Form.Item
-						label="Bao tiêu"
-						name="isPurchase"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
+					<Form.Item label="Bao tiêu" name="isPurchase">
 						<Radio.Group defaultValue={false} buttonStyle="solid">
 							<Radio.Button value={true}>Có</Radio.Button>
 							<Radio.Button value={false}>Không</Radio.Button>
 						</Radio.Group>
 					</Form.Item>
 
-					<Form.Item
-						label="Bao vật tư"
-						name="isMaterial"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
+					<Form.Item label="Bao vật tư" name="isMaterial">
 						<Radio.Group defaultValue={false} buttonStyle="solid">
 							<Radio.Button value={true}>Có</Radio.Button>
 							<Radio.Button value={false}>Không</Radio.Button>
 						</Radio.Group>
 					</Form.Item>
 
-					<Form.Item
-						label="Trạng thái"
-						name="status"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-						]}
-					>
-						<Select
-							className={styles.inputField}
-							allowClear
-							placeholder="Chọn trạng thái"
-							options={statusOptions}
-						></Select>
-					</Form.Item>
+					{/* <Form.Item
+					label="Trạng thái"
+					name="status"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+					]}
+				>
+					<Select
+						className={styles.inputField}
+						allowClear
+						placeholder="Chọn trạng thái"
+						options={statusOptions}
+					></Select>
+				</Form.Item> */}
 
 					<Form.Item
 						label="Giá gói dịch vụ (VND)"

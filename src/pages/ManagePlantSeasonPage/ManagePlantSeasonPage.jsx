@@ -266,7 +266,7 @@ export const ManagePlantSeasonPage = () => {
 	};
 
 	const handleUpdateModalClose = (isUpdateSucess) => {
-		if (isUpdateSucess) {
+		if (isUpdateSucess == true) {
 			fetchPlantSeasonList(currentPage);
 		}
 		setIsUpdateModalOpen(false);
@@ -274,7 +274,7 @@ export const ManagePlantSeasonPage = () => {
 	};
 
 	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
+		if (isCreateSucess == true) {
 			fetchPlantSeasonList(1);
 		}
 		setIsCreateModalOpen(false);

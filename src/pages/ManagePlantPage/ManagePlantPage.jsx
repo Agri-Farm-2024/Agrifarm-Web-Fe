@@ -190,7 +190,7 @@ export const ManagePlantPage = () => {
 	};
 
 	const handleUpdateModalClose = (isUpdateSucess) => {
-		if (isUpdateSucess) {
+		if (isUpdateSucess == true) {
 			fetchPlantList(currentPage);
 		}
 		setIsUpdateModalOpen(false);
@@ -198,7 +198,7 @@ export const ManagePlantPage = () => {
 	};
 
 	const handleCreateModalClose = (isCreateSucess) => {
-		if (isCreateSucess) {
+		if (isCreateSucess == true) {
 			console.log('Fetching new plant list when create a new plant');
 			fetchPlantList(1);
 		}

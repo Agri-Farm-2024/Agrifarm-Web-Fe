@@ -37,7 +37,7 @@ export const ManageServicePackageDetailModal = ({
 		{
 			key: 'price',
 			label: 'Giá gói dịch vụ',
-			children: <p>{selectedServicePackage.price} VND</p>,
+			children: <p>{formatNumber(selectedServicePackage.price)} VND</p>,
 		},
 		{
 			key: 'created_at',
