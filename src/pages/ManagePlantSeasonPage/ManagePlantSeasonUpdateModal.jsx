@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import {isLoadingPlant} from '../../redux/selectors';
 import {useDispatch, useSelector} from 'react-redux';
 import {getPlantList, updatePlantSeason} from '../../redux/slices/plantSlice';
+import {capitalizeFirstLetter} from '../../utils';
 
 const seasonTypeOptions = [
 	{
@@ -116,7 +117,7 @@ export const ManagePlantSeasonUpdateModal = ({
 				if (response.payload && response.payload.plants) {
 					const newOptions = response.payload.plants.map((option, index) => ({
 						key: index + option.name,
-						label: option.name,
+						label: capitalizeFirstLetter(option.name),
 						value: option.plant_id || index + option.name,
 					}));
 					console.log('newOptions:', newOptions);

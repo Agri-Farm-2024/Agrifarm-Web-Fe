@@ -4,6 +4,7 @@ import {DatePicker, Form, Input, InputNumber, Modal, Select, Spin, message} from
 import {useDispatch, useSelector} from 'react-redux';
 import {createCrop, getPlantList} from '../../redux/slices/plantSlice';
 import {isLoadingPlant} from '../../redux/selectors';
+import {capitalizeFirstLetter} from '../../utils';
 
 const seasonTypeOptions = [
 	{
@@ -108,7 +109,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 				if (response.payload && response.payload.plants) {
 					const newOptions = response.payload.plants.map((option, index) => ({
 						key: index + option.name,
-						label: option.name,
+						label: capitalizeFirstLetter(option.name),
 						value: option.plant_id || index + option.name,
 					}));
 					console.log('newOptions:', newOptions);
