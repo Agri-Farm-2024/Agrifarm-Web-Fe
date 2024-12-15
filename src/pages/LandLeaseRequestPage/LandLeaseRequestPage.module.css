@@ -69,3 +69,9 @@
     cursor: pointer;
     background-color: #fafafa;
 }
+
+
+.focus {
+    background-color: rgb(254, 255, 230);
+    cursor: pointer;
+}

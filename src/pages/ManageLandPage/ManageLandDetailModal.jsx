@@ -98,7 +98,7 @@ export const ManageLandDetailModal = ({
 							<p className={styles.title}>Hình ảnh:</p>
 							<div style={{display: 'flex', flexWrap: 'wrap'}}>
 								{selectedLand.url
-									.filter((url) => url.type === 'image')
+									.filter((url) => url.pmtype === 'image')
 									.map((image, index) => (
 										<div key={index} style={{width: 300, margin: 20}}>
 											<Image

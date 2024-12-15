@@ -14,7 +14,8 @@ export const ManageContractDetailModal = ({
 	fetchRequests,
 }) => {
 	const [visibleContract, setVisibleContract] = useState(false);
-	const [imageFile, setImageFile] = useState(null);
+	const [visibleContractImage, setVisibleContractImage] = useState(false);
+	const [visibleUploadImage, setVisibleUploadImage] = useState(false);
 	const [isModalExtendsOpen, setIsModalExtendsOpen] = useState(false);
 	const [selectedExtends, setSelectedExtends] = useState(null);
 	const contentRef = useRef(null);
@@ -204,26 +205,13 @@ export const ManageContractDetailModal = ({
 							selectedBooking.status !== 'pending_contract' && (
 								<div className={styles.bookingItem}>
 									<p className={styles.title}>Hình ảnh hợp đồng:</p>
-									<Button type="link" onClick={() => setVisibleContract(true)}>
-										Xem hình ảnh
-									</Button>
 
-									<Image
-										width={200}
-										style={{
-											display: 'none',
-										}}
-										preview={{
-											visible: visibleContract,
-											scaleStep: 1,
-											src: selectedBooking?.contract_image
-												? convertImageURL(selectedBooking.contract_image)
-												: 'error',
-											onVisibleChange: (value) => {
-												setVisibleContract(value);
-											},
-										}}
-									/>
+									<Button
+										type="primary"
+										onClick={() => setVisibleContractImage(true)}
+									>
+										Xem hợp đồng
+									</Button>
 								</div>
 							)}
 
@@ -292,6 +280,48 @@ export const ManageContractDetailModal = ({
 							</div>
 						</div>
 					</div>
+					<Modal
+						title="Hình ảnh hợp đồng"
+						open={visibleContractImage}
+						onOk={() => setVisibleContractImage(false)}
+						onCancel={() => setVisibleContractImage(false)}
+						footer={[
+							<Button key="back" onClick={() => setVisibleContractImage(false)}>
+								Đóng
+							</Button>,
+						]}
+					>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'space-evenly',
+								flexWrap: 'wrap',
+								gap: '16px',
+							}}
+						>
+							{selectedBooking?.contract_image
+								?.replace(/[\[\]\n]/g, '')
+								.trim()
+								.split(',').length >= 0 &&
+								selectedBooking?.contract_image
+									?.replace(/[\[\]\n]/g, '')
+									.trim()
+									.split(',')
+									?.map((image, index) => (
+										<Image
+											key={index}
+											width={200}
+											height={200}
+											src={convertImageURL(image)}
+											alt={`Contract Image ${index + 1}`}
+											style={{
+												borderRadius: '8px',
+												boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+											}}
+										/>
+									))}
+						</div>
+					</Modal>
 				</div>
 			)}
 			<ExtendsModal
