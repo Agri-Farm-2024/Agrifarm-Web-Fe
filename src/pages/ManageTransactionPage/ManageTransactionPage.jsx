@@ -106,14 +106,16 @@ export const ManageTransactionPage = () => {
 			key: 'purpose',
 			render: (purpose) => (
 				<>
-					{purpose === 'order' && <>Đơn hàng</>}
-					{purpose === 'booking_land' && <>Thuê đất</>}
-					{purpose === 'booking_material' && <>Thuê thiết bị</>}
-					{purpose === 'extend' && <>Gia hạn</>}
-					{purpose === 'service' && <>Dịch vụ</>}
-					{purpose === 'cancel_service' && <>Hủy dịch vụ</>}
-					{purpose === 'cancel_booking_land' && <>Hủy thuê đất</>}
-					{purpose === 'service_purchase_product' && <>Thu mua</>}
+					<>
+						{purpose === 'booking_land' && <Tag color="blue">Thuê đất</Tag>}
+						{purpose === 'booking_material' && <Tag color="orange">Thuê thiết bị</Tag>}
+						{purpose === 'extend' && <Tag color="cyan">Gia hạn</Tag>}
+						{purpose === 'service' && <Tag color="purple">Dịch vụ</Tag>}
+						{purpose === 'cancel_service' && <Tag color="red">Hủy dịch vụ</Tag>}
+						{purpose === 'cancel_booking_land' && <Tag color="red">Hủy thuê đất</Tag>}
+						{purpose === 'service_purchase_product' && <Tag color="gold">Thu mua</Tag>}
+						{purpose === 'order' && <Tag color="green">Đơn hàng</Tag>}
+					</>
 				</>
 			),
 		},
@@ -201,6 +203,7 @@ export const ManageTransactionPage = () => {
 					current: currentPage,
 					total: pagination?.total_page * pageSize,
 					onChange: handlePageChange,
+					showSizeChanger: false,
 				}}
 				rowKey="transaction_id"
 				className={styles.tableContainer}

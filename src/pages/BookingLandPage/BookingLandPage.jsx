@@ -1,7 +1,7 @@
 import {DatePicker, Input, InputNumber, message, Select, Table, Tag} from 'antd';
 import React, {useEffect, useState} from 'react';
 import styles from './BookingLandPage.module.css';
-import {formatNumber} from '../../utils';
+import {capitalizeFirstLetter, formatNumber} from '../../utils';
 import {BookingLandDetailModal} from './BookingLandDetailModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfBooking, updateBooking} from '../../redux/slices/landSlice';
@@ -167,7 +167,7 @@ const BookingLandPage = () => {
 			title: 'Mảnh đất',
 			dataIndex: 'land',
 			key: 'land',
-			render: (land) => <>{land.name}</>,
+			render: (land) => <>{capitalizeFirstLetter(land.name)}</>,
 		},
 		{
 			title: 'Khách Hàng',

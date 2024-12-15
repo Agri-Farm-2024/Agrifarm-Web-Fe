@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ManageTransactionPage.module.css';
 import {Modal, Descriptions, Tag} from 'antd';
-import {formatTimeViewLand} from '../../utils';
+import {capitalizeFirstLetter, formatDate, formatTimeViewLand} from '../../utils';
 
 export const ManageTransactionDetailModal = ({
 	selectedTransaction,
@@ -25,7 +25,7 @@ export const ManageTransactionDetailModal = ({
 					contentStyle={{fontSize: '1rem'}}
 				>
 					<Descriptions.Item label="Mã giao dịch">
-						{selectedTransaction?.transaction_code}
+						<a>{selectedTransaction?.transaction_code}</a>
 					</Descriptions.Item>
 					<Descriptions.Item label="Tên khách hàng">
 						{selectedTransaction?.user?.full_name}
@@ -40,23 +40,59 @@ export const ManageTransactionDetailModal = ({
 						{selectedTransaction?.type === 'payment' && <>Thanh toán</>}
 						{selectedTransaction?.type === 'refund' && <>Trả tiền</>}
 					</Descriptions.Item>
-					<Descriptions.Item label="Mục đich">
-						{selectedTransaction?.purpose === 'order' && <>Đơn hàng</>}
-						{selectedTransaction?.purpose === 'booking_land' && <>Thuê đất</>}
-						{selectedTransaction?.purpose === 'booking_material' && <>Thuê thiết bị</>}
-						{selectedTransaction?.purpose === 'extend' && <>Gia hạn</>}
-						{selectedTransaction?.purpose === 'service' && <>Dịch vụ</>}
-						{selectedTransaction?.purpose === 'cancel_service' && <>Hủy dịch vụ</>}
+
+					<Descriptions.Item label="Mục đích">
+						{selectedTransaction?.purpose === 'booking_land' && (
+							<Tag color="blue">Thuê đất</Tag>
+						)}
+						{selectedTransaction?.purpose === 'booking_material' && (
+							<Tag color="orange">Thuê thiết bị</Tag>
+						)}
+						{selectedTransaction?.purpose === 'extend' && (
+							<Tag color="cyan">Gia hạn</Tag>
+						)}
+						{selectedTransaction?.purpose === 'service' && (
+							<Tag color="purple">Dịch vụ</Tag>
+						)}
+						{selectedTransaction?.purpose === 'cancel_service' && (
+							<Tag color="red">Hủy dịch vụ</Tag>
+						)}
 						{selectedTransaction?.purpose === 'cancel_booking_land' && (
-							<>Hủy thuê đất</>
+							<Tag color="red">Hủy thuê đất</Tag>
 						)}
 						{selectedTransaction?.purpose === 'service_purchase_product' && (
-							<>Thu mua</>
+							<Tag color="gold">Thu mua</Tag>
+						)}
+						{selectedTransaction?.purpose === 'order' && (
+							<Tag color="green">Đơn hàng</Tag>
 						)}
 					</Descriptions.Item>
+					{selectedTransaction?.service_specific?.time_start && (
+						<Descriptions.Item label="Thời gian dịch vụ">
+							{formatDate(selectedTransaction?.service_specific?.time_start)} -{' '}
+							{formatDate(selectedTransaction?.service_specific?.time_end)}
+						</Descriptions.Item>
+					)}
+					{selectedTransaction?.service_specific?.booking_land?.land?.name && (
+						<Descriptions.Item label="Mảnh đất">
+							{capitalizeFirstLetter(
+								selectedTransaction?.service_specific?.booking_land?.land?.name
+							)}
+						</Descriptions.Item>
+					)}
+					{selectedTransaction?.booking_land?.land?.name && (
+						<Descriptions.Item label="Mảnh đất">
+							{capitalizeFirstLetter(selectedTransaction?.booking_land?.land?.name)}
+						</Descriptions.Item>
+					)}
 					<Descriptions.Item label="Ngày tạo">
 						{formatTimeViewLand(selectedTransaction?.created_at)}
 					</Descriptions.Item>
+					{selectedTransaction?.pay_at && (
+						<Descriptions.Item label="Ngày thanh toán">
+							{formatTimeViewLand(selectedTransaction?.pay_at)}
+						</Descriptions.Item>
+					)}
 					<Descriptions.Item label="Trạng thái">
 						{selectedTransaction?.status === 'succeed' && (
 							<Tag color="green">Hoàn thành</Tag>

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import styles from './BookingLandPage.module.css';
-import {Button, Image, message, Modal, Tag, Upload} from 'antd';
+import {Button, Empty, Image, message, Modal, Tag, Upload} from 'antd';
 import {convertImageURL, formatNumber} from '../../utils';
-import {UploadOutlined} from '@ant-design/icons';
+import {DeleteOutlined, UploadOutlined} from '@ant-design/icons';
 import {uploadFile} from '../../services/uploadService';
 import {updateBooking} from '../../redux/slices/landSlice';
 import {ExtendsModal} from '../../components/ExtendsModal/ExtendsModal';
@@ -15,7 +15,8 @@ export const BookingLandDetailModal = ({
 	handleUpdate,
 	fetchRequests,
 }) => {
-	const [visibleContract, setVisibleContract] = useState(false);
+	const [visibleContractImage, setVisibleContractImage] = useState(false);
+	const [visibleUploadImage, setVisibleUploadImage] = useState(false);
 	const [imageFile, setImageFile] = useState(null);
 	const [imageAPI, setImageAPI] = useState(null);
 	const [isModalExtendsOpen, setIsModalExtendsOpen] = useState(false);
@@ -41,12 +42,15 @@ export const BookingLandDetailModal = ({
 	console.log(selectedBooking);
 
 	const handleUpdateBooking = () => {
+		const formattedString = `[\n${imageAPI.map((item) => item).join(',\n')}\n]`;
+
 		const body = {
 			booking_id: selectedBooking.booking_id,
-			contract_image: imageAPI,
+			contract_image: formattedString,
 			status: 'pending_payment',
 			payment_frequency: 'single',
 		};
+		console.log(body);
 		handleUpdate(body);
 		setImageAPI(null);
 		setImageFile(null);
@@ -59,7 +63,11 @@ export const BookingLandDetailModal = ({
 			hideLoading();
 			uploadFile(file).then((res) => {
 				if (res.statusCode === 201) {
-					setImageAPI(res.metadata.folder_path);
+					setImageAPI((prevImageAPI) => [
+						...(prevImageAPI || []),
+						res.metadata.folder_path,
+					]);
+					console.log('Upload', res.metadata.folder_path);
 					message.success('Tải hợp đồng thành công');
 					setImageFile(res.metadata.folder_path);
 				}
@@ -78,6 +86,8 @@ export const BookingLandDetailModal = ({
 		(a, b) => new Date(a.created_at) - new Date(b.created_at)
 	);
 
+	console.log('imageAPI: ' + imageAPI);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết hợp đồng</span>}
@@ -94,7 +104,9 @@ export const BookingLandDetailModal = ({
 					<div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>ID Yêu Cầu:</p>
-							<p className={styles.content}>{selectedBooking.booking_id}</p>
+							<p className={styles.content}>
+								<a>{selectedBooking.booking_id}</a>
+							</p>
 						</div>
 						<div className={styles.bookingItem}>
 							<p className={styles.title}>Người Thuê Đất:</p>
@@ -209,7 +221,7 @@ export const BookingLandDetailModal = ({
 							selectedBooking.status !== 'pending_contract' && (
 								<div className={styles.bookingItem}>
 									<p className={styles.title}>Hình ảnh hợp đồng:</p>
-									{selectedBooking.contract_image || imageFile ? (
+									{/* {selectedBooking.contract_image || imageFile ? (
 										<Button
 											type="primary"
 											onClick={() => setVisibleContract(true)}
@@ -227,11 +239,26 @@ export const BookingLandDetailModal = ({
 												Tải hợp đồng
 											</Button>
 										</Upload>
+									)} */}
+									{selectedBooking.contract_image ? (
+										<Button
+											type="primary"
+											onClick={() => setVisibleContractImage(true)}
+										>
+											Xem hợp đồng
+										</Button>
+									) : (
+										<Button
+											type="primary"
+											onClick={() => setVisibleUploadImage(true)}
+										>
+											{imageAPI ? 'Đã có hình ảnh' : 'Chưa có hình ảnh'}
+										</Button>
 									)}
 								</div>
 							)}
 
-						<Image
+						{/* <Image
 							width={200}
 							style={{
 								display: 'none',
@@ -248,7 +275,7 @@ export const BookingLandDetailModal = ({
 									setVisibleContract(value);
 								},
 							}}
-						/>
+						/> */}
 						<div className={styles.bookingItem}>
 							<div>
 								<div className={styles.bookingItem}>
@@ -321,6 +348,106 @@ export const BookingLandDetailModal = ({
 				isModalOpen={isModalExtendsOpen}
 				handleModalClose={handleCloseExtendsModal}
 			/>
+
+			<Modal
+				title="Hình ảnh hợp đồng"
+				open={visibleContractImage}
+				onOk={() => setVisibleContractImage(false)}
+				onCancel={() => setVisibleContractImage(false)}
+				footer={[
+					<Button key="back" onClick={() => setVisibleContractImage(false)}>
+						Đóng
+					</Button>,
+				]}
+			>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-evenly',
+						flexWrap: 'wrap',
+						gap: '16px',
+					}}
+				>
+					{selectedBooking?.contract_image
+						?.replace(/[\[\]\n]/g, '')
+						.trim()
+						.split(',').length >= 0 &&
+						selectedBooking?.contract_image
+							?.replace(/[\[\]\n]/g, '')
+							.trim()
+							.split(',')
+							?.map((image, index) => (
+								<Image
+									key={index}
+									width={200}
+									height={200}
+									src={convertImageURL(image)}
+									alt={`Contract Image ${index + 1}`}
+									style={{
+										borderRadius: '8px',
+										boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+									}}
+								/>
+							))}
+				</div>
+			</Modal>
+
+			<Modal
+				title="Tải hợp đồng"
+				open={visibleUploadImage}
+				onOk={() => setVisibleUploadImage(false)}
+				onCancel={() => setVisibleUploadImage(false)}
+				footer={[
+					<Button key="back" onClick={() => setVisibleUploadImage(false)}>
+						Đóng
+					</Button>,
+				]}
+			>
+				<div>
+					<Upload
+						accept="image/*"
+						showUploadList={false}
+						beforeUpload={() => false} // Prevent automatic upload
+						onChange={handleImageUpload}
+					>
+						<Button type="link" icon={<UploadOutlined />}>
+							Tải hợp đồng
+						</Button>
+					</Upload>
+					{imageAPI && (
+						<Button
+							color="danger"
+							variant="filled"
+							icon={<DeleteOutlined />}
+							onClick={() => setImageAPI(null)}
+						/>
+					)}
+					<div
+						style={{
+							marginTop: 20,
+							display: 'flex',
+							justifyContent: 'space-evenly',
+							flexWrap: 'wrap',
+							gap: '16px',
+						}}
+					>
+						{imageAPI?.map((image, index) => (
+							<Image
+								key={index}
+								width={200}
+								height={200}
+								src={convertImageURL(image)}
+								alt={`Contract Image ${index + 1}`}
+								style={{
+									borderRadius: '8px',
+									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+								}}
+							/>
+						))}
+						{!imageAPI && <Empty />}
+					</div>
+				</div>
+			</Modal>
 		</Modal>
 	);
 };

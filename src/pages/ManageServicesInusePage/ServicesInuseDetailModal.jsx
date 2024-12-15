@@ -1,6 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {Descriptions, Modal, Tag, Upload, Button, Image, message} from 'antd';
-import {FileImageOutlined, PlusOutlined, PrinterOutlined, UploadOutlined} from '@ant-design/icons';
+import {Descriptions, Modal, Tag, Upload, Button, Image, message, Empty} from 'antd';
+import {
+	DeleteOutlined,
+	FileImageOutlined,
+	PlusOutlined,
+	PrinterOutlined,
+	UploadOutlined,
+} from '@ant-design/icons';
 import {convertImageURL, formatDate} from '../../utils';
 import {uploadFile} from '../../services/uploadService';
 import styles from './ManageServicesInusePage.module.css';
@@ -15,6 +21,8 @@ export const ServicesInuseDetailModal = ({
 }) => {
 	const [fileList, setFileList] = useState([]);
 	const [uploading, setUploading] = useState(false);
+	const [visibleContractImage, setVisibleContractImage] = useState(false);
+	const [visibleUploadImage, setVisibleUploadImage] = useState(false);
 	const totalPrice = selectedService
 		? (selectedService.price_package / 1000) * selectedService.acreage_land +
 			(selectedService.price_process / 1000) * selectedService.acreage_land
@@ -32,7 +40,11 @@ export const ServicesInuseDetailModal = ({
 			hideLoading();
 			uploadFile(file).then((res) => {
 				if (res.statusCode === 201) {
-					setImageAPI(res.metadata.folder_path);
+					setImageAPI((prevImageAPI) => [
+						...(prevImageAPI || []),
+						res.metadata.folder_path,
+					]);
+					console.log('Upload', res.metadata.folder_path);
 					message.success('Tải hợp đồng thành công');
 					setImageFile(res.metadata.folder_path);
 				}
@@ -54,9 +66,11 @@ export const ServicesInuseDetailModal = ({
 	};
 
 	const handleSubmit = () => {
+		const formattedString = `[\n${imageAPI.map((item) => item).join(',\n')}\n]`;
+
 		console.log('handleSubmit');
 		const body = {
-			contract_image: imageAPI,
+			contract_image: formattedString,
 			service_specific_id: selectedService.service_specific_id,
 		};
 		if (!imageAPI) {
@@ -198,40 +212,15 @@ export const ServicesInuseDetailModal = ({
 			label: 'Hình ảnh hợp đồng',
 			children: (
 				<p>
-					{selectedService.contract_image || imageFile ? (
-						<Button type="link" onClick={() => setVisibleContract(true)}>
-							Xem hình ảnh
+					{selectedService.contract_image ? (
+						<Button type="primary" onClick={() => setVisibleContractImage(true)}>
+							Xem hợp đồng
 						</Button>
 					) : (
-						<Upload
-							accept="image/*"
-							showUploadList={false}
-							beforeUpload={() => false} // Prevent automatic upload
-							onChange={handleImageUpload}
-						>
-							<Button type="primary" icon={<UploadOutlined />}>
-								Tải hợp đồng
-							</Button>
-						</Upload>
+						<Button type="primary" onClick={() => setVisibleUploadImage(true)}>
+							{imageAPI ? 'Đã có hình ảnh' : 'Chưa có hình ảnh'}
+						</Button>
 					)}
-					<Image
-						width={200}
-						style={{
-							display: 'none',
-						}}
-						preview={{
-							visible: visibleContract,
-							scaleStep: 1,
-							src: selectedService.contract_image
-								? convertImageURL(selectedService.contract_image)
-								: imageFile
-									? convertImageURL(imageFile)
-									: 'image',
-							onVisibleChange: (value) => {
-								setVisibleContract(value);
-							},
-						}}
-					/>
 				</p>
 			),
 		},
@@ -280,6 +269,105 @@ export const ServicesInuseDetailModal = ({
 					items={detailItems}
 				/>
 			)}
+			<Modal
+				title="Hình ảnh hợp đồng"
+				open={visibleContractImage}
+				onOk={() => setVisibleContractImage(false)}
+				onCancel={() => setVisibleContractImage(false)}
+				footer={[
+					<Button key="back" onClick={() => setVisibleContractImage(false)}>
+						Đóng
+					</Button>,
+				]}
+			>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-evenly',
+						flexWrap: 'wrap',
+						gap: '16px',
+					}}
+				>
+					{selectedService?.contract_image
+						?.replace(/[\[\]\n]/g, '')
+						.trim()
+						.split(',').length >= 0 &&
+						selectedService?.contract_image
+							?.replace(/[\[\]\n]/g, '')
+							.trim()
+							.split(',')
+							?.map((image, index) => (
+								<Image
+									key={index}
+									width={200}
+									height={200}
+									src={convertImageURL(image)}
+									alt={`Contract Image ${index + 1}`}
+									style={{
+										borderRadius: '8px',
+										boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+									}}
+								/>
+							))}
+				</div>
+			</Modal>
+
+			<Modal
+				title="Tải hợp đồng"
+				open={visibleUploadImage}
+				onOk={() => setVisibleUploadImage(false)}
+				onCancel={() => setVisibleUploadImage(false)}
+				footer={[
+					<Button key="back" onClick={() => setVisibleUploadImage(false)}>
+						Đóng
+					</Button>,
+				]}
+			>
+				<div>
+					<Upload
+						accept="image/*"
+						showUploadList={false}
+						beforeUpload={() => false} // Prevent automatic upload
+						onChange={handleImageUpload}
+					>
+						<Button type="link" icon={<UploadOutlined />}>
+							Tải hợp đồng
+						</Button>
+					</Upload>
+					{imageAPI && (
+						<Button
+							color="danger"
+							variant="filled"
+							icon={<DeleteOutlined />}
+							onClick={() => setImageAPI(null)}
+						/>
+					)}
+					<div
+						style={{
+							marginTop: 20,
+							display: 'flex',
+							justifyContent: 'space-evenly',
+							flexWrap: 'wrap',
+							gap: '16px',
+						}}
+					>
+						{imageAPI?.map((image, index) => (
+							<Image
+								key={index}
+								width={200}
+								height={200}
+								src={convertImageURL(image)}
+								alt={`Contract Image ${index + 1}`}
+								style={{
+									borderRadius: '8px',
+									boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+								}}
+							/>
+						))}
+						{!imageAPI && <Empty />}
+					</div>
+				</div>
+			</Modal>
 		</Modal>
 	);
 };

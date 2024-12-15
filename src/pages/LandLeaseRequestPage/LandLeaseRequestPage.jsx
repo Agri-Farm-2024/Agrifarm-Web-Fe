@@ -247,7 +247,7 @@ export const LandLeaseRequestPage = () => {
 					dataSource={requests}
 					scroll={{x: 'max-content'}}
 					rowClassName={(record, index) =>
-						index % 2 === 0 ? styles.evenRow : styles.oddRow
+						record.status === 'pending' ? styles.focus : styles.oddRow
 					}
 					loading={loading}
 					pagination={{
