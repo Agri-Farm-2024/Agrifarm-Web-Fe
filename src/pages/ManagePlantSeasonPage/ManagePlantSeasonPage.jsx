@@ -285,12 +285,12 @@ export const ManagePlantSeasonPage = () => {
 	const [pageSize, setPageSize] = useState(100);
 	const [totalPage, setTotalPage] = useState(10);
 	const [selectMonth, setSelectMonth] = useState(1);
+	const [loading, setLoading] = useState(false);
 
 	const dispatch = useDispatch();
 
 	const plantSeasonList = useSelector(plantSeasonListSelector);
 	console.log('plantSeason', plantSeasonList);
-	const loading = useSelector(isLoadingPlant);
 
 	useEffect(() => {
 		fetchPlantSeasonList(1);
@@ -298,13 +298,17 @@ export const ManagePlantSeasonPage = () => {
 
 	const fetchPlantSeasonList = (pageNumber) => {
 		try {
+			setLoading(true);
 			setCurrentPage(pageNumber);
 			const params = {
 				page_size: pageSize,
 				page_index: pageNumber,
 			};
-			dispatch(getPlantSeasonList(params));
+			dispatch(getPlantSeasonList(params)).then((response) => {
+				setLoading(false);
+			});
 		} catch (error) {
+			setLoading(false);
 			console.log('Error fetching plant season list: ' + error);
 		}
 	};
@@ -409,7 +413,7 @@ export const ManagePlantSeasonPage = () => {
 						plantSeasonList.plant_seasons &&
 						plantSeasonList.plant_seasons.length > 0 &&
 						months.map((month, index) => (
-							<div className={styles.monthColumn}>
+							<div key={`Month ${index}`} className={styles.monthColumn}>
 								<div
 									className={styles.columnHeader}
 									style={{backgroundColor: month.color}}
@@ -419,8 +423,9 @@ export const ManagePlantSeasonPage = () => {
 								<div className={styles.itemContainer}>
 									{plantSeasonList.plant_seasons
 										.filter((item) => item?.month_start == month.value)
-										.map((season, index) => (
+										.map((season, seasonIndex) => (
 											<div
+												key={`season_${seasonIndex} in monnth ${index}`}
 												className={styles.seasonItem}
 												style={{backgroundColor: month.color}}
 												onClick={() => handleRowClick(season)}
@@ -493,9 +498,11 @@ export const ManagePlantSeasonPage = () => {
 										))}
 									<div
 										className={styles.addItemBar}
-										onClick={() => {
-											setIsCreateModalOpen(true);
+										onClick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
 											setSelectMonth(month.value);
+											setIsCreateModalOpen(true);
 										}}
 									>
 										<span>
