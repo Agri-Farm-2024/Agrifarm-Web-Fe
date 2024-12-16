@@ -48,7 +48,7 @@ const plantNameOptions = [
 	},
 ];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 50;
 
 export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isModalOpen}) => {
 	const [form] = Form.useForm();
@@ -67,7 +67,7 @@ export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isMod
 	const fetchPlantSeasonOptions = (pageIndex) => {
 		const formData = {
 			page_index: pageIndex,
-			page_size: 10,
+			page_size: PAGE_SIZE,
 		};
 
 		dispatch(getPlantSeasonList(formData))
@@ -115,7 +115,7 @@ export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isMod
 	const fetchExpertOptions = (pageIndex) => {
 		const formData = {
 			page_index: pageIndex,
-			page_size: 10,
+			page_size: PAGE_SIZE,
 			role: 3,
 		};
 

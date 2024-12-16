@@ -175,6 +175,7 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 				wrapperCol={{
 					span: 16,
 				}}
+				style={{paddingBottom: '50px'}}
 				size="large"
 				className={styles.formContainer}
 				onFinish={onFinish}
@@ -251,40 +252,6 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 				</Form.Item>
 
 				<Form.Item
-					label="Đơn giá (VND/kg)"
-					name="pricePurchasePerKg"
-					rules={[
-						{
-							required: true,
-							message: 'Vui lòng không bỏ trống!',
-						},
-						{
-							type: 'number',
-							min: 0,
-							message: 'Giá không hợp lệ!',
-						},
-					]}
-				>
-					<InputNumber
-						placeholder="Đơn giá"
-						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-						className={styles.inputField}
-					/>
-					<a
-						style={{
-							textDecorationLine: 'underline',
-							float: 'right',
-							fontSize: 12,
-						}}
-						href="https://gianongsan.org/"
-						target="_blank"
-					>
-						Tham khảo giá thị trường
-					</a>
-				</Form.Item>
-
-				<Form.Item
 					label="Giá quy trình theo mùa vụ (VND)"
 					name="priceProcess"
 					rules={[
@@ -324,6 +291,40 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 						options={seasonTypeOptions}
 					></Select>
 				</Form.Item>
+
+				<Form.Item
+					label={`Đơn giá thu mua (VND/kg)`}
+					name="pricePurchasePerKg"
+					rules={[
+						{
+							required: true,
+							message: 'Vui lòng không bỏ trống!',
+						},
+						{
+							type: 'number',
+							min: 0,
+							message: 'Giá không hợp lệ!',
+						},
+					]}
+				>
+					<InputNumber
+						placeholder="Đơn giá"
+						formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+						className={styles.inputField}
+					/>
+				</Form.Item>
+				<a
+					style={{
+						textDecorationLine: 'underline',
+						float: 'right',
+						fontSize: 12,
+					}}
+					href="https://gianongsan.org/"
+					target="_blank"
+				>
+					Tham khảo giá thị trường
+				</a>
 			</Form>
 		</Modal>
 	);

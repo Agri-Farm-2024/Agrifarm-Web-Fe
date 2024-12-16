@@ -33,7 +33,7 @@ const plantTypeOptions = [
 	},
 ];
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 50;
 
 export const ManagePlantSeasonUpdateModal = ({
 	selectedPlantSeason,
@@ -81,6 +81,13 @@ export const ManagePlantSeasonUpdateModal = ({
 							);
 						} else if (
 							response.payload.message === 'A season already exists at month_start.'
+						) {
+							message.error(
+								`Cây này đã tồn tại mùa vụ tại tháng ${values.month_start}`
+							);
+						} else if (
+							response.payload.message ===
+							'A season with a similar month_start already exists for this cultivar.'
 						) {
 							message.error(
 								`Cây này đã tồn tại mùa vụ tại tháng ${values.month_start}`
@@ -189,6 +196,7 @@ export const ManagePlantSeasonUpdateModal = ({
 					}}
 					size="large"
 					className={styles.formContainer}
+					style={{paddingBottom: '50px'}}
 					onFinish={onFinish}
 					onFinishFailed={onFinishFailed}
 					autoComplete="off"
@@ -263,40 +271,6 @@ export const ManagePlantSeasonUpdateModal = ({
 					</Form.Item>
 
 					<Form.Item
-						label="Đơn giá (VND/kg)"
-						name="price_purchase_per_kg"
-						rules={[
-							{
-								required: true,
-								message: 'Vui lòng không bỏ trống!',
-							},
-							{
-								type: 'number',
-								min: 0,
-								message: 'Giá không hợp lệ!',
-							},
-						]}
-					>
-						<InputNumber
-							placeholder="Đơn giá"
-							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-							parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
-							className={styles.inputField}
-						/>
-						<a
-							style={{
-								textDecorationLine: 'underline',
-								float: 'right',
-								fontSize: 12,
-							}}
-							href="https://gianongsan.org/"
-							target="_blank"
-						>
-							Tham khảo giá thị trường
-						</a>
-					</Form.Item>
-
-					<Form.Item
 						label="Giá quy trình theo mùa vụ"
 						name="price_process"
 						rules={[
@@ -337,6 +311,40 @@ export const ManagePlantSeasonUpdateModal = ({
 							loading={plantLoading}
 						></Select>
 					</Form.Item>
+
+					<Form.Item
+						label="Đơn giá thu mua (VND/kg)"
+						name="price_purchase_per_kg"
+						rules={[
+							{
+								required: true,
+								message: 'Vui lòng không bỏ trống!',
+							},
+							{
+								type: 'number',
+								min: 0,
+								message: 'Giá không hợp lệ!',
+							},
+						]}
+					>
+						<InputNumber
+							placeholder="Đơn giá"
+							formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
+							className={styles.inputField}
+						/>
+					</Form.Item>
+					<a
+						style={{
+							textDecorationLine: 'underline',
+							float: 'right',
+							fontSize: 12,
+						}}
+						href="https://gianongsan.org/"
+						target="_blank"
+					>
+						Tham khảo giá thị trường
+					</a>
 				</Form>
 			)}
 		</Modal>
