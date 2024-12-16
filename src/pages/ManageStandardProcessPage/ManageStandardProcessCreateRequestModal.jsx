@@ -74,7 +74,10 @@ export const ManageStandardProcessCreateRequestModal = ({handleModalClose, isMod
 			.then((response) => {
 				console.log('response:', response);
 				if (response.payload && response.payload.plant_seasons) {
-					const newOptions = response.payload.plant_seasons.map((option, index) => ({
+					const filterSeason = response.payload.plant_seasons.filter(
+						(season) => season?.process_technical_standard == null
+					);
+					const newOptions = filterSeason.map((option, index) => ({
 						key: index + option.plant_season_id,
 						label: `Mùa vụ ${option.plant.name} Tháng ${option.month_start}`,
 						value: option.plant_season_id,
