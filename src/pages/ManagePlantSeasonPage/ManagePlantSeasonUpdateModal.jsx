@@ -258,6 +258,7 @@ export const ManagePlantSeasonUpdateModal = ({
 							placeholder="Chọn loại cây"
 							options={plantTypeOptions || []}
 							onPopupScroll={handleScroll}
+							disabled={true}
 						></Select>
 					</Form.Item>
 
@@ -282,6 +283,17 @@ export const ManagePlantSeasonUpdateModal = ({
 							parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
 							className={styles.inputField}
 						/>
+						<a
+							style={{
+								textDecorationLine: 'underline',
+								float: 'right',
+								fontSize: 12,
+							}}
+							href="https://gianongsan.org/"
+							target="_blank"
+						>
+							Tham khảo giá thị trường
+						</a>
 					</Form.Item>
 
 					<Form.Item

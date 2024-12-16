@@ -107,11 +107,13 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 			.then((response) => {
 				console.log('response:', response);
 				if (response.payload && response.payload.plants) {
-					const newOptions = response.payload.plants.map((option, index) => ({
-						key: index + option.name,
-						label: capitalizeFirstLetter(option.name),
-						value: option.plant_id || index + option.name,
-					}));
+					const newOptions = response.payload.plants
+						.filter((plant) => plant?.status == 'active')
+						.map((option, index) => ({
+							key: index + option.name,
+							label: capitalizeFirstLetter(option.name),
+							value: option.plant_id || index + option.name,
+						}));
 					console.log('newOptions:', newOptions);
 					setPlantTypeOptions(newOptions);
 
@@ -269,6 +271,17 @@ export const ManagePlantSeasonCreateModal = ({handleModalClose, isModalOpen, sel
 						parser={(value) => value?.replace(/\$\s?|(,*)/g, '')}
 						className={styles.inputField}
 					/>
+					<a
+						style={{
+							textDecorationLine: 'underline',
+							float: 'right',
+							fontSize: 12,
+						}}
+						href="https://gianongsan.org/"
+						target="_blank"
+					>
+						Tham khảo giá thị trường
+					</a>
 				</Form.Item>
 
 				<Form.Item
