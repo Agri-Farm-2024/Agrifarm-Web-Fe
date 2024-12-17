@@ -43,7 +43,7 @@ export const ManagePlantSeasonDetailModal = ({
 		},
 		{
 			key: 'price_purchase_per_kg',
-			label: 'Đơn giá',
+			label: 'Đơn giá thu mua',
 			children: <p>{formatNumber(selectedPlantSeason?.price_purchase_per_kg)} VND/kg</p>,
 		},
 		{
