@@ -85,23 +85,17 @@ export const DefaultLayout = ({children}) => {
 	];
 
 	const staffMenuItems = [
-		getItem('Dashboard', '/dashboard', <DashboardOutlined />),
-
-		getItem('Quản lý yêu cầu', 'sub1', <FileTextOutlined />, [
-			getItem('Yêu cầu thuê đất', '/land-requests', <FileTextOutlined />),
-			// getItem('Yêu cầu dịch vụ', '/service-requests', <ShoppingCartOutlined />),
-			getItem('Yêu cầu thu mua', '/purchase-requests', <DeliveredProcedureOutlined />),
-		]),
-
+		// getItem('Dashboard', '/dashboard', <DashboardOutlined />),
+		getItem('Yêu cầu thuê đất', '/land-requests', <FileTextOutlined />),
 		getItem('Quản lý thuê đất', '/booking-land', <EnvironmentOutlined />),
 		getItem('Phân công nhiệm vụ', '/task-management', <ScheduleOutlined />),
 		getItem('Dịch vụ đang sử dụng', '/services-inuse', <ApiOutlined />),
-		getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
-		getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
-		getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
+		// getItem('Giám sát nhật ký', '/log-monitoring', <FormOutlined />),
+		// getItem('Báo cáo đơn hàng', '/order-reports', <FileDoneOutlined />),
+		// getItem('Hóa đơn cung cấp thiết bị', '/supply-invoices', <SettingOutlined />),
 		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
-		getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
-		getItem('Nhắc nhở', '/reminders', <BellOutlined />),
+		// getItem('Hóa đơn thu mua', '/product-purchase-invoices', <CalculatorOutlined />),
+		// getItem('Nhắc nhở', '/reminders', <BellOutlined />),
 	];
 
 	const adminMenuItems = [
@@ -139,9 +133,9 @@ export const DefaultLayout = ({children}) => {
 			<TruckOutlined />
 		),
 		getItem('Quản lý vật tư', '/manage-materials', <ToolOutlined />),
-		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <ToolOutlined />),
+		getItem('Quản lý thiết bị thuê', '/manage-rental-equipment', <FileTextOutlined />),
 
-		getItem('Quản lý đơn hàng', '/manage-order', <FileTextOutlined />),
+		// getItem('Quản lý đơn hàng', '/manage-order', <FileTextOutlined />),
 		getItem('Báo cáo tình trạng đất', '/land-reports', <FileDoneOutlined />),
 	];
 
@@ -178,8 +172,8 @@ export const DefaultLayout = ({children}) => {
 				}}
 			>
 				<Link
-					to="/dashboard"
-					onClick={() => setSelectMenu('/dashboard')}
+					to="/"
+					onClick={() => setSelectMenu('/')}
 					style={{display: 'block', height: '100px'}}
 				>
 					<img

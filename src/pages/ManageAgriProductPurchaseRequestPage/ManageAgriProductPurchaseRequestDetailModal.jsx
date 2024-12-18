@@ -48,15 +48,15 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 					</Descriptions.Item>
 					<Descriptions.Item label="Đơn giá thu mua">
 						{formatNumber(
-							selectedPurchaseRequest?.service_specific?.plant_season
-								?.price_purchase_per_kg
+							selectedPurchaseRequest?.service_specific?.price_purchase_per_kg
 						)}{' '}
 						VND/kg
 					</Descriptions.Item>
 					<Descriptions.Item label="Ngày gửi yêu cầu">
 						{formatDate(selectedPurchaseRequest.created_at)}
 					</Descriptions.Item>
-					{selectedPurchaseRequest?.task?.report?.quality_plant_expect ? (
+					{selectedPurchaseRequest?.task?.report?.quality_plant_expect ||
+					selectedPurchaseRequest?.task?.report?.quality_plant_expect === 0 ? (
 						<>
 							<Descriptions.Item label="Số lượng dự kiến">
 								{selectedPurchaseRequest?.task?.report?.mass_plant_expect} kg
@@ -68,7 +68,10 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 									: selectedPurchaseRequest?.task?.report
 												?.quality_plant_expect === 95
 										? 'Khá'
-										: 'Trung bình'}
+										: selectedPurchaseRequest?.task?.report
+													?.quality_plant_expect === 90
+											? 'Trung bình'
+											: 'Đã hủy'}
 							</Descriptions.Item>
 						</>
 					) : null}
@@ -87,6 +90,11 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							</Descriptions.Item>
 						</>
 					) : null}
+					{selectedPurchaseRequest?.task?.report?.content && (
+						<Descriptions.Item label="Nội dung">
+							{selectedPurchaseRequest?.task?.report?.content}
+						</Descriptions.Item>
+					)}
 
 					{/* {selectedPurchaseRequest?.task?.report?.quality_plant && (
 						<>
