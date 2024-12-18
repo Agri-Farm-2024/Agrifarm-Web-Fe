@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getDashboardByManager} from '../../redux/slices/dashboard';
 import socket from '../../services/socket';
 import {toast} from 'react-toastify';
+import {formatNumber} from '../../utils';
 
 export default function ManagerDashBoardPages() {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -159,7 +160,8 @@ export default function ManagerDashBoardPages() {
 	const revenueLineConfig = {
 		data: revenueData,
 		xField: 'month',
-		yField: ({revenue}) => revenue,
+		yField: 'revenue',
+
 		color: '#3f51b5',
 		point: {
 			size: 5,
@@ -174,6 +176,11 @@ export default function ManagerDashBoardPages() {
 			lineWidth: 3,
 		},
 		smooth: true,
+		tooltip: {
+			channel: 'y', // Target the 'y' channel for the tooltip
+			name: 'Doanh thu',
+			valueFormatter: (value) => `${value.toLocaleString()} VND`, // Format revenue as currency
+		},
 	};
 
 	// Define color mapping for each status
