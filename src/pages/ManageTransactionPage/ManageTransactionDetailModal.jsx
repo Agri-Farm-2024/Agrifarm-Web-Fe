@@ -2,7 +2,8 @@ import React from 'react';
 import styles from './ManageTransactionPage.module.css';
 import {Modal, Descriptions, Tag, message} from 'antd';
 import {capitalizeFirstLetter, formatDate, formatNumber, formatTimeViewLand} from '../../utils';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {approveTransaction} from '../../redux/slices/transactionSlice';
 
 export const ManageTransactionDetailModal = ({
 	selectedTransaction,
@@ -10,15 +11,29 @@ export const ManageTransactionDetailModal = ({
 	isModalOpen,
 }) => {
 	const loading = useSelector((state) => state?.transactionSlice?.loading);
+	const dispatch = useDispatch();
 
 	const handleApproveTransaction = () => {
 		console.log('Approve transaction: ', selectedTransaction?.transaction_id);
 		const hideLoading = message.loading('Đang xử lý...', 0);
-		setTimeout(() => {
-			hideLoading();
-			handleModalClose(true);
-			message.success('Phê duyệt thành công');
-		}, 1000);
+		dispatch(
+			approveTransaction({
+				transactionID: selectedTransaction?.transaction_id,
+			})
+		)
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					handleModalClose(true);
+					message.success('Phê duyệt thành công');
+				} else {
+					message.error('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
 	};
 
 	return (
@@ -34,6 +49,7 @@ export const ManageTransactionDetailModal = ({
 					: {style: {display: 'none'}}
 			}
 			onOk={handleApproveTransaction}
+			okText={loading ? 'Đang xử lý' : 'Đồng ý'}
 		>
 			{selectedTransaction && (
 				<Descriptions

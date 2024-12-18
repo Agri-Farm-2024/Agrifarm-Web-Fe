@@ -18,6 +18,20 @@ export const getAllTransaction = createAsyncThunk(
 	}
 );
 
+export const approveTransaction = createAsyncThunk(
+	'transactions/approveTransaction',
+	async ({transactionID}, {rejectWithValue}) => {
+		console.log('approveTransaction: ' + transactionID);
+		try {
+			const response = await api.patch(`/transactions/confirm/${transactionID}`);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
 const transactionSlice = createSlice({
 	name: 'transactionSlice',
 	initialState: {
@@ -39,6 +53,17 @@ const transactionSlice = createSlice({
 			.addCase(getAllTransaction.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload || 'Service package creation failed';
+			})
+			.addCase(approveTransaction.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(approveTransaction.fulfilled, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(approveTransaction.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload || 'failed';
 			});
 	},
 });
