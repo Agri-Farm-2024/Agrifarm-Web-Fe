@@ -286,13 +286,13 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 			),
 		},
 		{
-			title: 'Giá thu mua(VND)',
+			title: 'Giá thu mua',
 			dataIndex: 'price_purchase_per_kg',
 			key: 'price_purchase_per_kg',
 			render: (_, record) => (
 				<p>
-					{formatNumber(record?.service_specific?.plant_season?.price_purchase_per_kg)} /
-					KG
+					{formatNumber(record?.service_specific?.plant_season?.price_purchase_per_kg)}{' '}
+					VND/kg
 				</p>
 			),
 		},

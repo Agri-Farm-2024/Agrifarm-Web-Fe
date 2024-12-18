@@ -36,6 +36,12 @@ export const ManageTransactionDetailModal = ({
 			});
 	};
 
+	console.log(
+		selectedTransaction?.service_specific?.requests?.find(
+			(request) => request.type === 'product_puchase_harvest'
+		)?.task?.report
+	);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết giao dịch</span>}
@@ -67,6 +73,50 @@ export const ManageTransactionDetailModal = ({
 					<Descriptions.Item label="Email">
 						{selectedTransaction?.user?.email}
 					</Descriptions.Item>
+
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Số lượng">
+								{
+									selectedTransaction?.service_specific?.requests?.find(
+										(request) => request.type === 'product_puchase_harvest'
+									)?.task?.report?.mass_plant
+								}{' '}
+								kg
+							</Descriptions.Item>
+						)}
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Chất lượng">
+								{selectedTransaction?.service_specific?.requests?.find(
+									(request) => request.type === 'product_puchase_harvest'
+								)?.task?.report?.quality_plant === 100
+									? 'Tốt'
+									: selectedTransaction?.service_specific?.requests?.find(
+												(request) =>
+													request.type === 'product_puchase_harvest'
+										  )?.task?.report?.quality_plant === 100
+										? 'Khá'
+										: 'Trung bình'}{' '}
+							</Descriptions.Item>
+						)}
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Đơn giá">
+								{formatNumber(
+									selectedTransaction?.service_specific?.requests?.find(
+										(request) => request.type === 'product_puchase_harvest'
+									)?.task?.report?.price_purchase_per_kg
+								)}{' '}
+								VND/kg
+							</Descriptions.Item>
+						)}
 					<Descriptions.Item label="Giá">
 						{selectedTransaction?.total_price?.toLocaleString()} VND
 					</Descriptions.Item>
@@ -80,11 +130,6 @@ export const ManageTransactionDetailModal = ({
 					{selectedTransaction?.booking_land?.price_per_month && (
 						<Descriptions.Item label="Tiền thuê mỗi tháng">
 							{formatNumber(selectedTransaction?.booking_land?.price_per_month)} VND
-						</Descriptions.Item>
-					)}
-					{selectedTransaction?.booking_land?.price_deposit && (
-						<Descriptions.Item label="Tiền cọc">
-							{formatNumber(selectedTransaction?.booking_land?.price_deposit)} VND
 						</Descriptions.Item>
 					)}
 					{selectedTransaction?.booking_land?.price_deposit && (
