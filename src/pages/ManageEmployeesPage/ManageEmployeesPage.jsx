@@ -195,7 +195,10 @@ export const ManageEmployeesPage = () => {
 							allowClear
 							placeholder="Chọn vị trí"
 							options={roleOptions}
-							onChange={(value) => setSelectedRole(value)}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setSelectedRole(value);
+							}}
 						></Select>
 					</div>
 					{/* <div className={styles.fiterItem}>
