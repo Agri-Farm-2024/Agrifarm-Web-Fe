@@ -129,7 +129,10 @@ export const ManageStandardProcessDetailModal = ({
 											>
 												{`Ngày ${action.time_start == action.time_end ? action.time_start : `${action.time_start} - ngày ${action.time_end}`}: ${action.title}`}
 											</p>
-											<p className={styles.content}>{action.content}</p>
+											<div
+												dangerouslySetInnerHTML={{__html: action.content}}
+												className={styles.content}
+											/>
 										</div>
 									))}
 								{plan.process_standard_stage_material &&

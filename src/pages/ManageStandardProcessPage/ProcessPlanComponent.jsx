@@ -2,6 +2,7 @@ import {DeleteOutlined} from '@ant-design/icons';
 import {Button, Form, Input, InputNumber, Select} from 'antd';
 import React from 'react';
 import styles from './ManageStandardProcessPage.module.css';
+import TextEditor from '../ManageLandPage/TextEditor';
 
 export const ProcessPlanComponent = ({form, selectedProcess, handleScroll, materialOptions}) => {
 	const markAsDeleted = (fieldName) => {
