@@ -36,7 +36,6 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							? selectedPurchaseRequest?.service_specific?.land_renter?.full_name
 							: 'chưa có'}
 					</Descriptions.Item>
-
 					<Descriptions.Item label="Số điện thoại">
 						{selectedPurchaseRequest?.service_specific?.land_renter?.phone
 							? selectedPurchaseRequest?.service_specific?.land_renter?.phone
@@ -47,7 +46,6 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							selectedPurchaseRequest?.service_specific?.plant_season?.plant?.name
 						)}
 					</Descriptions.Item>
-
 					<Descriptions.Item label="Đơn giá thu mua(VND)">
 						{formatNumber(
 							selectedPurchaseRequest?.service_specific?.plant_season
@@ -69,7 +67,8 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 								lượng
 							</Descriptions.Item>
 						</>
-					) : (
+					) : null}
+					{selectedPurchaseRequest?.task?.report?.quality_plant ? (
 						<>
 							<Descriptions.Item label="Số lượng thu hoạch">
 								{selectedPurchaseRequest?.task?.report?.mass_plant} Kg
@@ -79,7 +78,8 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 								{selectedPurchaseRequest?.task?.report?.quality_plant}% chất lượng
 							</Descriptions.Item>
 						</>
-					)}
+					) : null}
+
 					{/* {selectedPurchaseRequest?.task?.report?.quality_plant && (
 						<>
 							<Descriptions.Item label="Số lượng thu hoạch">
@@ -96,7 +96,6 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							? selectedPurchaseRequest?.task?.assign_to?.full_name
 							: 'chưa có'}
 					</Descriptions.Item>
-
 					<Descriptions.Item label="Trạng thái">
 						{selectedPurchaseRequest.status == 'completed' && (
 							<Tag color="green" key={selectedPurchaseRequest.status}>
@@ -129,7 +128,6 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 							</Tag>
 						)}
 					</Descriptions.Item>
-
 					{selectedPurchaseRequest?.task?.report?.report_url && (
 						<Descriptions.Item label="Hình ảnh" span={2}>
 							<Image

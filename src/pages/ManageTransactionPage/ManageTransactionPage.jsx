@@ -53,7 +53,19 @@ export const ManageTransactionPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleModalClose = () => {
+	const handleModalClose = (isLoading) => {
+		if (isLoading === true) {
+			dispatch(
+				getAllTransaction({
+					status: filterStatus,
+					type: filterType,
+					page_size: pageSize,
+					page_index: currentPage,
+				})
+			).then((response) => {
+				console.log('Data fetched:', response.payload);
+			});
+		}
 		setIsModalOpen(false);
 		setselectedTransaction(null);
 	};
