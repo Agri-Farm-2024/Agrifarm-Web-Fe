@@ -49,7 +49,7 @@ export const AppRouters = () => {
 								user?.role === 1
 									? 'manager-dashboard'
 									: user?.role === 2
-										? '/dashboard'
+										? '/land-requests'
 										: user?.role == 0
 											? '/manage-account'
 											: '/login'

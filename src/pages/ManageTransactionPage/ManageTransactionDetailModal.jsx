@@ -168,6 +168,9 @@ export const ManageTransactionDetailModal = ({
 						{selectedTransaction?.purpose === 'order' && (
 							<Tag color="green">Đơn hàng</Tag>
 						)}
+						{selectedTransaction?.purpose === 'cancel_purchase_product' && (
+							<Tag color="#ccc">Hủy thu mua</Tag>
+						)}
 					</Descriptions.Item>
 					{selectedTransaction?.service_specific?.time_start && (
 						<Descriptions.Item label="Thời gian dịch vụ">

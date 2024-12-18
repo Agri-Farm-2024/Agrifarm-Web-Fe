@@ -56,7 +56,7 @@ const LoginPage = () => {
 						user.role === 1
 							? '/manager-dashboard'
 							: user.role === 2
-								? '/dashboard'
+								? '/land-requests'
 								: '/manage-account'
 					);
 				} else {

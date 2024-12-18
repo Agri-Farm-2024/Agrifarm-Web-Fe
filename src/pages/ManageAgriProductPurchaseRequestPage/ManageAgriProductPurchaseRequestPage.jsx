@@ -290,10 +290,7 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 			dataIndex: 'price_purchase_per_kg',
 			key: 'price_purchase_per_kg',
 			render: (_, record) => (
-				<p>
-					{formatNumber(record?.service_specific?.plant_season?.price_purchase_per_kg)}{' '}
-					VND/kg
-				</p>
+				<p>{formatNumber(record?.service_specific?.price_purchase_per_kg)} VND/kg</p>
 			),
 		},
 		{
