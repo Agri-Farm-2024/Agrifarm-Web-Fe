@@ -414,7 +414,10 @@ export const ManageAgriProductPurchaseRequestPage = () => {
 							placeholder="Chọn trạng thái"
 							options={statusOptions}
 							value={status}
-							onChange={(value) => setStatus(value)}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setStatus(value);
+							}}
 						></Select>
 					</div>
 				</div>
