@@ -149,6 +149,11 @@ const PrintContract = forwardRef((props, ref) => {
 							bên nào đối với bên còn lại phải được thực hiện trong vòng 30 ngày kể từ
 							ngày chấm dứt hợp đồng.
 						</li>
+						<li>
+							Trường hợp bất khả kháng (thiên tai) doanh nghiệp sẽ miễn trách nhiệm
+							thu mua. Đàm phán với khách hàng hỗ trợ một phần tài chính.Doanh nghiệp
+							phối hợp với chính quyền có chính sách hỗ trợ
+						</li>
 					</ul>
 				</ul>
 			</div>

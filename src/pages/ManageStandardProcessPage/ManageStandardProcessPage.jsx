@@ -2,7 +2,13 @@ import {Button, Input, Popconfirm, Select, Space, Table, Tag, message} from 'ant
 import React, {useEffect, useState} from 'react';
 import styles from './ManageStandardProcessPage.module.css';
 import {ManageStandardProcessDetailModal} from './ManageStandardProcessDetailModal';
-import {CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {
+	CheckOutlined,
+	CloseOutlined,
+	DeleteOutlined,
+	EditOutlined,
+	ReloadOutlined,
+} from '@ant-design/icons';
 import {ManageStandardProcessUpdateModal} from './ManageStandardProcessUpdateModal';
 import {ManageStandardProcessCreateRequestModal} from './ManageStandardProcessCreateRequestModal';
 import {useDispatch, useSelector} from 'react-redux';
@@ -139,9 +145,122 @@ const plantNameOptions = [
 ];
 
 export const ManageStandardProcessPage = () => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+	const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+	const [selectedProcess, setSelectedProcess] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
+	const [filterStatus, setFilterStatus] = useState('');
+
+	const dispatch = useDispatch();
+
+	const standardProcess = useSelector(standardProcessListSelector);
+	const loading = useSelector(isLoadingProcess);
+
+	const handleConfirmProcess = (e, isConfirm, process) => {
+		e.stopPropagation();
+		if (isConfirm) {
+			try {
+				const formData = {
+					rejectReason: null,
+					processId: process.process_technical_standard_id,
+				};
+				toast.loading('Đang tiến hành...', {autoClose: false});
+				dispatch(confirmProcess(formData)).then((response) => {
+					console.log('Approve process reponse: ' + response);
+					toast.dismiss(); // Remove the loading message
+					if (response.payload && response.payload.statusCode) {
+						//Catch Error message
+						if (response.payload.statusCode !== 200) {
+							message.error('Chấp nhận quy trình thất bại');
+							console.log('Approve process failed!');
+						}
+
+						if (response.payload.statusCode === 200) {
+							message.success('Chấp nhận quy trình thành công');
+							fetchStandardProcess(1);
+						}
+					}
+				});
+			} catch (error) {
+				console.log('Error confirm process', error);
+				toast.dismiss(); // Remove the loading message
+				message.error('Chấp nhận quy trình thất bại');
+			}
+		} else {
+			setSelectedProcess(process);
+			setIsRejectModalOpen(true);
+		}
+	};
+
+	const fetchStandardProcess = (pageIndex) => {
+		console.log('filterStatus: ' + filterStatus);
+		try {
+			const params = {
+				page_index: pageIndex,
+				page_size: pageSize,
+				status: filterStatus,
+			};
+			dispatch(getStandardProcessList(params));
+			setCurrentPage(pageIndex);
+		} catch (error) {
+			console.log('Error fetch standard process', error);
+		}
+	};
+
+	useEffect(() => {
+		fetchStandardProcess(1);
+	}, [filterStatus]);
+
+	const handleRowClick = (record) => {
+		console.log('setSelectedProcess', record);
+		setSelectedProcess(record);
+		setIsModalOpen(true);
+	};
+
+	const handleRemovePlant = (e) => {
+		e.stopPropagation();
+		console.log('Remove Plant');
+	};
+
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+		setSelectedProcess(null);
+	};
+
+	const handleUpdateModalClose = (isUpdateSuccess) => {
+		if (isUpdateSuccess == true) {
+			fetchStandardProcess(1);
+		}
+		setIsUpdateModalOpen(false);
+		setSelectedProcess(null);
+	};
+
+	const handleCreateModalClose = () => {
+		setIsCreateModalOpen(false);
+		setSelectedProcess(null);
+	};
+
+	const handleRejectModalClose = (isRejectSuccess) => {
+		if (isRejectSuccess) {
+			fetchStandardProcess(1);
+		}
+		setSelectedProcess(null);
+		setIsRejectModalOpen(false);
+	};
+
 	const columns = [
 		{
-			title: '#',
+			title: (
+				<ReloadOutlined
+					className={styles.reloadBtn}
+					onClick={() => {
+						fetchStandardProcess(1);
+					}}
+				/>
+			),
 			dataIndex: 'index',
 			key: 'index',
 			render: (text, record, index) => <a>{(currentPage - 1) * 10 + index + 1}</a>,
@@ -264,111 +383,6 @@ export const ManageStandardProcessPage = () => {
 			),
 		},
 	];
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-	const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
-	const [selectedProcess, setSelectedProcess] = useState(null);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [pageSize, setPageSize] = useState(5);
-	const [filterStatus, setFilterStatus] = useState('');
-
-	const dispatch = useDispatch();
-
-	const standardProcess = useSelector(standardProcessListSelector);
-	const loading = useSelector(isLoadingProcess);
-
-	const handleConfirmProcess = (e, isConfirm, process) => {
-		e.stopPropagation();
-		if (isConfirm) {
-			try {
-				const formData = {
-					rejectReason: null,
-					processId: process.process_technical_standard_id,
-				};
-				toast.loading('Đang tiến hành...', {autoClose: false});
-				dispatch(confirmProcess(formData)).then((response) => {
-					console.log('Approve process reponse: ' + response);
-					toast.dismiss(); // Remove the loading message
-					if (response.payload && response.payload.statusCode) {
-						//Catch Error message
-						if (response.payload.statusCode !== 200) {
-							message.error('Chấp nhận quy trình thất bại');
-							console.log('Approve process failed!');
-						}
-
-						if (response.payload.statusCode === 200) {
-							message.success('Chấp nhận quy trình thành công');
-							fetchStandardProcess(1);
-						}
-					}
-				});
-			} catch (error) {
-				console.log('Error confirm process', error);
-				toast.dismiss(); // Remove the loading message
-				message.error('Chấp nhận quy trình thất bại');
-			}
-		} else {
-			setSelectedProcess(process);
-			setIsRejectModalOpen(true);
-		}
-	};
-
-	const fetchStandardProcess = (pageIndex) => {
-		console.log('filterStatus: ' + filterStatus);
-		try {
-			const params = {
-				page_index: pageIndex,
-				page_size: pageSize,
-				status: filterStatus,
-			};
-			dispatch(getStandardProcessList(params));
-			setCurrentPage(pageIndex);
-		} catch (error) {
-			console.log('Error fetch standard process', error);
-		}
-	};
-
-	useEffect(() => {
-		fetchStandardProcess(1);
-	}, [filterStatus]);
-
-	const handleRowClick = (record) => {
-		console.log('setSelectedProcess', record);
-		setSelectedProcess(record);
-		setIsModalOpen(true);
-	};
-
-	const handleRemovePlant = (e) => {
-		e.stopPropagation();
-		console.log('Remove Plant');
-	};
-
-	const handleModalClose = () => {
-		setIsModalOpen(false);
-		setSelectedProcess(null);
-	};
-
-	const handleUpdateModalClose = (isUpdateSuccess) => {
-		if (isUpdateSuccess == true) {
-			fetchStandardProcess(1);
-		}
-		setIsUpdateModalOpen(false);
-		setSelectedProcess(null);
-	};
-
-	const handleCreateModalClose = () => {
-		setIsCreateModalOpen(false);
-		setSelectedProcess(null);
-	};
-
-	const handleRejectModalClose = (isRejectSuccess) => {
-		if (isRejectSuccess) {
-			fetchStandardProcess(1);
-		}
-		setSelectedProcess(null);
-		setIsRejectModalOpen(false);
-	};
 
 	return (
 		<div className={styles.container}>

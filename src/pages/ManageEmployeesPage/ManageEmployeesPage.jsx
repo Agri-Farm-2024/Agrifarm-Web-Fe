@@ -22,6 +22,10 @@ const statusOptions = [
 
 const roleOptions = [
 	{
+		value: 4,
+		label: 'Người dùng',
+	},
+	{
 		value: 3,
 		label: 'Chuyên viên nông nghiệp',
 	},
@@ -124,37 +128,37 @@ export const ManageEmployeesPage = () => {
 				</>
 			),
 		},
-		{
-			title: 'Hành động',
-			key: 'action',
-			render: (_, record) => (
-				<Space size="middle">
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							console.log('CLick');
-							setSelectedEmployee(record);
-							setIsUpdateModalOpen(true);
-						}}
-						color="primary"
-						variant="filled"
-						icon={<EditOutlined />}
-					></Button>
+		// {
+		// 	title: 'Hành động',
+		// 	key: 'action',
+		// 	render: (_, record) => (
+		// 		<Space size="middle">
+		// 			<Button
+		// 				onClick={(e) => {
+		// 					e.stopPropagation();
+		// 					console.log('CLick');
+		// 					setSelectedEmployee(record);
+		// 					setIsUpdateModalOpen(true);
+		// 				}}
+		// 				color="primary"
+		// 				variant="filled"
+		// 				icon={<EditOutlined />}
+		// 			></Button>
 
-					<Popconfirm
-						onClick={(e) => e.stopPropagation()}
-						title="Đình chỉ nhân viên"
-						description="Bạn muốn đình chỉ nhân viên này?"
-						onConfirm={handleSuspendEmployee}
-						onCancel={(e) => e.stopPropagation()}
-						okText="Đình chỉ"
-						cancelText="Huỷ"
-					>
-						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
-				</Space>
-			),
-		},
+		// 			<Popconfirm
+		// 				onClick={(e) => e.stopPropagation()}
+		// 				title="Đình chỉ nhân viên"
+		// 				description="Bạn muốn đình chỉ nhân viên này?"
+		// 				onConfirm={handleSuspendEmployee}
+		// 				onCancel={(e) => e.stopPropagation()}
+		// 				okText="Đình chỉ"
+		// 				cancelText="Huỷ"
+		// 			>
+		// 				<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+		// 			</Popconfirm>
+		// 		</Space>
+		// 	),
+		// },
 	];
 
 	const handleRowClick = (record) => {
@@ -191,7 +195,10 @@ export const ManageEmployeesPage = () => {
 							allowClear
 							placeholder="Chọn vị trí"
 							options={roleOptions}
-							onChange={(value) => setSelectedRole(value)}
+							onChange={(value) => {
+								setCurrentPage(1);
+								setSelectedRole(value);
+							}}
 						></Select>
 					</div>
 					{/* <div className={styles.fiterItem}>

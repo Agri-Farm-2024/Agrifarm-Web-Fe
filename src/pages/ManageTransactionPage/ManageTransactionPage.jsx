@@ -53,7 +53,19 @@ export const ManageTransactionPage = () => {
 		setIsModalOpen(true);
 	};
 
-	const handleModalClose = () => {
+	const handleModalClose = (isLoading) => {
+		if (isLoading === true) {
+			dispatch(
+				getAllTransaction({
+					status: filterStatus,
+					type: filterType,
+					page_size: pageSize,
+					page_index: currentPage,
+				})
+			).then((response) => {
+				console.log('Data fetched:', response.payload);
+			});
+		}
 		setIsModalOpen(false);
 		setselectedTransaction(null);
 	};
@@ -172,7 +184,10 @@ export const ManageTransactionPage = () => {
 				<span>Lọc theo trạng thái:</span>
 				<Select
 					placeholder="Chọn Trạng Thái"
-					onChange={(value) => setFilterStatus(value)}
+					onChange={(value) => {
+						setCurrentPage(1);
+						setFilterStatus(value);
+					}}
 					style={{width: '20%', marginRight: 8}}
 				>
 					<Option value="">Tất cả</Option>
@@ -185,7 +200,10 @@ export const ManageTransactionPage = () => {
 				<span>Lọc theo loại:</span>
 				<Select
 					placeholder="Chọn Loại"
-					onChange={(value) => setFilterType(value)}
+					onChange={(value) => {
+						setCurrentPage(1);
+						setFilterType(value);
+					}}
 					style={{width: '20%'}}
 				>
 					<Option value={null}>Tất cả</Option>

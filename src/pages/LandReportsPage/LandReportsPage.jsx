@@ -3,7 +3,7 @@ import {Table, Select, Button, Space, Tag, Modal, message, Tooltip, Popconfirm} 
 import styles from './LandReportsPage.module.css';
 import {useDispatch, useSelector} from 'react-redux';
 import {getListOfReportLand} from '../../redux/slices/landSlice';
-import {formatDate, formatNumber, formatTimeViewLand} from '../../utils';
+import {capitalizeFirstLetter, formatDate, formatNumber, formatTimeViewLand} from '../../utils';
 import {approveRequest, assignForTask} from '../../redux/slices/requestSlice';
 import {getListOfExpert, getListOfStaff} from '../../redux/slices/userSlice';
 import {LandReportsDetailModal} from './LandReportsDetailModal';
@@ -150,7 +150,9 @@ export const LandReportsPage = () => {
 			title: 'Tên Mảnh Đất',
 			dataIndex: 'land_name',
 			key: 'land_name',
-			render: (_, record) => <p> {record?.booking_land?.land?.name}</p>,
+			render: (_, record) => (
+				<p> {capitalizeFirstLetter(record?.booking_land?.land?.name)}</p>
+			),
 		},
 		{
 			title: 'Diện tích',

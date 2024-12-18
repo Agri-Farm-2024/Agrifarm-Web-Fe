@@ -1,21 +1,61 @@
 import React from 'react';
 import styles from './ManageTransactionPage.module.css';
-import {Modal, Descriptions, Tag} from 'antd';
-import {capitalizeFirstLetter, formatDate, formatTimeViewLand} from '../../utils';
+import {Modal, Descriptions, Tag, message} from 'antd';
+import {capitalizeFirstLetter, formatDate, formatNumber, formatTimeViewLand} from '../../utils';
+import {useDispatch, useSelector} from 'react-redux';
+import {approveTransaction} from '../../redux/slices/transactionSlice';
 
 export const ManageTransactionDetailModal = ({
 	selectedTransaction,
 	handleModalClose,
 	isModalOpen,
 }) => {
+	const loading = useSelector((state) => state?.transactionSlice?.loading);
+	const dispatch = useDispatch();
+
+	const handleApproveTransaction = () => {
+		console.log('Approve transaction: ', selectedTransaction?.transaction_id);
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		dispatch(
+			approveTransaction({
+				transactionID: selectedTransaction?.transaction_id,
+			})
+		)
+			.then((res) => {
+				hideLoading();
+				if (res.payload.statusCode === 200) {
+					handleModalClose(true);
+					message.success('Phê duyệt thành công');
+				} else {
+					message.error('Có lỗi trong quá trình cập nhật');
+				}
+			})
+			.catch(() => {
+				hideLoading();
+				message.error('Có lỗi trong quá trình cập nhật');
+			});
+	};
+
+	console.log(
+		selectedTransaction?.service_specific?.requests?.find(
+			(request) => request.type === 'product_puchase_harvest'
+		)?.task?.report
+	);
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết giao dịch</span>}
 			open={isModalOpen}
 			onCancel={handleModalClose}
-			okButtonProps={{style: {display: 'none'}}}
 			style={{top: 20}}
 			cancelText="Hủy"
+			okButtonProps={
+				selectedTransaction?.status === 'approved' && selectedTransaction?.type === 'refund'
+					? null
+					: {style: {display: 'none'}}
+			}
+			onOk={handleApproveTransaction}
+			okText={loading ? 'Đang xử lý' : 'Đồng ý'}
 		>
 			{selectedTransaction && (
 				<Descriptions
@@ -33,9 +73,71 @@ export const ManageTransactionDetailModal = ({
 					<Descriptions.Item label="Email">
 						{selectedTransaction?.user?.email}
 					</Descriptions.Item>
+
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Số lượng">
+								{
+									selectedTransaction?.service_specific?.requests?.find(
+										(request) => request.type === 'product_puchase_harvest'
+									)?.task?.report?.mass_plant
+								}{' '}
+								kg
+							</Descriptions.Item>
+						)}
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Chất lượng">
+								{selectedTransaction?.service_specific?.requests?.find(
+									(request) => request.type === 'product_puchase_harvest'
+								)?.task?.report?.quality_plant === 100
+									? 'Tốt'
+									: selectedTransaction?.service_specific?.requests?.find(
+												(request) =>
+													request.type === 'product_puchase_harvest'
+										  )?.task?.report?.quality_plant === 100
+										? 'Khá'
+										: 'Trung bình'}{' '}
+							</Descriptions.Item>
+						)}
+					{selectedTransaction?.service_specific?.requests?.find(
+						(request) => request.type === 'product_puchase_harvest'
+					)?.task?.report &&
+						selectedTransaction?.type === 'refund' && (
+							<Descriptions.Item label="Đơn giá">
+								{formatNumber(
+									selectedTransaction?.service_specific?.requests?.find(
+										(request) => request.type === 'product_puchase_harvest'
+									)?.task?.report?.price_purchase_per_kg
+								)}{' '}
+								VND/kg
+							</Descriptions.Item>
+						)}
 					<Descriptions.Item label="Giá">
 						{selectedTransaction?.total_price?.toLocaleString()} VND
 					</Descriptions.Item>
+					{selectedTransaction?.booking_land?.time_start && (
+						<Descriptions.Item label="Thời gian thuê">
+							{formatDate(selectedTransaction?.booking_land?.time_start)} -{' '}
+							{formatDate(selectedTransaction?.booking_land?.time_end)}
+						</Descriptions.Item>
+					)}
+
+					{selectedTransaction?.booking_land?.price_per_month && (
+						<Descriptions.Item label="Tiền thuê mỗi tháng">
+							{formatNumber(selectedTransaction?.booking_land?.price_per_month)} VND
+						</Descriptions.Item>
+					)}
+					{selectedTransaction?.booking_land?.price_deposit && (
+						<Descriptions.Item label="Tiền cọc">
+							{formatNumber(selectedTransaction?.booking_land?.price_deposit)} VND
+						</Descriptions.Item>
+					)}
+
 					<Descriptions.Item label="Loại">
 						{selectedTransaction?.type === 'payment' && <>Thanh toán</>}
 						{selectedTransaction?.type === 'refund' && <>Trả tiền</>}
