@@ -96,6 +96,7 @@ button {
 	gap: 10px;
 	flex-wrap: nowrap;
 	overflow-x: scroll;
+	position: relative;
 }
 
 .monthColumn {

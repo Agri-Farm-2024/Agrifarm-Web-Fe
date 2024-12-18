@@ -6,6 +6,7 @@ import {
 	Select,
 	Skeleton,
 	Space,
+	Spin,
 	Table,
 	Tag,
 	Tooltip,
@@ -397,141 +398,155 @@ export const ManagePlantSeasonPage = () => {
 					</Button> */}
 				</div>
 			</div>
-			<Skeleton
-				style={{margin: '0 auto', width: '98%'}}
-				active
-				loading={loading}
-				paragraph={{rows: 3}}
-			>
-				<div className={styles.tableContainer}>
-					{(!plantSeasonList ||
+
+			<div className={styles.tableContainer}>
+				{loading && (
+					<Spin
+						size="large"
+						style={{
+							width: '100%',
+							height: '100%',
+							textAlign: 'center',
+							position: 'absolute',
+							top: '50%',
+							left: 0,
+							bottom: 0,
+							zIndex: 100,
+						}}
+					></Spin>
+				)}
+				{!loading &&
+					(!plantSeasonList ||
 						!plantSeasonList.plant_seasons ||
 						plantSeasonList.plant_seasons.length == 0) && (
 						<Empty style={{width: '100%', marginTop: '50px'}} />
 					)}
-					{plantSeasonList &&
-						plantSeasonList.plant_seasons &&
-						plantSeasonList.plant_seasons.length > 0 &&
-						months.map((month, index) => (
-							<div key={`Month ${index}`} className={styles.monthColumn}>
-								<div
-									className={styles.columnHeader}
-									style={{backgroundColor: month.color}}
-								>
-									{month.label}
-								</div>
-								<div className={styles.itemContainer}>
-									{plantSeasonList.plant_seasons
-										.filter((item) => item?.month_start == month.value)
-										.map((season, seasonIndex) => (
-											<div
-												key={`season_${seasonIndex} in monnth ${index}`}
-												className={styles.seasonItem}
-												style={{backgroundColor: month.color}}
-												onClick={() => handleRowClick(season)}
-											>
-												<p className={styles.seasonName}>
-													{capitalizeFirstLetter(season?.plant?.name)}
-												</p>
-												<p className={styles.seasonType}>
-													{season?.type == 'in_season'
-														? 'Mùa thuận'
-														: 'Mùa nghịch'}
-												</p>
-												<p>
-													{season?.status == 'active' && (
-														<Tag
-															className={styles.tagSize}
-															color="green"
-														>
-															Đang áp dụng
-														</Tag>
-													)}
-													{season?.status == 'deleted' && (
-														<Tag className={styles.tagSize} color="red">
-															Ngừng áp dụng
-														</Tag>
-													)}
-												</p>
-												<Space className={styles.actionBar}>
+				{plantSeasonList &&
+					plantSeasonList.plant_seasons &&
+					plantSeasonList.plant_seasons.length > 0 &&
+					months.map((month, index) => (
+						<div key={`Month ${index}`} className={styles.monthColumn}>
+							<div
+								className={styles.columnHeader}
+								style={{backgroundColor: month.color}}
+							>
+								{month.label}
+							</div>
+							<div className={styles.itemContainer}>
+								{plantSeasonList.plant_seasons
+									.filter((item) => item?.month_start == month.value)
+									.map((season, seasonIndex) => (
+										<div
+											key={`season_${seasonIndex} in monnth ${index}`}
+											className={styles.seasonItem}
+											style={{backgroundColor: month.color}}
+											onClick={() => handleRowClick(season)}
+										>
+											<p className={styles.seasonName}>
+												{capitalizeFirstLetter(season?.plant?.name)}
+											</p>
+											<p className={styles.seasonType}>
+												{season?.type == 'in_season'
+													? 'Mùa thuận'
+													: 'Mùa nghịch'}
+											</p>
+											<p className={styles.seasonType}>
+												Giá thu mua:{' '}
+												<span style={{fontWeight: 'bold'}}>
+													{formatNumber(season?.price_purchase_per_kg)}{' '}
+													VND/kg
+												</span>
+											</p>
+											<p>
+												{season?.status == 'active' && (
+													<Tag className={styles.tagSize} color="green">
+														Đang áp dụng
+													</Tag>
+												)}
+												{season?.status == 'deleted' && (
+													<Tag className={styles.tagSize} color="red">
+														Ngừng áp dụng
+													</Tag>
+												)}
+											</p>
+											<Space className={styles.actionBar}>
+												<Button
+													className={styles.actionButton}
+													size="small"
+													onClick={(e) => {
+														e.stopPropagation();
+														console.log('CLick');
+														setSelectedPlantSeason(season);
+														setIsUpdateModalOpen(true);
+													}}
+													color="primary"
+													variant="filled"
+													icon={<EditOutlined />}
+													disabled={season.status === 'deleted'}
+												></Button>
+
+												<Popconfirm
+													onClick={(e) => e.stopPropagation()}
+													title="Xoá dụng mùa vụ này"
+													description="Bạn muốn xoá dụng mùa vụ này?"
+													onConfirm={(e) =>
+														handleStopPlantSeason(
+															e,
+															season.plant_season_id
+														)
+													}
+													onCancel={(e) => e.stopPropagation()}
+													okText="Xoá dụng"
+													cancelText="Huỷ"
+													disabled={season.status === 'deleted'}
+												>
 													<Button
 														className={styles.actionButton}
+														disabled={season.status === 'deleted'}
 														size="small"
-														onClick={(e) => {
-															e.stopPropagation();
-															console.log('CLick');
-															setSelectedPlantSeason(season);
-															setIsUpdateModalOpen(true);
-														}}
-														color="primary"
+														color="danger"
 														variant="filled"
-														icon={<EditOutlined />}
-														disabled={season.status === 'deleted'}
+														icon={<DeleteOutlined />}
 													></Button>
-
-													<Popconfirm
-														onClick={(e) => e.stopPropagation()}
-														title="Xoá dụng mùa vụ này"
-														description="Bạn muốn xoá dụng mùa vụ này?"
-														onConfirm={(e) =>
-															handleStopPlantSeason(
-																e,
-																season.plant_season_id
-															)
-														}
-														onCancel={(e) => e.stopPropagation()}
-														okText="Xoá dụng"
-														cancelText="Huỷ"
-														disabled={season.status === 'deleted'}
-													>
-														<Button
-															className={styles.actionButton}
-															disabled={season.status === 'deleted'}
-															size="small"
-															color="danger"
-															variant="filled"
-															icon={<DeleteOutlined />}
-														></Button>
-													</Popconfirm>
-												</Space>
-											</div>
-										))}
-									<div
-										className={styles.addItemBar}
-										onClick={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-											setSelectMonth(month.value);
-											setIsCreateModalOpen(true);
-										}}
-									>
-										<span>
-											<PlusOutlined /> Tạo mùa vụ
-										</span>
-									</div>
+												</Popconfirm>
+											</Space>
+										</div>
+									))}
+								<div
+									className={styles.addItemBar}
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setSelectMonth(month.value);
+										setIsCreateModalOpen(true);
+									}}
+								>
+									<span>
+										<PlusOutlined /> Tạo mùa vụ
+									</span>
 								</div>
 							</div>
-						))}
+						</div>
+					))}
 
-					<ManagePlantSeasonDetailModal
-						isModalOpen={isModalOpen}
-						handleModalClose={handleModalClose}
-						selectedPlantSeason={selectedPlantSeason}
-					/>
+				<ManagePlantSeasonDetailModal
+					isModalOpen={isModalOpen}
+					handleModalClose={handleModalClose}
+					selectedPlantSeason={selectedPlantSeason}
+				/>
 
-					<ManagePlantSeasonUpdateModal
-						isModalOpen={isUpdateModalOpen}
-						handleModalClose={handleUpdateModalClose}
-						selectedPlantSeason={selectedPlantSeason}
-					/>
+				<ManagePlantSeasonUpdateModal
+					isModalOpen={isUpdateModalOpen}
+					handleModalClose={handleUpdateModalClose}
+					selectedPlantSeason={selectedPlantSeason}
+				/>
 
-					<ManagePlantSeasonCreateModal
-						selectMonth={selectMonth}
-						isModalOpen={isCreateModalOpen}
-						handleModalClose={handleCreateModalClose}
-					/>
-				</div>
-			</Skeleton>
+				<ManagePlantSeasonCreateModal
+					selectMonth={selectMonth}
+					isModalOpen={isCreateModalOpen}
+					handleModalClose={handleCreateModalClose}
+				/>
+			</div>
 		</div>
 	);
 };
