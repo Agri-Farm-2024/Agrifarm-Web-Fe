@@ -1,21 +1,39 @@
 import React from 'react';
 import styles from './ManageTransactionPage.module.css';
-import {Modal, Descriptions, Tag} from 'antd';
-import {capitalizeFirstLetter, formatDate, formatTimeViewLand} from '../../utils';
+import {Modal, Descriptions, Tag, message} from 'antd';
+import {capitalizeFirstLetter, formatDate, formatNumber, formatTimeViewLand} from '../../utils';
+import {useSelector} from 'react-redux';
 
 export const ManageTransactionDetailModal = ({
 	selectedTransaction,
 	handleModalClose,
 	isModalOpen,
 }) => {
+	const loading = useSelector((state) => state?.transactionSlice?.loading);
+
+	const handleApproveTransaction = () => {
+		console.log('Approve transaction: ', selectedTransaction?.transaction_id);
+		const hideLoading = message.loading('Đang xử lý...', 0);
+		setTimeout(() => {
+			hideLoading();
+			handleModalClose(true);
+			message.success('Phê duyệt thành công');
+		}, 1000);
+	};
+
 	return (
 		<Modal
 			title={<span style={{fontSize: '1.5rem'}}>Chi tiết giao dịch</span>}
 			open={isModalOpen}
 			onCancel={handleModalClose}
-			okButtonProps={{style: {display: 'none'}}}
 			style={{top: 20}}
 			cancelText="Hủy"
+			okButtonProps={
+				selectedTransaction?.status === 'approved' && selectedTransaction?.type === 'refund'
+					? null
+					: {style: {display: 'none'}}
+			}
+			onOk={handleApproveTransaction}
 		>
 			{selectedTransaction && (
 				<Descriptions
@@ -36,6 +54,29 @@ export const ManageTransactionDetailModal = ({
 					<Descriptions.Item label="Giá">
 						{selectedTransaction?.total_price?.toLocaleString()} VND
 					</Descriptions.Item>
+					{selectedTransaction?.booking_land?.time_start && (
+						<Descriptions.Item label="Thời gian thuê">
+							{formatDate(selectedTransaction?.booking_land?.time_start)} -{' '}
+							{formatDate(selectedTransaction?.booking_land?.time_end)}
+						</Descriptions.Item>
+					)}
+
+					{selectedTransaction?.booking_land?.price_per_month && (
+						<Descriptions.Item label="Tiền thuê mỗi tháng">
+							{formatNumber(selectedTransaction?.booking_land?.price_per_month)} VND
+						</Descriptions.Item>
+					)}
+					{selectedTransaction?.booking_land?.price_deposit && (
+						<Descriptions.Item label="Tiền cọc">
+							{formatNumber(selectedTransaction?.booking_land?.price_deposit)} VND
+						</Descriptions.Item>
+					)}
+					{selectedTransaction?.booking_land?.price_deposit && (
+						<Descriptions.Item label="Tiền cọc">
+							{formatNumber(selectedTransaction?.booking_land?.price_deposit)} VND
+						</Descriptions.Item>
+					)}
+
 					<Descriptions.Item label="Loại">
 						{selectedTransaction?.type === 'payment' && <>Thanh toán</>}
 						{selectedTransaction?.type === 'refund' && <>Trả tiền</>}
