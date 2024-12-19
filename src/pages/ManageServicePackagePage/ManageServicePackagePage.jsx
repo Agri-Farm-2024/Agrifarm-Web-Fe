@@ -166,7 +166,7 @@ export const ManageServicePackagePage = () => {
 						icon={<EditOutlined />}
 					></Button>
 
-					<Popconfirm
+					{/* <Popconfirm
 						onClick={(e) => e.stopPropagation()}
 						title="Ngừng áp dụng gói dịch vụ này"
 						description="Bạn muốn ngừng áp dụng gói dịch vụ này?"
@@ -176,7 +176,7 @@ export const ManageServicePackagePage = () => {
 						cancelText="Huỷ"
 					>
 						<Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-					</Popconfirm>
+					</Popconfirm> */}
 				</Space>
 			),
 		},
