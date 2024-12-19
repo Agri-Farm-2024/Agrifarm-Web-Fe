@@ -188,7 +188,7 @@ export const ManageRentalEquipmentPage = () => {
 							onClick: () => handleRowClick(record),
 						})}
 						rowClassName={(record, index) =>
-							index % 2 === 0 ? styles.evenRow : styles.oddRow
+							record.status === 'pending_sign' ? styles.focus : styles.oddRow
 						}
 						pagination={{
 							pageSize: pageSize,

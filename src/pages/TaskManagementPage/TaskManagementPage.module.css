@@ -67,6 +67,8 @@
 .modalContainer {
     width: 100%;
     padding-top: 1rem;
+    display: flex;
+    flex-direction: 'column';
 }
 
 .modalContainer .bookingItem {
@@ -93,6 +95,11 @@
 .oddRow {
     cursor: pointer;
     background-color: #fafafa;
+}
+
+.focus {
+    background-color: rgb(254, 255, 230);
+    cursor: pointer;
 }
 
 .reloadBtn {
