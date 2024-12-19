@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Button, Space, Select, Tag, Popconfirm, message} from 'antd';
+import {Table, Button, Space, Select, Tag, Popconfirm, message, Modal} from 'antd';
 import styles from './TaskManagementPage.module.css';
 import {
 	CheckOutlined,
@@ -13,104 +13,12 @@ import {TaskManagementAssignModal} from './TaskManagementAssignModal';
 import {TaskManagementAddModal} from './TaskManagementAddModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {isLoadingRequest, requestListSelector} from '../../redux/selectors';
-import {approveRequest, getListRequest} from '../../redux/slices/requestSlice';
+import {approveRequest, assignForTask, getListRequest} from '../../redux/slices/requestSlice';
 import {formatDate} from '../../utils';
 import {toast} from 'react-toastify';
+import {getListOfExpert} from '../../redux/slices/userSlice';
 
 const {Option} = Select;
-
-const dataTable = [
-	{
-		IDTask: 'NV0001',
-		IDLand: 'MD001',
-		Category: 'Hỗ trợ kĩ thuật',
-		Content: 'Xử lí sâu bệnh cho cây ổi',
-		Priority: 'Cao',
-		Assign: 'Bá Phước',
-		status: 'Hoàn thành',
-	},
-	{
-		IDTask: 'NV0002',
-		IDLand: 'MD002',
-		Category: 'Hỗ trợ canh tác',
-		Content: 'Tưới nước cho lúa',
-		Priority: 'Trung bình',
-		Assign: 'Đăng Ninh',
-		status: 'Chờ xử lý',
-	},
-	{
-		IDTask: 'NV0003',
-		IDLand: 'MD003',
-		Category: 'Hỗ trợ kĩ thuật',
-		Content: 'Kiểm tra độ pH của đất',
-		Priority: 'Thấp',
-		Assign: 'Tiến Dũng',
-		status: 'Chờ phân công',
-	},
-	{
-		IDTask: 'NV0004',
-		IDLand: 'MD004',
-		Category: 'Hỗ trợ canh tác',
-		Content: 'Gieo hạt giống cải xanh',
-		Priority: 'Cao',
-		Assign: 'Bá Phước',
-		status: 'Chờ xử lý',
-	},
-	{
-		IDTask: 'NV0005',
-		IDLand: 'MD005',
-		Category: 'Hỗ trợ kĩ thuật',
-		Content: 'Phun thuốc trừ cỏ',
-		Priority: 'Trung bình',
-		Assign: 'Đăng Ninh',
-		status: 'Hoàn thành',
-	},
-	{
-		IDTask: 'NV0006',
-		IDLand: 'MD006',
-		Category: 'Hỗ trợ canh tác',
-		Content: 'Làm cỏ cho vườn cam',
-		Priority: 'Thấp',
-		Assign: 'Tiến Dũng',
-		status: 'Chờ xử lý',
-	},
-	{
-		IDTask: 'NV0007',
-		IDLand: 'MD007',
-		Category: 'Hỗ trợ kĩ thuật',
-		Content: 'Kiểm tra sâu bệnh trên cây chuối',
-		Priority: 'Cao',
-		Assign: 'Bá Phước',
-		status: 'Chờ phân công',
-	},
-	{
-		IDTask: 'NV0008',
-		IDLand: 'MD008',
-		Category: 'Hỗ trợ canh tác',
-		Content: 'Bón phân hữu cơ cho vườn dưa hấu',
-		Priority: 'Trung bình',
-		Assign: 'Đăng Ninh',
-		status: 'Chờ xử lý',
-	},
-	{
-		IDTask: 'NV0009',
-		IDLand: 'MD009',
-		Category: 'Hỗ trợ kĩ thuật',
-		Content: 'Tư vấn cách trồng cây táo',
-		Priority: 'Cao',
-		Assign: 'Tiến Dũng',
-		status: 'Hoàn thành',
-	},
-	{
-		IDTask: 'NV0010',
-		IDLand: 'MD010',
-		Category: 'Hỗ trợ canh tác',
-		Content: 'Tưới nhỏ giọt cho vườn cà phê',
-		Priority: 'Thấp',
-		Assign: 'Bá Phước',
-		status: 'Đang xử lý',
-	},
-];
 
 export const TaskManagementPage = () => {
 	const dispatch = useDispatch();
@@ -131,6 +39,9 @@ export const TaskManagementPage = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPage, setTotalPage] = useState(10);
 	const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+	const [staffList, setStaffList] = useState([]);
+	const [isModalAssignVisible, setIsModalAssignVisible] = useState(false);
+	const [assignedStaff, setAssignedStaff] = useState(null);
 
 	useEffect(() => {
 		fetchTaskList(1);
@@ -152,11 +63,18 @@ export const TaskManagementPage = () => {
 		}
 	};
 
-	// const filteredTasks = dataTable.filter((task) => {
-	// 	const matchesStatus = filterStatus ? task.status === filterStatus : true;
-	// 	const matchesPriority = filterPriority ? task.Priority === filterPriority : true;
-	// 	return matchesStatus && matchesPriority;
-	// });
+	useEffect(() => {
+		dispatch(getListOfExpert())
+			.then((res) => {
+				if (res.payload.statusCode === 200) {
+					console.log('getListOfExpert: ' + JSON.stringify(res.payload.metadata.users));
+					setStaffList(res.payload.metadata.users);
+				}
+			})
+			.catch((error) => {
+				console.error('Caught error:', error);
+			});
+	}, []);
 
 	const handleRowClick = (record) => {
 		setselectedRequestTask(record);
@@ -227,6 +145,34 @@ export const TaskManagementPage = () => {
 			setselectedRequestTask(request);
 			// setIsRejectModalOpen(true);
 		}
+	};
+
+	const handleAssign = () => {
+		console.log('assignedStaff: ' + assignedStaff);
+		console.log('task: ' + selectedRequestTask.task.task_id);
+
+		if (assignedStaff) {
+			const hideLoading = message.loading('Đang xử lí...', 0);
+			dispatch(
+				assignForTask({taskID: selectedRequestTask.task.task_id, staffID: assignedStaff})
+			)
+				.then((res) => {
+					hideLoading();
+					if (res.payload.statusCode === 200) {
+						message.success('Đã phân công');
+						fetchTaskList(1);
+						setIsModalAssignVisible(false);
+					}
+				})
+				.catch((error) => {
+					hideLoading();
+					console.error('Caught error:', error);
+					message.error('Không thành công');
+				});
+			console.log('assignedStaff: ' + assignedStaff);
+			return;
+		}
+		message.error('Hãy chọn nhân viên');
 	};
 
 	const columns = [
@@ -301,7 +247,7 @@ export const TaskManagementPage = () => {
 			title: 'Người Thực Hiện',
 			dataIndex: 'assign_to',
 			key: 'assign_to',
-			render: (_, record) => <p>{record?.task?.assign_to?.full_name || ''}</p>,
+			render: (_, record) => <p>{record?.task?.assign_to?.full_name || 'Chưa có'}</p>,
 		},
 		{
 			title: 'Trạng Thái',
@@ -323,7 +269,7 @@ export const TaskManagementPage = () => {
 			key: 'actions',
 			render: (_, record) => (
 				<Space size="middle">
-					{record?.status != 'pending_approval' && (
+					{/* {record?.status != 'pending_approval' && (
 						<>
 							<Button
 								icon={<EditOutlined />}
@@ -383,7 +329,18 @@ export const TaskManagementPage = () => {
 								></Button>
 							</Popconfirm>
 						</Space>
-					)}
+					)} */}
+					<Button
+						disabled={record?.task?.assign_to?.full_name}
+						type="primary"
+						onClick={(e) => {
+							e.stopPropagation();
+							setselectedRequestTask(record);
+							setIsModalAssignVisible(true);
+						}}
+					>
+						Chọn chuyên viên
+					</Button>
 				</Space>
 			),
 		},
@@ -410,7 +367,7 @@ export const TaskManagementPage = () => {
 						}}
 					>
 						<Option value="">Tất cả</Option>
-						<Option value="view_land">Xem đất</Option>
+						{/* <Option value="view_land">Xem đất</Option> */}
 						<Option value="product_purchase">Thu mua</Option>
 						<Option value="product_puchase_harvest">Thu hoạch</Option>
 						<Option value="cultivate_process_content">Ghi nhật ký</Option>
@@ -465,12 +422,13 @@ export const TaskManagementPage = () => {
 					onClick: () => handleRowClick(record),
 				})}
 			/>
-			{/* 
 			<TaskManagementDetailModal
 				isModalOpen={isModalOpen}
 				handleModalClose={handleModalClose}
 				selectedRequestTask={selectedRequestTask}
 			/>
+			{/* 
+		
 
 			<TaskManagementAssignModal
 				isModalOpen={isModalAssignOpen}
@@ -483,6 +441,32 @@ export const TaskManagementPage = () => {
 				handleModalClose={() => setisModalAddOpen(false)}
 				handleAddTask={handleAddTask}
 			/> */}
+
+			<Modal
+				title="Chọn chuyên viên Phân Công"
+				visible={isModalAssignVisible}
+				onCancel={() => {
+					setIsModalAssignVisible(false);
+					setAssignedStaff(null);
+				}}
+				onOk={handleAssign}
+				cancelText="Hủy"
+				okText="Phân công"
+			>
+				<Select
+					placeholder="Chọn chuyên viên"
+					onChange={(value) => setAssignedStaff(value)}
+					value={assignedStaff || undefined}
+					allowClear
+					style={{width: '100%'}}
+				>
+					{staffList.map((staff) => (
+						<Option value={`${staff.user_id}`} key={staff.user_id}>
+							{staff.full_name}
+						</Option>
+					))}
+				</Select>
+			</Modal>
 		</div>
 	);
 };

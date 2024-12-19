@@ -130,6 +130,9 @@ export const ManageTransactionPage = () => {
 						{purpose === 'cancel_purchase_product' && (
 							<Tag color="#ccc">Hủy thu mua</Tag>
 						)}
+						{purpose === 'cancel_booking_material' && (
+							<Tag color="#536878">Hủy thuê thiết bị</Tag>
+						)}
 					</>
 				</>
 			),
