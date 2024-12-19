@@ -39,7 +39,7 @@ export const ManageTransactionDetailModal = ({
 	console.log(
 		selectedTransaction?.service_specific?.requests?.find(
 			(request) => request.type === 'product_puchase_harvest'
-		)?.task?.report
+		)
 	);
 
 	return (
@@ -77,43 +77,32 @@ export const ManageTransactionDetailModal = ({
 
 						{selectedTransaction?.service_specific?.requests?.find(
 							(request) => request.type === 'product_puchase_harvest'
-						)?.task?.report &&
+						) &&
 							selectedTransaction?.type === 'refund' && (
 								<Descriptions.Item label="Số lượng">
-									{
-										selectedTransaction?.service_specific?.requests?.find(
-											(request) => request.type === 'product_puchase_harvest'
-										)?.task?.report?.mass_plant
-									}{' '}
-									kg
+									{selectedTransaction?.service_specific?.mass_plant} kg
 								</Descriptions.Item>
 							)}
 						{selectedTransaction?.service_specific?.requests?.find(
 							(request) => request.type === 'product_puchase_harvest'
-						)?.task?.report &&
+						) &&
 							selectedTransaction?.type === 'refund' && (
 								<Descriptions.Item label="Chất lượng">
-									{selectedTransaction?.service_specific?.requests?.find(
-										(request) => request.type === 'product_puchase_harvest'
-									)?.task?.report?.quality_plant === 100
+									{selectedTransaction?.service_specific?.quality_plant === 100
 										? 'Tốt'
-										: selectedTransaction?.service_specific?.requests?.find(
-													(request) =>
-														request.type === 'product_puchase_harvest'
-											  )?.task?.report?.quality_plant === 100
+										: selectedTransaction?.service_specific?.quality_plant ===
+											  100
 											? 'Khá'
 											: 'Trung bình'}{' '}
 								</Descriptions.Item>
 							)}
 						{selectedTransaction?.service_specific?.requests?.find(
 							(request) => request.type === 'product_puchase_harvest'
-						)?.task?.report &&
+						) &&
 							selectedTransaction?.type === 'refund' && (
 								<Descriptions.Item label="Đơn giá">
 									{formatNumber(
-										selectedTransaction?.service_specific?.requests?.find(
-											(request) => request.type === 'product_puchase_harvest'
-										)?.task?.report?.price_purchase_per_kg
+										selectedTransaction?.service_specific?.price_purchase_per_kg
 									)}{' '}
 									VND/kg
 								</Descriptions.Item>
