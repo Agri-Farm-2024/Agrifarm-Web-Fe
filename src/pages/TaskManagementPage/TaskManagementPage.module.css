@@ -67,6 +67,8 @@
 .modalContainer {
     width: 100%;
     padding-top: 1rem;
+    display: flex;
+    flex-direction: 'column';
 }
 
 .modalContainer .bookingItem {
