@@ -55,7 +55,7 @@ export const ManageTransactionDetailModal = ({
 					: {style: {display: 'none'}}
 			}
 			onOk={handleApproveTransaction}
-			okText={loading ? 'Đang xử lý' : 'Đồng ý'}
+			okText={loading ? 'Đang xử lý' : 'Đã thanh toán'}
 		>
 			<div style={{maxHeight: '600px', overflowY: 'auto'}}>
 				{selectedTransaction && (

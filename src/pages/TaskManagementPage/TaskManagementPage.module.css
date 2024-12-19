@@ -97,6 +97,11 @@
     background-color: #fafafa;
 }
 
+.focus {
+    background-color: rgb(254, 255, 230);
+    cursor: pointer;
+}
+
 .reloadBtn {
     transition: all ease 0.5s;
 }
