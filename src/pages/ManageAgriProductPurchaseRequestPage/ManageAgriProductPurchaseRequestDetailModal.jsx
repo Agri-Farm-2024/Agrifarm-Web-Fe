@@ -55,36 +55,38 @@ export const ManageAgriProductPurchaseRequestDetailModal = ({
 					<Descriptions.Item label="Ngày gửi yêu cầu">
 						{formatDate(selectedPurchaseRequest.created_at)}
 					</Descriptions.Item>
-					{selectedPurchaseRequest?.task?.report?.quality_plant_expect ||
-					selectedPurchaseRequest?.task?.report?.quality_plant_expect === 0 ? (
+					{selectedPurchaseRequest?.service_specific?.quality_plant_expect ||
+					selectedPurchaseRequest?.service_specific?.quality_plant_expect === 0 ? (
 						<>
 							<Descriptions.Item label="Số lượng dự kiến">
-								{selectedPurchaseRequest?.task?.report?.mass_plant_expect} kg
+								{selectedPurchaseRequest?.service_specific?.mass_plant_expect} kg
 							</Descriptions.Item>
 
 							<Descriptions.Item label="Chất lượng dự kiến">
-								{selectedPurchaseRequest?.task?.report?.quality_plant_expect === 100
+								{selectedPurchaseRequest?.service_specific?.quality_plant_expect ===
+								100
 									? 'Tốt'
-									: selectedPurchaseRequest?.task?.report
+									: selectedPurchaseRequest?.service_specific
 												?.quality_plant_expect === 95
 										? 'Khá'
-										: selectedPurchaseRequest?.task?.report
+										: selectedPurchaseRequest?.service_specific
 													?.quality_plant_expect === 90
 											? 'Trung bình'
 											: 'Đã hủy'}
 							</Descriptions.Item>
 						</>
 					) : null}
-					{selectedPurchaseRequest?.task?.report?.quality_plant ? (
+					{selectedPurchaseRequest?.service_specific?.quality_plant ? (
 						<>
 							<Descriptions.Item label="Số lượng thu hoạch">
-								{selectedPurchaseRequest?.task?.report?.mass_plant} kg
+								{selectedPurchaseRequest?.service_specific?.mass_plant} kg
 							</Descriptions.Item>
 
 							<Descriptions.Item label="Chất lượng thu hoạch">
-								{selectedPurchaseRequest?.task?.report?.quality_plant === 100
+								{selectedPurchaseRequest?.service_specific?.quality_plant === 100
 									? 'Tốt'
-									: selectedPurchaseRequest?.task?.report?.quality_plant === 95
+									: selectedPurchaseRequest?.service_specific?.quality_plant ===
+										  95
 										? 'Khá'
 										: 'Trung bình'}
 							</Descriptions.Item>
