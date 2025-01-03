@@ -49,8 +49,8 @@ export const ManageLandAddModal = ({handleModalClose, isModalOpen}) => {
 				setErrors({...errors, [name]: 'Trường này chỉ chấp nhận số'});
 			} else if (value.trim() === '') {
 				setErrors({...errors, [name]: 'Trường này không được để trống'});
-			} else if (Number(value) < 1000000) {
-				setErrors({...errors, [name]: 'Giá thuê phải lớn hơn 1 triệu VND'});
+			} else if (Number(value) < 500000) {
+				setErrors({...errors, [name]: 'Giá thuê phải lớn hơn 500,000 VND'});
 			} else {
 				const {[name]: removedError, ...rest} = errors;
 				setErrors(rest);
